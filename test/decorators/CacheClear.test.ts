@@ -4,9 +4,13 @@ import { MissingClientError } from '../../lib/errors';
 import cacheManager from '../../lib';
 import { useRedisAdapter } from '../../lib/util/useAdapter';
 
-const client = Redis.createClient();
+let client: Redis.RedisClient;
 
 describe('CacheClear Decorator Tests', () => {
+  beforeAll(() => {
+    client = Redis.createClient();
+  });
+
   beforeEach(() => {
     useRedisAdapter(client);
   });
@@ -57,5 +61,9 @@ describe('CacheClear Decorator Tests', () => {
 
   afterEach((done) => {
     client.flushall(done);
+  });
+
+  afterAll(() => {
+    client.end(true);
   });
 });

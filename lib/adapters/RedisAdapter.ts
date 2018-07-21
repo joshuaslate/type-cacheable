@@ -87,7 +87,7 @@ export class RedisAdapter implements CacheClient {
      ? JSON.stringify(value)
      : value;
 
-     const separatedKeys = RedisAdapter.getSeparatedKeys(cacheKey);
+    const separatedKeys = RedisAdapter.getSeparatedKeys(cacheKey);
 
     return new Promise((resolve, reject) => {
       if (separatedKeys) {

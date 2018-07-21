@@ -1,8 +1,8 @@
 import * as Redis from 'redis';
 import { RedisAdapter } from '../../lib/adapters';
 
-const client = Redis.createClient();
-const redisAdapter = new RedisAdapter(client);
+let client: Redis.RedisClient;
+let redisAdapter: RedisAdapter;
 
 const keyName = 'aSimpleKey';
 const compoundKey1 = 'aCompound';
@@ -13,6 +13,11 @@ const objectValue = { myKeyOne: 'myValOne' };
 const arrayValue = ['element1', 2, { complex: 'element' }];
 
 describe('RedisAdapter Tests', () => {
+  beforeAll(() => {
+    client = Redis.createClient();
+    redisAdapter = new RedisAdapter(client);
+  });
+
   describe('Setter tests', () => {
     it('should set a string value on a standard key', async () => {
       await redisAdapter.set(keyName, simpleValue);
@@ -129,5 +134,9 @@ describe('RedisAdapter Tests', () => {
 
   afterEach((done) => {
     client.flushall(done);
+  });
+
+  afterAll(() => {
+    client.end(true);
   });
 });
