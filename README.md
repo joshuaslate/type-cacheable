@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/joshuaslate/type-cacheable.svg?branch=master)](https://travis-ci.org/joshuaslate/type-cacheable)
+
 # type-cacheable
 TypeScript-based caching decorator to assist with caching (and clearing cache for) async methods. Currently supports Redis.
 

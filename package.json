@@ -1,6 +1,6 @@
 {
   "name": "type-cacheable",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "TypeScript-based caching decorators",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -17,7 +17,7 @@
   },
   "scripts": {
     "start": "node ./dist/index.js",
-    "test": "jest --coverage --runInBand",
+    "test": "jest --coverage --runInBand --detectOpenHandles",
     "test:watch": "jest --watch --runInBand",
     "build": "tsc"
   },

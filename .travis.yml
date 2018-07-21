@@ -1,0 +1,9 @@
+services:
+  - redis-server
+language: node_js
+node:js:
+  - stable
+install:
+  - npm install
+script:
+  - npm test
