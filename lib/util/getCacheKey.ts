@@ -51,3 +51,7 @@ export const getCacheKey = (passedInKey: string | CacheKeyBuilder = '', methodNa
   const hashedKey = md5(serializedKey);
   return hashedKey;
 };
+
+export const getSeparatedKeys = (cacheKey: string): string[] | null => cacheKey.includes(':')
+  ? cacheKey.split(':')
+  : null;

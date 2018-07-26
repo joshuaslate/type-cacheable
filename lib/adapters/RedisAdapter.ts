@@ -1,6 +1,6 @@
 import { RedisClient, Callback } from 'redis';
 import { CacheClient } from '../interfaces';
-import { parseIfRequired } from '../util';
+import { parseIfRequired, getSeparatedKeys } from '../util';
 
 export class RedisAdapter implements CacheClient {
   static expiresAtProperty = 'expiresAt';
@@ -10,10 +10,6 @@ export class RedisAdapter implements CacheClient {
    *                   static method generates the key name for the expiration
    */
   static getExpiresAtKey = (cacheKey: string): string => `${cacheKey}_${RedisAdapter.expiresAtProperty}`;
-
-  static getSeparatedKeys = (cacheKey: string): string[] | null => cacheKey.includes(':')
-   ? cacheKey.split(':')
-   : null;
 
   static responseCallback = (resolve: Function, reject: Function): Callback<any> =>
   (err: any, response: any) => {
@@ -31,8 +27,13 @@ export class RedisAdapter implements CacheClient {
     this.redisClient = redisClient;
   };
 
+  // Redis doesn't have a standard TTL, it's at a per-key basis
+  public getClientTTL(): number {
+    return 0;
+  }
+
   public async get(cacheKey: string): Promise<any> {
-    const separatedKeys = RedisAdapter.getSeparatedKeys(cacheKey);
+    const separatedKeys = getSeparatedKeys(cacheKey);
     let hashKey: string;
     let individualKey: string;
     let expirationKey: string;
@@ -87,7 +88,7 @@ export class RedisAdapter implements CacheClient {
      ? JSON.stringify(value)
      : value;
 
-    const separatedKeys = RedisAdapter.getSeparatedKeys(cacheKey);
+    const separatedKeys = getSeparatedKeys(cacheKey);
 
     return new Promise((resolve, reject) => {
       if (separatedKeys) {
@@ -111,7 +112,7 @@ export class RedisAdapter implements CacheClient {
   };
 
   public async del(cacheKey: string): Promise<any> {
-    const separatedKeys = RedisAdapter.getSeparatedKeys(cacheKey);
+    const separatedKeys = getSeparatedKeys(cacheKey);
     return new Promise((resolve, reject) => {
       // Handle hash deletes
       if (separatedKeys) {

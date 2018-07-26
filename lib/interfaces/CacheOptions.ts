@@ -6,4 +6,5 @@ export interface CacheOptions {
   hashKey?: string | CacheKeyBuilder;
   client?: CacheClient;
   ttlSeconds?: number;
+  noop?: boolean;
 }

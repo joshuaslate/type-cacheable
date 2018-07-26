@@ -19,13 +19,19 @@ export function Cacheable(options?: CacheOptions) {
 
   return (target: Object, propertyKey: string, descriptor: PropertyDescriptor) => {
     // A caching client must exist, otherwise this library is doing nothing.
-    if (!client) {
+    if (!client && (!options || !options.noop)) {
       throw new MissingClientError(propertyKey);
     }
 
     return {
       ...descriptor,
       value: async function(...args: any[]): Promise<any> {
+        // If there is no client, no-op is enabled (else we would have thrown before),
+        // just return the result of the decorated method (no caching)
+        if (!client) {
+          return descriptor.value!.apply(this, args);
+        }
+
         const cacheKey = getCacheKey(options && options.cacheKey, propertyKey, args, this);
         const hashKey = extractKey(options && options.hashKey, args, this);
         const finalKey = hashKey

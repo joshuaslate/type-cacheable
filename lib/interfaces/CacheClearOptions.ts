@@ -5,4 +5,5 @@ export interface CacheClearOptions {
   cacheKey?: string | CacheKeyBuilder;
   hashKey?: string | CacheKeyBuilder;
   client?: CacheClient;
+  noop?: boolean;
 }
