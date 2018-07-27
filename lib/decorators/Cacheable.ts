@@ -11,16 +11,16 @@ import cacheManager from '../index';
  * @param options {CacheOptions}
  */
 export function Cacheable(options?: CacheOptions) {
-  // Allow a client to be passed in directly for granularity, else use the connected
-  // client from the main CacheManager singleton.
-  const client = options && options.client
-    ? options.client
-    : cacheManager.client;
-
   return (target: Object, propertyKey: string, descriptor: PropertyDescriptor) => {
     return {
       ...descriptor,
       value: async function(...args: any[]): Promise<any> {
+        // Allow a client to be passed in directly for granularity, else use the connected
+        // client from the main CacheManager singleton.
+        const client = options && options.client
+          ? options.client
+          : cacheManager.client;
+
         // If there is no client, no-op is enabled (else we would have thrown before),
         // just return the result of the decorated method (no caching)
         if (!client) {
