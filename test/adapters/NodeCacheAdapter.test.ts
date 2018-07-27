@@ -2,7 +2,7 @@ import * as NodeCache from 'node-cache';
 import { NodeCacheAdapter } from '../../lib/adapters';
 
 let client: NodeCache.NodeCache;
-let redisAdapter: NodeCacheAdapter;
+let nodeCacheAdapter: NodeCacheAdapter;
 
 const keyName = 'aSimpleKey';
 const compoundKey1 = 'aCompound';
@@ -15,12 +15,12 @@ const arrayValue = ['element1', 2, { complex: 'element' }];
 describe('NodeCacheAdapter Tests', () => {
   beforeAll(() => {
     client = new NodeCache();
-    redisAdapter = new NodeCacheAdapter(client);
+    nodeCacheAdapter = new NodeCacheAdapter(client);
   });
 
   describe('Setter tests', () => {
     it('should set a string value on a standard key', async () => {
-      await redisAdapter.set(keyName, simpleValue);
+      await nodeCacheAdapter.set(keyName, simpleValue);
 
       client.get(keyName, (err, result) => {
         expect(result).toBe(simpleValue);
@@ -30,7 +30,7 @@ describe('NodeCacheAdapter Tests', () => {
     it('should set an object value on a standard key', async () => {
       const keyName = 'aSimpleKey';
 
-      await redisAdapter.set(keyName, objectValue);
+      await nodeCacheAdapter.set(keyName, objectValue);
 
       client.get(keyName, (err, result) => {
         expect(result).toEqual(objectValue);
@@ -38,7 +38,7 @@ describe('NodeCacheAdapter Tests', () => {
     });
 
     it('should set an array value on a standard key', async () => {
-      await redisAdapter.set(keyName, arrayValue);
+      await nodeCacheAdapter.set(keyName, arrayValue);
 
       client.get(keyName, (err, result) => {
         expect(result).toEqual(arrayValue);
@@ -46,7 +46,7 @@ describe('NodeCacheAdapter Tests', () => {
     });
 
     it('should set a string value on a compound (x:y) key', async () => {
-      await redisAdapter.set(compoundCombined, simpleValue);
+      await nodeCacheAdapter.set(compoundCombined, simpleValue);
 
       client.get(compoundCombined, (err, result) => {
         expect(result).toBe(simpleValue);
@@ -54,7 +54,7 @@ describe('NodeCacheAdapter Tests', () => {
     });
 
     it('should set an object value on a compound (x:y) key', async () => {
-      await redisAdapter.set(compoundCombined, objectValue);
+      await nodeCacheAdapter.set(compoundCombined, objectValue);
 
       client.get(compoundCombined, (err, result) => {
         expect(result).toEqual(objectValue);
@@ -62,7 +62,7 @@ describe('NodeCacheAdapter Tests', () => {
     });
 
     it('should set an array value on a compound (x:y) key', async () => {
-      await redisAdapter.set(compoundCombined, arrayValue);
+      await nodeCacheAdapter.set(compoundCombined, arrayValue);
 
       client.get(compoundCombined, (err, result) => {
         expect(result).toEqual(arrayValue);
@@ -73,7 +73,7 @@ describe('NodeCacheAdapter Tests', () => {
   describe('Getter tests', () => {
     it('should get a string set on a simple key', (done) => {
       client.set(keyName, simpleValue, async (err, setResult) => {
-        const result = await redisAdapter.get(keyName);
+        const result = await nodeCacheAdapter.get(keyName);
         expect(result).toBe(simpleValue);
         done();
       });
@@ -81,7 +81,7 @@ describe('NodeCacheAdapter Tests', () => {
 
     it('should get an object set on a simple key', (done) => {
       client.set(keyName, objectValue, async (err, setResult) => {
-        const result = await redisAdapter.get(keyName);
+        const result = await nodeCacheAdapter.get(keyName);
         expect(result).toEqual(objectValue);
         done();
       });
@@ -89,7 +89,7 @@ describe('NodeCacheAdapter Tests', () => {
 
     it('should get an array set on a simple key', (done) => {
       client.set(keyName, arrayValue, async (err, setResult) => {
-        const result = await redisAdapter.get(keyName);
+        const result = await nodeCacheAdapter.get(keyName);
         expect(result).toEqual(arrayValue);
         done();
       });
@@ -97,7 +97,7 @@ describe('NodeCacheAdapter Tests', () => {
 
     it('should get a string set on a compound (x:y) key', (done) => {
       client.set(compoundCombined, simpleValue, async (err, setResult) => {
-        const result = await redisAdapter.get(compoundCombined);
+        const result = await nodeCacheAdapter.get(compoundCombined);
         expect(result).toBe(simpleValue);
         done();
       });
@@ -105,7 +105,7 @@ describe('NodeCacheAdapter Tests', () => {
 
     it('should get an object set on a compound (x:y) key', (done) => {
       client.set(compoundCombined, objectValue, async (err, setResult) => {
-        const result = await redisAdapter.get(compoundCombined);
+        const result = await nodeCacheAdapter.get(compoundCombined);
         expect(result).toEqual(objectValue);
         done();
       });
@@ -113,7 +113,7 @@ describe('NodeCacheAdapter Tests', () => {
 
     it('should get an array set on a compound (x:y) key', (done) => {
       client.set(compoundCombined, arrayValue, async (err, setResult) => {
-        const result = await redisAdapter.get(compoundCombined);
+        const result = await nodeCacheAdapter.get(compoundCombined);
         expect(result).toEqual(arrayValue);
         done();
       });
