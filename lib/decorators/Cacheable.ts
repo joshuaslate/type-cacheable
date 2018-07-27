@@ -1,5 +1,5 @@
 import { CacheOptions } from '../interfaces';
-import { getCacheKey, extractKey } from '../util';
+import { getCacheKey, extractKey, determineOp } from '../util';
 import { MissingClientError } from '../errors';
 import cacheManager from '../index';
 
@@ -18,18 +18,18 @@ export function Cacheable(options?: CacheOptions) {
     : cacheManager.client;
 
   return (target: Object, propertyKey: string, descriptor: PropertyDescriptor) => {
-    // A caching client must exist, otherwise this library is doing nothing.
-    if (!client && (!options || !options.noop)) {
-      throw new MissingClientError(propertyKey);
-    }
-
     return {
       ...descriptor,
       value: async function(...args: any[]): Promise<any> {
         // If there is no client, no-op is enabled (else we would have thrown before),
         // just return the result of the decorated method (no caching)
         if (!client) {
-          return descriptor.value!.apply(this, args);
+          if (options && options.noop && determineOp(options.noop, args, this)) {
+            return descriptor.value!.apply(this, args);
+          }
+
+          // A caching client must exist if not set to noop, otherwise this library is doing nothing.
+          throw new MissingClientError(propertyKey);
         }
 
         const cacheKey = getCacheKey(options && options.cacheKey, propertyKey, args, this);
