@@ -1,5 +1,5 @@
 import { CacheOptions } from '../interfaces';
-import { getCacheKey, extractKey, determineOp } from '../util';
+import { determineOp, extractKey, getCacheKey, getTTL } from '../util';
 import { MissingClientError } from '../errors';
 import cacheManager from '../index';
 
@@ -32,8 +32,11 @@ export function Cacheable(options?: CacheOptions) {
           throw new MissingClientError(propertyKey);
         }
 
-        const cacheKey = getCacheKey(options && options.cacheKey, propertyKey, args, this);
-        const hashKey = extractKey(options && options.hashKey, args, this);
+        const contextToUse = !cacheManager.options.excludeContext
+          ? this
+          : undefined;
+        const cacheKey = getCacheKey(options && options.cacheKey, propertyKey, args, contextToUse);
+        const hashKey = extractKey(options && options.hashKey, args, contextToUse);
         const finalKey = hashKey
           ? `${hashKey}:${cacheKey}`
           : cacheKey;
@@ -50,7 +53,7 @@ export function Cacheable(options?: CacheOptions) {
         // TTL in seconds should prioritize options set in the decorator first,
         // the CacheManager options second, and be undefined if unset.
         const ttl = options && options.ttlSeconds
-          ? options.ttlSeconds
+          ? getTTL(options.ttlSeconds, args, contextToUse)
           : cacheManager.options.ttlSeconds || undefined;
 
         await client.set(finalKey, result, ttl);

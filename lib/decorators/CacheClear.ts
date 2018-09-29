@@ -30,13 +30,16 @@ export function CacheClear(options?: CacheClearOptions) {
           throw new MissingClientError(propertyKey);
         }
 
-        const cacheKey = getCacheKey(options && options.cacheKey, propertyKey, args, this);
-        const hashKey = extractKey(options && options.hashKey, args, this);
+        const contextToUse = !cacheManager.options.excludeContext
+          ? this
+          : undefined;
+        const cacheKey = getCacheKey(options && options.cacheKey, propertyKey, args, contextToUse);
+        const hashKey = extractKey(options && options.hashKey, args, contextToUse);
         const finalKey = hashKey
           ? `${hashKey}:${cacheKey}`
           : cacheKey;
 
-        // Run the decorated function
+        // Run the decorated method
         const result = await descriptor.value!.apply(this, args);
 
         // Delete the requested value from cache

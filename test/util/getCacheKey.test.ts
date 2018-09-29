@@ -1,4 +1,4 @@
-import { getCacheKey } from '../../lib/util/getCacheKey';
+import { getCacheKey } from '../../lib/util';
 
 const mockArgs: any[] = [
   1,
