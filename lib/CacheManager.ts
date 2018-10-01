@@ -3,6 +3,7 @@ import { CacheClient, CacheManagerOptions } from './interfaces';
 export default class CacheManager {
   public client: CacheClient | null = null;
   public options: CacheManagerOptions = {
+    excludeContext: true,
     ttlSeconds: 0,
   };
   

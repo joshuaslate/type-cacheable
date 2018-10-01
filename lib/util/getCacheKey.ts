@@ -5,7 +5,7 @@ import { CacheKeyBuilder } from '../interfaces';
 /**
  * extractKey - If data should be stored in a hash, this would be the name of the hash
  *
- * @param passedInKey The desired key, or function to build the key based on arguments
+ * @param passedInKey The desired key, or function to build the key based on arguments/context
  * @param args        The arguments the decorated method was called with
  * @param context     The instance whose method is being called
  * 
@@ -34,7 +34,7 @@ export const extractKey = (passedInKey: string | CacheKeyBuilder = '', args: any
  */
 export const getCacheKey = (passedInKey: string | CacheKeyBuilder = '', methodName: string, args: any[], context?: any): string => {
   // If the user passed in a cacheKey, use that. If it's a string/number, use it directly.
-  // In the case of a function
+  // In the case of a function, we'll use the result of the called function.
   if (passedInKey) {
     return extractKey(passedInKey, args, context);
   }
