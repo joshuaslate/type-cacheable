@@ -44,7 +44,7 @@
     "node-cache": "^4.2.0",
     "redis": "^2.8.0",
     "ts-jest": "^23.0.1",
-    "typescript": "^2.9.2"
+    "typescript": "^3.5.3"
   },
   "dependencies": {
     "@types/node-cache": "^4.1.1",
