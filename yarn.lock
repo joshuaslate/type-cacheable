@@ -31,8 +31,8 @@
     "@types/node" "*"
 
 "@types/node-cache@^4.1.1":
-  version "4.1.1"
-  resolved "https://registry.yarnpkg.com/@types/node-cache/-/node-cache-4.1.1.tgz#c435974571cdb3b44fef91de95565fb6656cc3b6"
+  version "4.1.3"
+  resolved "https://registry.yarnpkg.com/@types/node-cache/-/node-cache-4.1.3.tgz#524b8b13b787dec4fe982b9d77b251f7d59416f4"
   dependencies:
     "@types/node" "*"
 
