@@ -27,8 +27,8 @@
     "@types/jest-diff" "*"
 
 "@types/md5@^2.1.32":
-  version "2.1.32"
-  resolved "https://registry.yarnpkg.com/@types/md5/-/md5-2.1.32.tgz#93e23437fcd17a7b9ca98d02aa6002e835842fe8"
+  version "2.1.33"
+  resolved "https://registry.yarnpkg.com/@types/md5/-/md5-2.1.33.tgz#8c8dba30df4ad0e92296424f08c4898dd808e8df"
   dependencies:
     "@types/node" "*"
 
