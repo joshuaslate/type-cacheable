@@ -50,6 +50,6 @@
     "@types/node-cache": "^4.1.1",
     "@types/redis": "^2.8.6",
     "md5": "^2.2.1",
-    "serialize-javascript": "^1.5.0"
+    "serialize-javascript": "^2.1.0"
   }
 }
