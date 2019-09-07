@@ -1,5 +1,5 @@
 import { CacheClearOptions } from '../interfaces';
-import { getCacheKey, extractKey, determineOp } from '../util';
+import { getFinalKey, determineOp } from '../util';
 import { MissingClientError } from '../errors';
 import cacheManager from '../index';
 
@@ -33,11 +33,7 @@ export function CacheClear(options?: CacheClearOptions) {
         const contextToUse = !cacheManager.options.excludeContext
           ? this
           : undefined;
-        const cacheKey = getCacheKey(options && options.cacheKey, propertyKey, args, contextToUse);
-        const hashKey = extractKey(options && options.hashKey, args, contextToUse);
-        const finalKey = hashKey
-          ? `${hashKey}:${cacheKey}`
-          : cacheKey;
+        const finalKey = getFinalKey(options && options.cacheKey, options && options.hashKey, propertyKey, args, contextToUse);
 
         // Run the decorated method
         const result = await descriptor.value!.apply(this, args);

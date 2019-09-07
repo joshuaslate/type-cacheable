@@ -12,8 +12,8 @@ import { CacheKeyBuilder } from '../interfaces';
  * @returns {String}
  */
 export const extractKey = (passedInKey: string | CacheKeyBuilder = '', args: any[], context?: any): string => {
-  // If the user passed in a cacheKey, use that. If it's a string/number, use it directly.
-  // In the case of a function
+  // If the user passed in a cacheKey, use that. If it's a string, use it directly.
+  // In the case of a function, we'll use the result of the called function.
   return passedInKey instanceof Function
     ? passedInKey(args, context)
     : passedInKey;
@@ -33,7 +33,7 @@ export const extractKey = (passedInKey: string | CacheKeyBuilder = '', args: any
  * @returns {String}
  */
 export const getCacheKey = (passedInKey: string | CacheKeyBuilder = '', methodName: string, args: any[], context?: any): string => {
-  // If the user passed in a cacheKey, use that. If it's a string/number, use it directly.
+  // If the user passed in a cacheKey, use that. If it's a string, use it directly.
   // In the case of a function, we'll use the result of the called function.
   if (passedInKey) {
     return extractKey(passedInKey, args, context);
@@ -52,6 +52,17 @@ export const getCacheKey = (passedInKey: string | CacheKeyBuilder = '', methodNa
   return hashedKey;
 };
 
-export const getSeparatedKeys = (cacheKey: string): string[] | null => cacheKey.includes(':')
-  ? cacheKey.split(':')
-  : null;
+export const getFinalKey = (
+  passedCacheKey: string | CacheKeyBuilder = '',
+  passedHashKey: string | CacheKeyBuilder = '',
+  methodName: string,
+  args: any[],
+  context?: any,
+) => {
+  const cacheKey = getCacheKey(passedCacheKey, methodName, args, context);
+  const hashKey = extractKey(passedHashKey, args, context);
+
+  return hashKey
+    ? `${hashKey}:${cacheKey}`
+    : cacheKey;
+}

@@ -5,9 +5,7 @@ let client: Redis.RedisClient;
 let redisAdapter: RedisAdapter;
 
 const keyName = 'aSimpleKey';
-const compoundKey1 = 'aCompound';
-const compoundKey2 = 'key';
-const compoundExpire = RedisAdapter.getExpiresAtKey(compoundKey2);
+const compoundKey = 'aCompound:key';
 const simpleValue = 'aSimpleValue';
 const objectValue = { myKeyOne: 'myValOne' };
 const arrayValue = ['element1', 2, { complex: 'element' }];
@@ -45,40 +43,26 @@ describe('RedisAdapter Tests', () => {
       });
     });
 
-    it('should set a string value on a compound (x:y) key', async () => {
-      await redisAdapter.set(`${compoundKey1}:${compoundKey2}`, simpleValue);
-
-      client.hgetall(compoundKey1, (err, result) => {
-        expect(result[compoundKey2]).toBe(simpleValue);
-        expect(result[compoundExpire]).toBeFalsy();
-      });
-    });
-
     it('should set an object value on a compound (x:y) key', async () => {
-      await redisAdapter.set(`${compoundKey1}:${compoundKey2}`, objectValue);
+      await redisAdapter.set(compoundKey, objectValue);
 
-      client.hgetall(compoundKey1, (err, result) => {
-        expect(result[compoundKey2]).toBe(JSON.stringify(objectValue));
-        expect(result[compoundExpire]).toBeFalsy();
+      client.hgetall(compoundKey, (err, result) => {
+        expect(result).toEqual(objectValue);
       });
     });
 
     it('should set an array value on a compound (x:y) key', async () => {
-      await redisAdapter.set(`${compoundKey1}:${compoundKey2}`, arrayValue);
+      await redisAdapter.set(compoundKey, arrayValue);
 
-      client.hgetall(compoundKey1, (err, result) => {
-        expect(result[compoundKey2]).toBe(JSON.stringify(arrayValue));
-        expect(result[compoundExpire]).toBeFalsy();
+      client.hgetall(compoundKey, (err, result) => {
+        expect(result).toEqual({ ...result });
       });
     });
 
     it('should set an expiresAt value on a compound (x:y) key when TTL is passed in', async () => {
-      await redisAdapter.set(`${compoundKey1}:${compoundKey2}`, simpleValue, 150);
-
-      client.hgetall(compoundKey1, (err, result) => {
-        expect(result[compoundKey2]).toBe(simpleValue);
-        expect(result[compoundExpire]).toBeTruthy();
-      });
+      jest.spyOn(client, 'expire');
+      await redisAdapter.set(compoundKey, objectValue, 50000);
+      expect(client.expire).toHaveBeenCalled();
     });
   });
 
@@ -107,25 +91,19 @@ describe('RedisAdapter Tests', () => {
       });
     });
 
-    it('should get a string set on a compound (x:y) key', (done) => {
-      client.hmset(compoundKey1, [compoundKey2, simpleValue], async (err, setResult) => {
-        const result = await redisAdapter.get(`${compoundKey1}:${compoundKey2}`);
-        expect(result).toBe(simpleValue);
-        done();
-      });
-    });
-
     it('should get an object set on a compound (x:y) key', (done) => {
-      client.hmset(compoundKey1, [compoundKey2, JSON.stringify(objectValue)], async (err, setResult) => {
-        const result = await redisAdapter.get(`${compoundKey1}:${compoundKey2}`);
+      const args = RedisAdapter.buildSetArgumentsFromObject(objectValue);
+      client.hmset(compoundKey, args, async (err, setResult) => {
+        const result = await redisAdapter.get(compoundKey);
         expect(result).toEqual(objectValue);
         done();
       });
     });
 
     it('should get an array set on a compound (x:y) key', (done) => {
-      client.hmset(compoundKey1, [compoundKey2, JSON.stringify(arrayValue)], async (err, setResult) => {
-        const result = await redisAdapter.get(`${compoundKey1}:${compoundKey2}`);
+      const args = RedisAdapter.buildSetArgumentsFromObject({ ...arrayValue });
+      client.hmset(compoundKey, args, async (err, setResult) => {
+        const result = await redisAdapter.get(compoundKey);
         expect(result).toEqual(arrayValue);
         done();
       });
