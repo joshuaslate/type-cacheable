@@ -1,15 +1,14 @@
 import { RedisClient, Callback } from 'redis';
 import { CacheClient } from '../interfaces';
-import { parseIfRequired, getSeparatedKeys } from '../util';
+import { parseIfRequired } from '../util';
 
 export class RedisAdapter implements CacheClient {
-  static expiresAtProperty = 'expiresAt';
+  static buildSetArgumentsFromObject = (objectValue: any): string[] =>
+    Object.keys(objectValue).reduce((accum: any, curr: any) => {
+      accum.push(curr, typeof objectValue[curr] === 'object' ? JSON.stringify(objectValue[curr]) : objectValue[curr]);
 
-  /**
-   * getExpiresAtKey - For hashsets, we need to store a separate value for expiration, so this
-   *                   static method generates the key name for the expiration
-   */
-  static getExpiresAtKey = (cacheKey: string): string => `${cacheKey}_${RedisAdapter.expiresAtProperty}`;
+      return accum;
+    }, [] as string[]);
 
   static responseCallback = (resolve: Function, reject: Function): Callback<any> =>
   (err: any, response: any) => {
@@ -33,44 +32,19 @@ export class RedisAdapter implements CacheClient {
   }
 
   public async get(cacheKey: string): Promise<any> {
-    const separatedKeys = getSeparatedKeys(cacheKey);
-    let hashKey: string;
-    let individualKey: string;
-    let expirationKey: string;
-
-    if (separatedKeys) {
-      [ hashKey, individualKey ] = separatedKeys;
-      expirationKey = RedisAdapter.getExpiresAtKey(individualKey);
-    }
-
     return new Promise((resolve, reject) => {
-      if (separatedKeys) {
-        this.redisClient.hmget(hashKey, [individualKey, expirationKey], RedisAdapter.responseCallback(resolve, reject));
+      if (cacheKey.includes(':')) {
+        this.redisClient.hgetall(cacheKey, RedisAdapter.responseCallback(resolve, reject));
       } else {
         this.redisClient.get(cacheKey, RedisAdapter.responseCallback(resolve, reject));
       }
     }).then((result: any) => {
-      if (result) {
-        const usableResult = parseIfRequired(result);
-
-        if (separatedKeys && Array.isArray(usableResult)) {
-          // hget will return in the order we query keys from Redis in (value first, then expiration)
-          const [ innerResult, expiration ]: any[] = usableResult;
-          const expiresAt = expiration
-            ? Number(expiration)
-            : null;
-
-          // If there is no expiresAt value, or if the hash hasn't expired,
-          // return the parsed result. Else return null and repopulate the cache.
-          return !expiresAt || (expiresAt && expiresAt < (Date.now() / 1000))
-            ? innerResult && parseIfRequired(innerResult)
-            : null;
-        }
-
-        return usableResult;
+      const usableResult = parseIfRequired(result);
+      if (usableResult && typeof usableResult === 'object' && Object.keys(usableResult).every(key => Number.isInteger(Number(key)))) {
+        return Object.keys(usableResult).map(key => parseIfRequired(usableResult[key]));
       }
 
-      return result;
+      return usableResult;
     });
   };
 
@@ -84,44 +58,36 @@ export class RedisAdapter implements CacheClient {
    * @returns {Promise}
    */
   public async set(cacheKey: string, value: any, ttl?: number): Promise<any> {
-    const usableValue = typeof value === 'object'
-     ? JSON.stringify(value)
-     : value;
-
-    const separatedKeys = getSeparatedKeys(cacheKey);
-
     return new Promise((resolve, reject) => {
-      if (separatedKeys) {
-        const [ hashKey, individualKey ]: string[] = separatedKeys;
-        const args: any[] = [individualKey, usableValue];
+      if (cacheKey.includes(':') && typeof value === 'object') {
+        const args = RedisAdapter.buildSetArgumentsFromObject(value);
 
-        // hmset doesn't add expiration by default, so we have to implement that here if ttl is given
-        if (ttl) {
-          args.push(RedisAdapter.getExpiresAtKey(individualKey), (Date.now() / 1000) + ttl);
-        }
+        this.redisClient.hmset(cacheKey, args, (err, result) => {
+          if (!err) {
+            // hmset doesn't add expiration by default, so we have to implement that here if ttl is given
+            if (ttl) {
+              this.redisClient.expire(cacheKey, ttl, RedisAdapter.responseCallback(resolve, reject));
+              return;
+            }
+          }
 
-        this.redisClient.hmset(hashKey, args, RedisAdapter.responseCallback(resolve, reject));
+          RedisAdapter.responseCallback(resolve, reject)(err, result);
+        });
       } else {
+        const usableValue = typeof value === 'string' ? value : JSON.stringify(value);
+
         if (ttl) {
           this.redisClient.set(cacheKey, usableValue, 'EX', ttl, RedisAdapter.responseCallback(resolve, reject));
         } else {
           this.redisClient.set(cacheKey, usableValue, RedisAdapter.responseCallback(resolve, reject));
         }
       }
-    });
+    })
   };
 
   public async del(cacheKey: string): Promise<any> {
-    const separatedKeys = getSeparatedKeys(cacheKey);
     return new Promise((resolve, reject) => {
-      // Handle hash deletes
-      if (separatedKeys) {
-        const [ hashKey, individualKey ]: string[] = separatedKeys;
-        this.redisClient.hdel(hashKey, [individualKey, RedisAdapter.getExpiresAtKey(individualKey)], RedisAdapter.responseCallback(resolve, reject));
-      // Handle deletes on normal keys
-      } else {
-        this.redisClient.del(cacheKey, RedisAdapter.responseCallback(resolve, reject));
-      }
+      this.redisClient.del(cacheKey, RedisAdapter.responseCallback(resolve, reject));
     });
   };
 }

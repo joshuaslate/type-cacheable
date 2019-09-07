@@ -1,5 +1,5 @@
 import { CacheOptions } from '../interfaces';
-import { determineOp, extractKey, getCacheKey, getTTL } from '../util';
+import { determineOp, getFinalKey, getTTL } from '../util';
 import { MissingClientError } from '../errors';
 import cacheManager from '../index';
 
@@ -35,11 +35,7 @@ export function Cacheable(options?: CacheOptions) {
         const contextToUse = !cacheManager.options.excludeContext
           ? this
           : undefined;
-        const cacheKey = getCacheKey(options && options.cacheKey, propertyKey, args, contextToUse);
-        const hashKey = extractKey(options && options.hashKey, args, contextToUse);
-        const finalKey = hashKey
-          ? `${hashKey}:${cacheKey}`
-          : cacheKey;
+        const finalKey = getFinalKey(options && options.cacheKey, options && options.hashKey, propertyKey, args, contextToUse);
         const cachedValue = await client.get(finalKey);
 
         // If a value for the cacheKey was found in cache, simply return that.
