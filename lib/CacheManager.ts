@@ -5,6 +5,7 @@ export default class CacheManager {
   public options: CacheManagerOptions = {
     excludeContext: true,
     ttlSeconds: 0,
+    debug: false,
   };
   
   public setClient(client: CacheClient): void {

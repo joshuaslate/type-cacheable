@@ -36,11 +36,17 @@ export function Cacheable(options?: CacheOptions) {
           ? this
           : undefined;
         const finalKey = getFinalKey(options && options.cacheKey, options && options.hashKey, propertyKey, args, contextToUse);
-        const cachedValue = await client.get(finalKey);
 
-        // If a value for the cacheKey was found in cache, simply return that.
-        if (cachedValue) {
-          return cachedValue;
+        try {
+          const cachedValue = await client.get(finalKey);
+          // If a value for the cacheKey was found in cache, simply return that.
+          if (cachedValue) {
+            return cachedValue;
+          }
+        } catch (err) {
+          if (cacheManager.options.debug) {
+            console.warn(`type-cacheable Cacheable cache miss due to client error: ${err.message}`);
+          }
         }
 
         // On a cache miss, run the decorated function and cache its return value.
@@ -52,7 +58,14 @@ export function Cacheable(options?: CacheOptions) {
           ? getTTL(options.ttlSeconds, args, contextToUse)
           : cacheManager.options.ttlSeconds || undefined;
 
-        await client.set(finalKey, result, ttl);
+        try {
+          await client.set(finalKey, result, ttl);
+        } catch (err) {
+          if (cacheManager.options.debug) {
+            console.warn(`type-cacheable Cacheable set cache failure due to client error: ${err.message}`);
+          }
+        }
+
         return result;
       },
     };

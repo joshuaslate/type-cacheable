@@ -39,7 +39,14 @@ export function CacheClear(options?: CacheClearOptions) {
         const result = await descriptor.value!.apply(this, args);
 
         // Delete the requested value from cache
-        await client.del(finalKey);
+        try {
+          await client.del(finalKey);
+        } catch (err) {
+          if (cacheManager.options.debug) {
+            console.warn(`type-cacheable CacheClear failure due to client error: ${err.message}`);
+          }
+        }
+
         return result;
       },
     };
