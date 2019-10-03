@@ -30,6 +30,35 @@ describe('Cacheable Decorator Tests', () => {
     }
   });
 
+  it('should not throw an error if the client fails', async () => {
+    class TestClass {
+      public aProp: string = 'aVal!';
+
+      @Cacheable()
+      public async hello(): Promise<any> {
+        return 'world';
+      }
+    }
+
+    cacheManager.client!.get = async (cacheKey: string) => {
+      throw new Error('client failure');
+    };
+
+    cacheManager.client!.set = async (cacheKey: string, value: any) => {
+      throw new Error('client failure');
+    };
+
+    const testInstance = new TestClass();
+    let err;
+    try {
+      await testInstance.hello();
+    } catch (error) {
+      err = error;
+    }
+
+    expect(err).toBeFalsy();
+  });
+
   it('should attempt to get and set the cache on an initial call to a decorated method, only get on subsequent calls', async () => {
     class TestClass {
       public aProp: string = 'aVal!';
