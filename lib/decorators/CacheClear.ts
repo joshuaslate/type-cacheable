@@ -1,6 +1,5 @@
 import { CacheClearOptions } from '../interfaces';
 import { getFinalKey, determineOp } from '../util';
-import { MissingClientError } from '../errors';
 import cacheManager from '../index';
 
 /**
@@ -27,7 +26,11 @@ export function CacheClear(options?: CacheClearOptions) {
           }
 
           // A caching client must exist if not set to noop, otherwise this library is doing nothing.
-          throw new MissingClientError(propertyKey);
+          if (cacheManager.options.debug) {
+            console.warn('type-cacheable @CacheClear was not set up with a caching client. Without a client, type-cacheable is not serving a purpose.');
+          }
+
+          return descriptor.value!.apply(this, args);
         }
 
         const contextToUse = !cacheManager.options.excludeContext

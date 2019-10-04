@@ -1,6 +1,5 @@
 import { CacheOptions } from '../interfaces';
 import { determineOp, getFinalKey, getTTL } from '../util';
-import { MissingClientError } from '../errors';
 import cacheManager from '../index';
 
 /**
@@ -29,7 +28,11 @@ export function Cacheable(options?: CacheOptions) {
           }
 
           // A caching client must exist if not set to noop, otherwise this library is doing nothing.
-          throw new MissingClientError(propertyKey);
+          if (cacheManager.options.debug) {
+            console.warn('type-cacheable @Cacheable was not set up with a caching client. Without a client, type-cacheable is not serving a purpose.');
+          }
+
+          return descriptor.value!.apply(this, args);
         }
 
         const contextToUse = !cacheManager.options.excludeContext

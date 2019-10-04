@@ -1,6 +1,5 @@
 import * as Redis from 'redis';
 import { Cacheable, CacheClear } from '../../lib/decorators';
-import { MissingClientError } from '../../lib/errors';
 import cacheManager from '../../lib';
 import { useRedisAdapter } from '../../lib/util/useAdapter';
 
@@ -13,21 +12,6 @@ describe('CacheClear Decorator Tests', () => {
 
   beforeEach(() => {
     useRedisAdapter(client);
-  });
-
-  it('should throw a MissingClientError if no cache manager was set up', () => {
-    cacheManager.client = null;
-
-    try {
-      class FailClass {
-        @CacheClear()
-        public async hello(): Promise<any> {
-          return 'world';
-        };
-      }
-    } catch (err) {
-      expect(err).toBeInstanceOf(MissingClientError);
-    }
   });
 
   it('should not throw an error if the client fails', async () => {
