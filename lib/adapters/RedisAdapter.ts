@@ -27,7 +27,10 @@ export class RedisAdapter implements CacheClient {
 
   constructor(redisClient: RedisClient) {
     this.redisClient = redisClient;
-    this.clientReady = false;
+    this.clientReady = this.redisClient.ping();
+    this.redisClient.on('ready', () => {
+      this.clientReady = true;
+    });
     this.redisClient.on('error', () => {
       this.clientReady = false;
     });
@@ -52,12 +55,12 @@ export class RedisAdapter implements CacheClient {
     }
 
     return this.clientReady;
-  }
+  };
 
   // Redis doesn't have a standard TTL, it's at a per-key basis
   public getClientTTL(): number {
     return 0;
-  }
+  };
 
   public async get(cacheKey: string): Promise<any> {
     const isReady = this.checkIfReady();
@@ -77,7 +80,7 @@ export class RedisAdapter implements CacheClient {
 
         return usableResult;
       });
-    }
+    };
 
     throw new Error('Redis client is not accepting connections.');
   };
