@@ -11,8 +11,16 @@ const objectValue = { myKeyOne: 'myValOne' };
 const arrayValue = ['element1', 2, { complex: 'element' }];
 
 describe('RedisAdapter Tests', () => {
-  beforeAll(() => {
+  beforeAll(async () => {
     client = Redis.createClient();
+
+    // Wait until the connection is ready before passing the client to the adapter.
+    await new Promise(resolve => {
+      client.on('ready', () => {
+        resolve();
+      });
+    });
+
     redisAdapter = new RedisAdapter(client);
   });
 
