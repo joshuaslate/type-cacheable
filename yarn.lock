@@ -2064,7 +2064,7 @@ lodash.sortby@^4.7.0:
   version "4.7.0"
   resolved "https://registry.yarnpkg.com/lodash.sortby/-/lodash.sortby-4.7.0.tgz#edd14c824e2cc9c1e0b0a1b42bb5210516a42438"
 
-lodash@^4.13.1, lodash@^4.17.13, lodash@^4.17.15:
+lodash@^4.13.1, lodash@^4.17.13:
   version "4.17.15"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.15.tgz#b447f6670a0455bbfeedd11392eff330ea097548"
 
@@ -2240,13 +2240,12 @@ nice-try@^1.0.4:
   resolved "https://registry.yarnpkg.com/nice-try/-/nice-try-1.0.5.tgz#a3378a7696ce7d223e88fc9b764bd7ef1089e366"
   integrity sha512-1nh45deeb5olNY7eX82BkPO7SSxR5SSYJiPTrTdFUVYwAl8CKMA5N9PjTYkHiRjisVcxcQ1HXdLhx2qxxJzLNQ==
 
-node-cache@^4.2.1:
-  version "4.2.1"
-  resolved "https://registry.yarnpkg.com/node-cache/-/node-cache-4.2.1.tgz#efd8474dee4edec4138cdded580f5516500f7334"
-  integrity sha512-BOb67bWg2dTyax5kdef5WfU3X8xu4wPg+zHzkvls0Q/QpYycIFRLEEIdAx9Wma43DxG6Qzn4illdZoYseKWa4A==
+node-cache@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/node-cache/-/node-cache-5.0.0.tgz#3cbf44b15eb1f955a30f09caaa4037008e84729f"
+  integrity sha512-Wtt0K7r8ojiziSvg7Ga5NZ9wSTTY0rRywnXaqB71NiXc2D6R4QdeQCzwOpAwKzIXZoGmj+ru5OfRnwYdi5T8rg==
   dependencies:
     clone "2.x"
-    lodash "^4.17.15"
 
 node-int64@^0.4.0:
   version "0.4.0"
