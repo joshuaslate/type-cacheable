@@ -8,7 +8,7 @@ export const useRedisAdapter = (client: RedisClient): void => {
   cacheManager.setClient(redisAdapter);
 };
 
-export const useNodeCacheAdapter = (client: NodeCache.NodeCache): void => {
+export const useNodeCacheAdapter = (client: NodeCache): void => {
   const nodeCacheAdapter = new NodeCacheAdapter(client);
   cacheManager.setClient(nodeCacheAdapter);
 };

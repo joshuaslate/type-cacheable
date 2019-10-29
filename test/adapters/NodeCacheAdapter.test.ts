@@ -1,7 +1,7 @@
 import * as NodeCache from 'node-cache';
 import { NodeCacheAdapter } from '../../lib/adapters';
 
-let client: NodeCache.NodeCache;
+let client: NodeCache;
 let nodeCacheAdapter: NodeCacheAdapter;
 
 const keyName = 'aSimpleKey';
@@ -22,101 +22,72 @@ describe('NodeCacheAdapter Tests', () => {
     it('should set a string value on a standard key', async () => {
       await nodeCacheAdapter.set(keyName, simpleValue);
 
-      client.get(keyName, (err, result) => {
-        expect(result).toBe(simpleValue);
-      });
+      expect(client.get<string>(keyName)).toBe(simpleValue);
     });
 
     it('should set an object value on a standard key', async () => {
       const keyName = 'aSimpleKey';
 
       await nodeCacheAdapter.set(keyName, objectValue);
-
-      client.get(keyName, (err, result) => {
-        expect(result).toEqual(objectValue);
-      });
+      expect(client.get<Object>(keyName)).toEqual(objectValue);
     });
 
     it('should set an array value on a standard key', async () => {
       await nodeCacheAdapter.set(keyName, arrayValue);
-
-      client.get(keyName, (err, result) => {
-        expect(result).toEqual(arrayValue);
-      });
+      expect(client.get<any[]>(keyName)).toEqual(arrayValue);
     });
 
     it('should set a string value on a compound (x:y) key', async () => {
       await nodeCacheAdapter.set(compoundCombined, simpleValue);
-
-      client.get(compoundCombined, (err, result) => {
-        expect(result).toBe(simpleValue);
-      });
+      expect(client.get<string>(compoundCombined)).toBe(simpleValue);
     });
 
     it('should set an object value on a compound (x:y) key', async () => {
       await nodeCacheAdapter.set(compoundCombined, objectValue);
-
-      client.get(compoundCombined, (err, result) => {
-        expect(result).toEqual(objectValue);
-      });
+      expect(client.get<Object>(compoundCombined)).toEqual(objectValue);
     });
 
     it('should set an array value on a compound (x:y) key', async () => {
       await nodeCacheAdapter.set(compoundCombined, arrayValue);
-
-      client.get(compoundCombined, (err, result) => {
-        expect(result).toEqual(arrayValue);
-      });
+      expect(client.get<any[]>(compoundCombined)).toEqual(arrayValue);
     });
   });
 
   describe('Getter tests', () => {
-    it('should get a string set on a simple key', (done) => {
-      client.set(keyName, simpleValue, async (err, setResult) => {
-        const result = await nodeCacheAdapter.get(keyName);
-        expect(result).toBe(simpleValue);
-        done();
-      });
+    it('should get a string set on a simple key', async () => {
+      client.set<string>(keyName, simpleValue);
+      const result = await nodeCacheAdapter.get(keyName);
+      expect(result).toBe(simpleValue);
     });
 
-    it('should get an object set on a simple key', (done) => {
-      client.set(keyName, objectValue, async (err, setResult) => {
-        const result = await nodeCacheAdapter.get(keyName);
-        expect(result).toEqual(objectValue);
-        done();
-      });
+    it('should get an object set on a simple key', async () => {
+      client.set<Object>(keyName, objectValue);
+      const result = await nodeCacheAdapter.get(keyName);
+      expect(result).toEqual(objectValue);
     });
 
-    it('should get an array set on a simple key', (done) => {
-      client.set(keyName, arrayValue, async (err, setResult) => {
-        const result = await nodeCacheAdapter.get(keyName);
-        expect(result).toEqual(arrayValue);
-        done();
-      });
+    it('should get an array set on a simple key', async () => {
+      client.set<any[]>(keyName, arrayValue);
+      const result = await nodeCacheAdapter.get(keyName);
+      expect(result).toEqual(arrayValue);
     });
 
-    it('should get a string set on a compound (x:y) key', (done) => {
-      client.set(compoundCombined, simpleValue, async (err, setResult) => {
-        const result = await nodeCacheAdapter.get(compoundCombined);
-        expect(result).toBe(simpleValue);
-        done();
-      });
+    it('should get a string set on a compound (x:y) key', async () => {
+      client.set<string>(compoundCombined, simpleValue);
+      const result = await nodeCacheAdapter.get<string>(compoundCombined);
+      expect(result).toBe(simpleValue);
     });
 
-    it('should get an object set on a compound (x:y) key', (done) => {
-      client.set(compoundCombined, objectValue, async (err, setResult) => {
-        const result = await nodeCacheAdapter.get(compoundCombined);
-        expect(result).toEqual(objectValue);
-        done();
-      });
+    it('should get an object set on a compound (x:y) key', async () => {
+      client.set<Object>(compoundCombined, objectValue);
+      const result = await nodeCacheAdapter.get<Object>(compoundCombined);
+      expect(result).toEqual(objectValue);
     });
 
-    it('should get an array set on a compound (x:y) key', (done) => {
-      client.set(compoundCombined, arrayValue, async (err, setResult) => {
-        const result = await nodeCacheAdapter.get(compoundCombined);
-        expect(result).toEqual(arrayValue);
-        done();
-      });
+    it('should get an array set on a compound (x:y) key', async () => {
+      client.set<any[]>(compoundCombined, arrayValue);
+      const result = await nodeCacheAdapter.get<any[]>(compoundCombined);
+      expect(result).toEqual(arrayValue);
     });
   });
 
