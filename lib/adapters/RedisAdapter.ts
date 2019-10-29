@@ -4,20 +4,30 @@ import { parseIfRequired } from '../util';
 
 export class RedisAdapter implements CacheClient {
   static buildSetArgumentsFromObject = (objectValue: any): string[] =>
-    Object.keys(objectValue).reduce((accum: any, curr: any) => {
-      accum.push(curr, typeof objectValue[curr] === 'object' ? JSON.stringify(objectValue[curr]) : objectValue[curr]);
+    Object.keys(objectValue).reduce(
+      (accum: any, curr: any) => {
+        accum.push(
+          curr,
+          typeof objectValue[curr] === 'object'
+            ? JSON.stringify(objectValue[curr])
+            : objectValue[curr],
+        );
 
-      return accum;
-    }, [] as string[]);
+        return accum;
+      },
+      [] as string[],
+    );
 
-  static responseCallback = (resolve: Function, reject: Function): Callback<any> =>
-    (err: any, response: any) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(response);
-      }
-    };
+  static responseCallback = (resolve: Function, reject: Function): Callback<any> => (
+    err: any,
+    response: any,
+  ) => {
+    if (err) {
+      reject(err);
+    } else {
+      resolve(response);
+    }
+  };
 
   // The node_redis client
   private redisClient: RedisClient;
@@ -36,7 +46,7 @@ export class RedisAdapter implements CacheClient {
     });
 
     this.checkIfReady();
-  };
+  }
 
   /**
    * checkIfReady will return the last received ready status of the client.
@@ -55,12 +65,12 @@ export class RedisAdapter implements CacheClient {
     }
 
     return this.clientReady;
-  };
+  }
 
   // Redis doesn't have a standard TTL, it's at a per-key basis
   public getClientTTL(): number {
     return 0;
-  };
+  }
 
   public async get(cacheKey: string): Promise<any> {
     const isReady = this.checkIfReady();
@@ -74,16 +84,20 @@ export class RedisAdapter implements CacheClient {
         }
       }).then((result: any) => {
         const usableResult = parseIfRequired(result);
-        if (usableResult && typeof usableResult === 'object' && Object.keys(usableResult).every(key => Number.isInteger(Number(key)))) {
+        if (
+          usableResult &&
+          typeof usableResult === 'object' &&
+          Object.keys(usableResult).every(key => Number.isInteger(Number(key)))
+        ) {
           return Object.keys(usableResult).map(key => parseIfRequired(usableResult[key]));
         }
 
         return usableResult;
       });
-    };
+    }
 
     throw new Error('Redis client is not accepting connections.');
-  };
+  }
 
   /**
    * set - Sets a key equal to a value in a Redis cache
@@ -106,7 +120,11 @@ export class RedisAdapter implements CacheClient {
             if (!err) {
               // hmset doesn't add expiration by default, so we have to implement that here if ttl is given
               if (ttl) {
-                this.redisClient.expire(cacheKey, ttl, RedisAdapter.responseCallback(resolve, reject));
+                this.redisClient.expire(
+                  cacheKey,
+                  ttl,
+                  RedisAdapter.responseCallback(resolve, reject),
+                );
                 return;
               }
             }
@@ -117,16 +135,26 @@ export class RedisAdapter implements CacheClient {
           const usableValue = typeof value === 'string' ? value : JSON.stringify(value);
 
           if (ttl) {
-            this.redisClient.set(cacheKey, usableValue, 'EX', ttl, RedisAdapter.responseCallback(resolve, reject));
+            this.redisClient.set(
+              cacheKey,
+              usableValue,
+              'EX',
+              ttl,
+              RedisAdapter.responseCallback(resolve, reject),
+            );
           } else {
-            this.redisClient.set(cacheKey, usableValue, RedisAdapter.responseCallback(resolve, reject));
+            this.redisClient.set(
+              cacheKey,
+              usableValue,
+              RedisAdapter.responseCallback(resolve, reject),
+            );
           }
         }
       });
     }
 
     throw new Error('Redis client is not accepting connections.');
-  };
+  }
 
   public async del(cacheKey: string): Promise<any> {
     const isReady = this.checkIfReady();
@@ -138,5 +166,5 @@ export class RedisAdapter implements CacheClient {
     }
 
     throw new Error('Redis client is not accepting connections.');
-  };
+  }
 }
