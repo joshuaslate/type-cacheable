@@ -1,6 +1,5 @@
 import * as NodeCache from 'node-cache';
 import { CacheClient } from '../interfaces';
-import { lightblue } from 'color-name';
 
 export class NodeCacheAdapter implements CacheClient {
   // The node-cache client
