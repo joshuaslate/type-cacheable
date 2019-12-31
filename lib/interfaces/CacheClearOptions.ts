@@ -7,4 +7,5 @@ export interface CacheClearOptions {
   hashKey?: string | CacheKeyBuilder;
   client?: CacheClient;
   noop?: boolean | NoOpDeterminer;
+  isPattern?: boolean | false
 }

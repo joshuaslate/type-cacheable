@@ -1,5 +1,6 @@
 import * as NodeCache from 'node-cache';
 import { CacheClient } from '../interfaces';
+import { lightblue } from 'color-name';
 
 export class NodeCacheAdapter implements CacheClient {
   // The node-cache client
@@ -34,7 +35,19 @@ export class NodeCacheAdapter implements CacheClient {
     this.nodeCacheClient.set<T>(cacheKey, value);
   }
 
-  public async del(cacheKey: string): Promise<any> {
-    return this.nodeCacheClient.del(cacheKey);
+  public async del(keyOrKeys: string | string[]): Promise<any> {
+    return this.nodeCacheClient.del(keyOrKeys);
+  }
+
+  public async keys(pattern: string): Promise<string[]> {
+    const allKeys = this.nodeCacheClient.keys()
+    const regExp = new RegExp(pattern, 'g')
+    let matchedKeys = []
+    for (let key of allKeys) {
+      if (Array.isArray(key.match(regExp))) {
+        matchedKeys.push(key)
+      }
+    }
+    return matchedKeys
   }
 }

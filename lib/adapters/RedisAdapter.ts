@@ -156,12 +156,24 @@ export class RedisAdapter implements CacheClient {
     throw new Error('Redis client is not accepting connections.');
   }
 
-  public async del(cacheKey: string): Promise<any> {
+  public async del(keyOrKeys: string | string[]): Promise<any> {
     const isReady = this.checkIfReady();
 
     if (isReady) {
       return new Promise((resolve, reject) => {
-        this.redisClient.del(cacheKey, RedisAdapter.responseCallback(resolve, reject));
+        this.redisClient.del(keyOrKeys, RedisAdapter.responseCallback(resolve, reject));
+      });
+    }
+
+    throw new Error('Redis client is not accepting connections.');
+  }
+
+  public async keys(pattern: string): Promise<string[]> {
+    const isReady = this.checkIfReady();
+
+    if (isReady) {
+      return new Promise((resolve, reject) => {
+        this.redisClient.scan('0', 'MATCH', `*${pattern}*`, 'COUNT', '1000', RedisAdapter.responseCallback(resolve, reject));
       });
     }
 
