@@ -3,7 +3,7 @@ import { getFinalKey, determineOp } from '../util';
 import cacheManager from '../index';
 
 /**
- * CacheClear - This decorator allows you to clear a key in 
+ * CacheClear - This decorator allows you to clear a key in
  *
  * @param options {CacheOptions}
  */
@@ -41,9 +41,14 @@ export function CacheClear(options?: CacheClearOptions) {
         // Run the decorated method
         const result = await descriptor.value!.apply(this, args);
 
-        // Delete the requested value from cache
         try {
-          await client.del(finalKey);
+          if (options && options.isPattern) {
+            // Delete keys that match a string pattern
+            await client.del(await client.keys(finalKey));
+          } else {
+            // Delete the requested value from cache
+            await client.del(finalKey);
+          }
         } catch (err) {
           if (cacheManager.options.debug) {
             console.warn(`type-cacheable CacheClear failure due to client error: ${err.message}`);
