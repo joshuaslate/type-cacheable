@@ -2,7 +2,7 @@
 
 # type-cacheable
 
-TypeScript-based caching decorator to assist with caching (and clearing cache for) async methods. Currently supports Redis and node-cache.
+TypeScript-based caching decorator to assist with caching (and clearing cache for) async methods. Currently supports Redis (`redis`, `ioredis`) and node-cache.
 
 ## Usage
 
@@ -20,7 +20,7 @@ yarn add type-cacheable
 
 ### Setup Adapter
 
-You will need to set up the appropriate adapter for your cache. So far, there is only support for Redis and node-cache. If you would like to see more adapters added, please open an issue or, better yet, a pull request with an implementation.
+You will need to set up the appropriate adapter for your cache. So far, there is only support for Redis (`redis`, `ioredis`) and node-cache. If you would like to see more adapters added, please open an issue or, better yet, a pull request with an implementation.
 
 To use the Redis adapter, add the following code to your entry point:
 
@@ -30,6 +30,16 @@ import { useRedisAdapter } from 'type-cacheable';
 
 const client = Redis.createClient();
 useRedisAdapter(client);
+```
+
+To use the ioredis adapter, add the following code to your entry point:
+
+```ts
+import * as IoRedis from 'ioredis';
+import { useIoRedisAdapter } from 'type-cacheable';
+
+const client = new IoRedis();
+useIoRedisAdapter(client);
 ```
 
 To use the node-cache adapter, add the following code to your entry point:
