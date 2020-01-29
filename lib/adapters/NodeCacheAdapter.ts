@@ -29,6 +29,7 @@ export class NodeCacheAdapter implements CacheClient {
   public async set<T>(cacheKey: string, value: T, ttl?: number): Promise<any> {
     if (ttl) {
       this.nodeCacheClient.set<T>(cacheKey, value, ttl);
+      return;
     }
 
     this.nodeCacheClient.set<T>(cacheKey, value);
@@ -39,14 +40,14 @@ export class NodeCacheAdapter implements CacheClient {
   }
 
   public async keys(pattern: string): Promise<string[]> {
-    const allKeys = this.nodeCacheClient.keys()
-    const regExp = new RegExp(pattern, 'g')
-    let matchedKeys = []
+    const allKeys = this.nodeCacheClient.keys();
+    const regExp = new RegExp(pattern, 'g');
+    let matchedKeys = [];
     for (let key of allKeys) {
       if (Array.isArray(key.match(regExp))) {
-        matchedKeys.push(key)
+        matchedKeys.push(key);
       }
     }
-    return matchedKeys
+    return matchedKeys;
   }
 }
