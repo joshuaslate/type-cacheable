@@ -20,7 +20,7 @@ yarn add type-cacheable
 
 ### Setup Adapter
 
-You will need to set up the appropriate adapter for your cache. So far, there is only support for Redis (`redis`, `ioredis`) and node-cache. If you would like to see more adapters added, please open an issue or, better yet, a pull request with an implementation.
+You will need to set up the appropriate adapter for your cache. So far, there is only support for Redis (`redis`, `ioredis`) and `node-cache`. If you would like to see more adapters added, please open an issue or, better yet, a pull request with an implementation.
 
 To use the Redis adapter, add the following code to your entry point:
 
