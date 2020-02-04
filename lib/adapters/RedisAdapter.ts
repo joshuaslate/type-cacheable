@@ -73,7 +73,7 @@ export class RedisAdapter implements CacheClient {
         Object.keys(response).length === 1 &&
         response[SCALAR_KEY]
       ) {
-        resolve(RedisAdapter.transformRedisResponse(response[SCALAR_KEY]));
+        resolve(RedisAdapter.transformRedisResponse(response)[SCALAR_KEY]);
         return;
       }
 
