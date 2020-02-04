@@ -43,7 +43,7 @@ export function Cacheable(options?: CacheOptions) {
         try {
           const cachedValue = await client.get(finalKey);
           // If a value for the cacheKey was found in cache, simply return that.
-          if (cachedValue) {
+          if (cachedValue !== null) {
             return cachedValue;
           }
         } catch (err) {
