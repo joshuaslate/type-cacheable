@@ -9,6 +9,7 @@ const SCALAR_KEY = '';
 // When values are returned from redis, numbers can be converted to strings, so we need to store them
 // in a way that we can differentiate them from numbers that were intentionally stored as strings
 const NUMBER_IDENTIFIER = 'n';
+const BOOL_IDENTIFIER = 'b';
 
 export class RedisAdapter implements CacheClient {
   static buildSetArgumentsFromObject = (objectValue: any): string[] =>
@@ -22,6 +23,11 @@ export class RedisAdapter implements CacheClient {
         }
         case 'number': {
           value = `${value}${NUMBER_IDENTIFIER}`;
+          break;
+        }
+        case 'boolean': {
+          value = `${value}${BOOL_IDENTIFIER}`
+          break;
         }
         default:
           break;
@@ -44,6 +50,12 @@ export class RedisAdapter implements CacheClient {
               parseFloat(value).toString() === value.substr(0, value.length - 1)
             ) {
               accum[key] = parseFloat(value);
+              break;
+            } else if(
+              value.endsWith(BOOL_IDENTIFIER) &&
+              (value === "false"+BOOL_IDENTIFIER || value === "true" + BOOL_IDENTIFIER)
+            ) {
+              accum[key] = value === "true" + BOOL_IDENTIFIER;
               break;
             }
           }
@@ -73,7 +85,7 @@ export class RedisAdapter implements CacheClient {
         Object.keys(response).length === 1 &&
         response[SCALAR_KEY]
       ) {
-        resolve(RedisAdapter.transformRedisResponse(response[SCALAR_KEY]));
+        resolve(RedisAdapter.transformRedisResponse(response)[SCALAR_KEY]);
         return;
       }
 
