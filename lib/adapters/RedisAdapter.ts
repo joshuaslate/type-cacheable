@@ -23,9 +23,11 @@ export class RedisAdapter implements CacheClient {
         }
         case 'number': {
           value = `${value}${NUMBER_IDENTIFIER}`;
+          break;
         }
         case 'boolean': {
           value = `${value}${BOOL_IDENTIFIER}`
+          break;
         }
         default:
           break;
