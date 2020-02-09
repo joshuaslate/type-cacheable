@@ -50,8 +50,8 @@ export function Cacheable(options?: CacheOptions) {
 	        if(options && options.deserializer !== false) {
 	          if(typeof options.deserializer === 'function') {
                 return options.deserializer(cachedValue);
-              } else {
-	            return BasicDeserializer(cachedValue);
+              } else if(client.defaultDeserializer !== null) {
+	              return client.defaultDeserializer(cachedValue);
               }
             } else {
               return cachedValue;

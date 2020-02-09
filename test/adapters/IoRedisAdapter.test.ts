@@ -1,5 +1,7 @@
 import * as IoRedis from 'ioredis';
 import { IoRedisAdapter } from '../../lib/adapters';
+import {fieldify, serializeValue} from "../../lib/util";
+import {BasicDeserializer} from "../../lib/deserializers";
 
 let client: IoRedis.Redis;
 let ioRedisAdapter: IoRedisAdapter;
@@ -8,14 +10,17 @@ const keyName = 'aSimpleKey';
 const keyName_2 = 'aSimpleKey2';
 const compoundKey = 'aCompound:key';
 const simpleValue = 'aSimpleValue';
-const objectValue = { myKeyOne: 'myValOne' };
-const arrayValue = ['element1', 2, { complex: 'element' }];
+const simpleNumber = 5;
+const simpleBoolean = true;
+const objectValue = {myKeyOne: 'myValOne'};
+const arrayValue = ['element1', 2, 2.5, {complex: 'element'}, null, true];
 
 describe('IoRedisAdapter Tests', () => {
   beforeAll(async () => {
-    client = new IoRedis();
+    client = new IoRedis({lazyConnect:true});
 
     ioRedisAdapter = new IoRedisAdapter(client);
+    return client.connect();
   });
 
   describe('Setter tests', () => {
@@ -23,35 +28,56 @@ describe('IoRedisAdapter Tests', () => {
       await ioRedisAdapter.set(keyName, simpleValue);
       const result = await client.get(keyName);
 
-      expect(result).toBe(simpleValue);
+      expect(result).toBe(serializeValue(simpleValue));
+    });
+
+    it('should set a number value on a standard key', async () => {
+      await ioRedisAdapter.set(keyName, simpleNumber);
+      const result = await client.get(keyName);
+
+      expect(result).toBe(serializeValue(simpleNumber));
+    });
+
+    it('should set a null value on a standard key', async () => {
+      await ioRedisAdapter.set(keyName, null);
+      const result = await client.get(keyName);
+
+      expect(result).toBe(serializeValue(null));
+    });
+
+    it('should set a boolean value on a standard key', async () => {
+      await ioRedisAdapter.set(keyName, simpleBoolean);
+      const result = await client.get(keyName);
+
+      expect(result).toBe(serializeValue(simpleBoolean));
     });
 
     it('should set an object value on a standard key', async () => {
       await ioRedisAdapter.set(keyName, objectValue);
       const result = await client.get(keyName);
 
-      expect(result).toBe(JSON.stringify(objectValue));
+      expect(result).toBe(serializeValue(objectValue));
     });
 
     it('should set an array value on a standard key', async () => {
       await ioRedisAdapter.set(keyName, arrayValue);
       const result = await client.get(keyName);
 
-      expect(result).toBe(JSON.stringify(arrayValue));
+      expect(result).toBe(serializeValue(arrayValue));
     });
 
     it('should set an object value on a compound (x:y) key', async () => {
       await ioRedisAdapter.set(compoundKey, objectValue);
-      const result = await client.get(compoundKey);
+      const result = await client.hgetall(compoundKey);
 
-      expect(result).toEqual(JSON.stringify(objectValue));
+      expect(serializeValue(BasicDeserializer(result))).toEqual(serializeValue(objectValue));
     });
 
     it('should set an array value on a compound (x:y) key', async () => {
       await ioRedisAdapter.set(compoundKey, arrayValue);
-      const result = await client.get(compoundKey);
+      const result = await client.hgetall(compoundKey);
 
-      expect(result).toEqual(JSON.stringify(arrayValue));
+      expect(serializeValue(BasicDeserializer(result))).toEqual(serializeValue(arrayValue));
     });
 
     it('should set an expiresAt value on a compound (x:y) key when TTL is passed in', async () => {
@@ -59,7 +85,7 @@ describe('IoRedisAdapter Tests', () => {
       const ttl = 50000;
       await ioRedisAdapter.set(compoundKey, objectValue, ttl);
 
-      expect(client.set).toHaveBeenCalledWith(compoundKey, JSON.stringify(objectValue), ['EX', ttl]);
+      expect(await client.ttl(compoundKey)).toBeGreaterThan(-1);
     });
   });
 
@@ -75,30 +101,30 @@ describe('IoRedisAdapter Tests', () => {
       await client.set(keyName, JSON.stringify(objectValue));
       const result = await ioRedisAdapter.get(keyName);
 
-      expect(result).toEqual(objectValue);
+      expect(BasicDeserializer(result)).toEqual(objectValue);
     });
 
     it('should get an array set on a simple key', async () => {
       await client.set(keyName, JSON.stringify(arrayValue));
       const result = await ioRedisAdapter.get(keyName);
 
-      expect(result).toEqual(arrayValue);
+      expect(BasicDeserializer(result)).toEqual(arrayValue);
     });
 
     it('should get an object set on a compound (x:y) key', async () => {
-      const args = JSON.stringify(objectValue);
-      await client.set(compoundKey, args);
+      const args = fieldify(objectValue);
+      await client.hmset(compoundKey, args);
       const result = await ioRedisAdapter.get(compoundKey);
 
-      expect(result).toEqual(objectValue);
+      expect(BasicDeserializer(result)).toEqual(objectValue);
     });
 
     it('should get an array set on a compound (x:y) key', async () => {
-      const args = JSON.stringify(arrayValue);
-      await client.set(compoundKey, args);
+      const args = fieldify(arrayValue);
+      await client.hmset(compoundKey, args);
       const result = await ioRedisAdapter.get(compoundKey);
 
-      expect(result).toEqual(arrayValue);
+      expect(BasicDeserializer(result)).toEqual(arrayValue);
     });
   });
 
