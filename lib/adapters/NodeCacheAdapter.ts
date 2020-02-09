@@ -2,6 +2,9 @@ import * as NodeCache from 'node-cache';
 import { CacheClient } from '../interfaces';
 
 export class NodeCacheAdapter implements CacheClient {
+
+  defaultDeserializer = null;
+
   // The node-cache client
   private nodeCacheClient: NodeCache;
 

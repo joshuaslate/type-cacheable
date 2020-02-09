@@ -1,6 +1,6 @@
 import {RedisClient, Callback} from 'redis';
 import {CacheClient} from '../interfaces';
-import {parseIfRequired, serializeValue} from '../util';
+import {serializeValue} from '../util';
 import {SCALAR_KEY} from "../util";
 import {fieldify} from "../util";
 import {BasicDeserializer} from "../deserializers";
