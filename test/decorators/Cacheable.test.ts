@@ -72,6 +72,7 @@ describe('Cacheable Decorator Tests', () => {
 
   it('should allow the use of a separate client', async () => {
     class CustomClient implements CacheClient {
+      defaultDeserializer: null;
       public cache: NodeCache;
       private defaultTTL: number;
       constructor(stdTTL: number = 60 * 60) {
