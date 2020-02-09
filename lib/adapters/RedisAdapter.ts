@@ -1,10 +1,7 @@
 import {RedisClient, Callback} from 'redis';
 import {CacheClient} from '../interfaces';
-import {parseIfRequired} from '../util';
-
-// In order to support scalars in hmsets (likely not the intended use, but support has been requested),
-// we need at least one key. We can use an empty string.
-const SCALAR_KEY = '';
+import {parseIfRequired, serializeValue} from '../util';
+import {SCALAR_KEY} from "../util";
 
 export class RedisAdapter implements CacheClient {
 
@@ -17,12 +14,12 @@ export class RedisAdapter implements CacheClient {
             }
         };
 
-    static isScalar = (objectValue: any): boolean => {
-        if (objectValue && typeof objectValue === 'object' &&
-            Object.keys(objectValue).length === 1 && objectValue[SCALAR_KEY]) {
-            return true;
+    static fieldify = (value: any): string[] => {
+        if(typeof value === 'object' && !(value instanceof Array)) {
+            let fields = Object.entries(value).map(([key,value])=>[key,serializeValue(value)]);
+            return ([] as string[]).concat(...fields);
         } else {
-            return false;
+            return [SCALAR_KEY, serializeValue(value)];
         }
     };
 
@@ -104,13 +101,22 @@ export class RedisAdapter implements CacheClient {
             throw new Error('Redis client is not accepting connections.');
         }
 
-
         return new Promise((resolve, reject) => {
             if (cacheKey.includes(':')) {
-
-
+                let fields = RedisAdapter.fieldify(value);
+                if(ttl) {
+                    this.redisClient.multi().hmset(cacheKey, fields)
+                        .expire(cacheKey, ttl)
+                        .exec(RedisAdapter.promisify(resolve, reject));
+                } else {
+                    this.redisClient.hmset(cacheKey, fields, RedisAdapter.promisify(resolve, reject));
+                }
             } else {
-
+                if(ttl) {
+                    this.redisClient.set(cacheKey, serializeValue(value), 'EX', ttl, RedisAdapter.promisify(resolve, reject));
+                } else {
+                    this.redisClient.set(cacheKey, serializeValue(value), RedisAdapter.promisify(resolve, reject));
+                }
             }
         });
     }

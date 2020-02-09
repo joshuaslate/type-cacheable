@@ -1,6 +1,7 @@
 import { CacheOptions } from '../interfaces';
 import { determineOp, getFinalKey, getTTL } from '../util';
 import cacheManager from '../index';
+import {BasicDeserializer} from "../deserializers";
 
 /**
  * Cacheable - This decorator allows you to first check if cached results for the
@@ -45,7 +46,16 @@ export function Cacheable(options?: CacheOptions) {
 
           // If a value for the cacheKey was found in cache, simply return that.
 	      if (cachedValue !== undefined && cachedValue !== null) {
-            return cachedValue;
+
+	        if(options && options.deserializer !== false) {
+	          if(typeof options.deserializer === 'function') {
+                return options.deserializer(cachedValue);
+              } else {
+	            return BasicDeserializer(cachedValue);
+              }
+            } else {
+              return cachedValue;
+            }
           }
         } catch (err) {
           if (cacheManager.options.debug) {

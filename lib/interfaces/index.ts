@@ -5,3 +5,4 @@ export { CacheClearOptions } from './CacheClearOptions';
 export { CacheManagerOptions } from './CacheManagerOptions';
 export { NoOpDeterminer } from './NoOpDeterminer';
 export { TTLBuilder } from './TTLBuilder';
+export { CacheDeserializer } from './CacheDeserializer';

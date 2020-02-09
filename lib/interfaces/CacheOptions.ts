@@ -1,4 +1,4 @@
-import { CacheKeyBuilder, CacheClient, NoOpDeterminer, TTLBuilder } from './';
+import {CacheKeyBuilder, CacheClient, NoOpDeterminer, TTLBuilder, CacheDeserializer} from './';
 
 export interface CacheOptions {
   cacheKey?: string | CacheKeyBuilder;
@@ -6,4 +6,5 @@ export interface CacheOptions {
   client?: CacheClient;
   noop?: boolean | NoOpDeterminer;
   ttlSeconds?: number | TTLBuilder;
+  deserializer?: boolean | CacheDeserializer;
 }
