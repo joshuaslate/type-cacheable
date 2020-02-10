@@ -51,9 +51,15 @@ export class IoRedisAdapter implements CacheClient {
       throw new Error('Redis client is not accepting connections.');
     }
 
-
     if (cacheKey.includes(':')) {
-      return this.redisClient.hgetall(cacheKey);
+      return this.redisClient.hgetall(cacheKey).
+        then(res=>{
+          if(Object.keys(res).length === 0) {
+            return null;
+          } else {
+            return res;
+          }
+      });
     } else {
       return this.redisClient.get(cacheKey);
     }
