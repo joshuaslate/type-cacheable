@@ -1,6 +1,6 @@
 {
   "name": "type-cacheable",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "description": "TypeScript-based caching decorators",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -19,7 +19,8 @@
     "start": "node ./dist/index.js",
     "test": "jest --coverage --runInBand",
     "test:watch": "jest --watch --runInBand",
-    "build": "tsc"
+    "build": "tsc",
+    "prepare": "npm run-script build"
   },
   "repository": {
     "type": "git",
