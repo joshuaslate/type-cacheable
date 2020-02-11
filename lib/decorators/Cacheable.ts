@@ -39,9 +39,9 @@ export function Cacheable(options?: CacheOptions) {
           ? this
           : undefined;
         const finalKey = getFinalKey(options && options.cacheKey, options && options.hashKey, propertyKey, args, contextToUse);
-
+        const fieldKey = options && options.fieldKey ? typeof options.fieldKey === 'string' ? options.fieldKey : options.fieldKey(args, contextToUse) : null;
         try {
-          const cachedValue = await client.get(finalKey);
+          const cachedValue = fieldKey ? await client.get(finalKey, fieldKey) : await client.get(finalKey);
 
           // If a value for the cacheKey was found in cache, simply return that.
 	      if (cachedValue !== undefined && cachedValue !== null) {
