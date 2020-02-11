@@ -19,7 +19,8 @@
     "start": "node ./dist/index.js",
     "test": "jest --coverage --runInBand",
     "test:watch": "jest --watch --runInBand",
-    "build": "tsc"
+    "build": "tsc",
+    "prepare": "npm run-script build"
   },
   "repository": {
     "type": "git",
