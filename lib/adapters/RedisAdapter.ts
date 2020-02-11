@@ -60,7 +60,7 @@ export class RedisAdapter implements CacheClient {
     return 0;
   }
 
-  public async get(cacheKey: string): Promise<any> {
+  public async get(cacheKey: string, fieldKey?: string): Promise<any> {
 
     if (!this.isReady()) {
       throw new Error('Redis client is not accepting connections.');
@@ -68,7 +68,11 @@ export class RedisAdapter implements CacheClient {
 
     return new Promise((resolve, reject) => {
       if (cacheKey.includes(':')) {
-        this.redisClient.hgetall(cacheKey, RedisAdapter.promisify(resolve, reject));
+        if(fieldKey) {
+          this.redisClient.hget(cacheKey, fieldKey, RedisAdapter.promisify(resolve, reject));
+        } else {
+          this.redisClient.hgetall(cacheKey, RedisAdapter.promisify(resolve, reject));
+        }
       } else {
         this.redisClient.get(cacheKey, RedisAdapter.promisify(resolve, reject));
       }

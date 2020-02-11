@@ -34,21 +34,24 @@ export class IoRedisAdapter implements CacheClient {
     return 0;
   }
 
-  public async get(cacheKey: string): Promise<any> {
+  public async get(cacheKey: string, fieldKey?: string): Promise<any> {
 
     if (!this.isReady()) {
       throw new Error('Redis client is not accepting connections.');
     }
 
     if (cacheKey.includes(':')) {
-      return this.redisClient.hgetall(cacheKey).
-        then(res=>{
-          if(Object.keys(res).length === 0) {
+      if(fieldKey) {
+        return this.redisClient.hget(cacheKey, fieldKey);
+      } else {
+        return this.redisClient.hgetall(cacheKey).then(res => {
+          if (Object.keys(res).length === 0) {
             return null;
           } else {
             return res;
           }
-      });
+        });
+      }
     } else {
       return this.redisClient.get(cacheKey);
     }

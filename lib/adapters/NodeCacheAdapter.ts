@@ -16,8 +16,13 @@ export class NodeCacheAdapter implements CacheClient {
     return this.nodeCacheClient.options.stdTTL || 0;
   }
 
-  public async get<T>(cacheKey: string): Promise<T | undefined> {
-    return this.nodeCacheClient.get<T>(cacheKey);
+  public async get<T>(cacheKey: string, fieldKey?: string): Promise<T | undefined> {
+    let res = this.nodeCacheClient.get<T>(cacheKey);
+    if(fieldKey) {
+      return (res as {[key: string]: any})[fieldKey];
+    } else {
+      return res;
+    }
   }
 
   /**

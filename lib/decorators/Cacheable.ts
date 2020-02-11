@@ -71,11 +71,14 @@ export function Cacheable(options?: CacheOptions) {
           ? getTTL(options.ttlSeconds, args, contextToUse)
           : cacheManager.options.ttlSeconds || undefined;
 
-        try {
-          await client.set(finalKey, result, ttl);
-        } catch (err) {
-          if (cacheManager.options.debug) {
-            console.warn(`type-cacheable Cacheable set cache failure due to client error: ${err.message}`);
+        // Set is only supported when fieldKey is undefined
+        if(!options || (options && !options.fieldKey)) {
+          try {
+            await client.set(finalKey, result, ttl);
+          } catch (err) {
+            if (cacheManager.options.debug) {
+              console.warn(`type-cacheable Cacheable set cache failure due to client error: ${err.message}`);
+            }
           }
         }
 

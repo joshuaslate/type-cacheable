@@ -80,7 +80,7 @@ describe('Cacheable Decorator Tests', () => {
         this.cache = new NodeCache({ stdTTL, checkperiod: stdTTL * 0.2 });
       }
 
-      async get<T>(cacheKey: string): Promise<T | undefined> {
+      async get<T>(cacheKey: string, fieldKey?: string): Promise<T | undefined> {
         return this.cache.get(cacheKey);
       }
 
