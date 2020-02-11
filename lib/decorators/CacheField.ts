@@ -3,17 +3,16 @@ import {determineOp, getFinalKey, getTTL} from '../util';
 import cacheManager from '../index';
 
 /**
- * Cacheable - This decorator allows you to first check if cached results for the
- *             decorated method exist. If so, return those, else run the decorated
- *             method, cache its return value, then return that value.
+ * CacheField - This decorator allows you to return a field only of an hashed key.
+ * In case of a cache miss the decorated method is executed.
  *
  * @param options {CacheOptions}
  */
-export function Cacheable(options?: CacheOptions) {
+export function CacheField(options?: CacheOptions) {
   return (target: Object, propertyKey: string, descriptor: PropertyDescriptor) => {
     return {
       ...descriptor,
-      value: async function (...args: any[]): Promise<any> {
+      value: async function(...args: any[]): Promise<any> {
         // Allow a client to be passed in directly for granularity, else use the connected
         // client from the main CacheManager singleton.
         const client = options && options.client
@@ -39,18 +38,18 @@ export function Cacheable(options?: CacheOptions) {
           ? this
           : undefined;
         const finalKey = getFinalKey(options && options.cacheKey, options && options.hashKey, propertyKey, args, contextToUse);
-
+        const fieldKey = options && options.fieldKey ? typeof options.fieldKey === 'string' ? options.fieldKey : options.fieldKey(args, contextToUse) : null;
         try {
-          const cachedValue = await client.get(finalKey);
+          const cachedValue = fieldKey ? await client.get(finalKey, fieldKey) : await client.get(finalKey);
 
           // If a value for the cacheKey was found in cache, simply return that.
-          if (cachedValue !== undefined && cachedValue !== null) {
+	      if (cachedValue !== undefined && cachedValue !== null) {
 
-            if (options && options.deserializer !== false) {
-              if (typeof options.deserializer === 'function') {
+	        if(options && options.deserializer !== false) {
+	          if(typeof options.deserializer === 'function') {
                 return options.deserializer(cachedValue);
-              } else if (client.defaultDeserializer !== null) {
-                return client.defaultDeserializer(cachedValue);
+              } else if(client.defaultDeserializer !== null) {
+	              return client.defaultDeserializer(cachedValue);
               }
             } else {
               return cachedValue;
@@ -62,22 +61,9 @@ export function Cacheable(options?: CacheOptions) {
           }
         }
 
-        // On a cache miss, run the decorated function and cache its return value.
+        // On a cache miss, run the decorated function
         const result = await descriptor.value!.apply(this, args);
 
-        // TTL in seconds should prioritize options set in the decorator first,
-        // the CacheManager options second, and be undefined if unset.
-        const ttl = options && options.ttlSeconds
-          ? getTTL(options.ttlSeconds, args, contextToUse)
-          : cacheManager.options.ttlSeconds || undefined;
-
-        try {
-          await client.set(finalKey, result, ttl);
-        } catch (err) {
-          if (cacheManager.options.debug) {
-            console.warn(`type-cacheable Cacheable set cache failure due to client error: ${err.message}`);
-          }
-        }
 
         return result;
       },
