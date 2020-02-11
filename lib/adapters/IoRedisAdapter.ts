@@ -1,22 +1,11 @@
 import {Redis} from 'ioredis';
 import {CacheClient} from '../interfaces';
-import {SCALAR_KEY} from "../util";
-import {fieldify} from "../util";
+import {fieldify, serializeValue} from "../util";
 import {BasicDeserializer} from "../deserializers";
-import {serializeValue} from "../util";
 
 export class IoRedisAdapter implements CacheClient {
 
   defaultDeserializer = BasicDeserializer;
-
-  static fieldify = (value: any): string[] => {
-    if (typeof value === 'object' && !(value instanceof Array)) {
-      let fields = Object.entries(value).map(([key, value]) => [key, serializeValue(value)]);
-      return ([] as string[]).concat(...fields);
-    } else {
-      return [SCALAR_KEY, serializeValue(value)];
-    }
-  };
 
   // The node_redis client
   private redisClient: Redis;

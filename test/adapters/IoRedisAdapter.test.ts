@@ -1,5 +1,5 @@
 import * as IoRedis from 'ioredis';
-import { IoRedisAdapter } from '../../lib/adapters';
+import {IoRedisAdapter} from '../../lib/adapters';
 import {fieldify, serializeValue} from "../../lib/util";
 import {BasicDeserializer} from "../../lib/deserializers";
 

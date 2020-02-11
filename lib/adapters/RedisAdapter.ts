@@ -1,8 +1,6 @@
-import {RedisClient, Callback} from 'redis';
+import {Callback, RedisClient} from 'redis';
 import {CacheClient} from '../interfaces';
-import {serializeValue} from '../util';
-import {SCALAR_KEY} from "../util";
-import {fieldify} from "../util";
+import {fieldify, serializeValue} from "../util";
 import {BasicDeserializer} from "../deserializers";
 
 export class RedisAdapter implements CacheClient {

@@ -1,6 +1,6 @@
 import * as md5 from 'md5';
 import * as serialize from 'serialize-javascript';
-import { CacheKeyBuilder } from '../interfaces';
+import {CacheKeyBuilder} from '../interfaces';
 
 /**
  * extractKey - If data should be stored in a hash, this would be the name of the hash

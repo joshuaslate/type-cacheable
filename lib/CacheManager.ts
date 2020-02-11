@@ -1,4 +1,4 @@
-import { CacheClient, CacheManagerOptions } from './interfaces';
+import {CacheClient, CacheManagerOptions} from './interfaces';
 
 export default class CacheManager {
   public client: CacheClient | null = null;

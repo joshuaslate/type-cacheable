@@ -1,7 +1,7 @@
-import { Redis as IoRedis } from 'ioredis';
+import {Redis as IoRedis} from 'ioredis';
 import * as NodeCache from 'node-cache';
-import { RedisClient } from 'redis';
-import { IoRedisAdapter, NodeCacheAdapter, RedisAdapter } from '../adapters';
+import {RedisClient} from 'redis';
+import {IoRedisAdapter, NodeCacheAdapter, RedisAdapter} from '../adapters';
 import cacheManager from '../index';
 
 export const useRedisAdapter = (client: RedisClient): void => {

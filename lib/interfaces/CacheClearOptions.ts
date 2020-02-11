@@ -1,6 +1,6 @@
-import { CacheKeyBuilder } from './CacheKeyBuilder';
-import { CacheClient } from './CacheClient';
-import { NoOpDeterminer } from './NoOpDeterminer';
+import {CacheKeyBuilder} from './CacheKeyBuilder';
+import {CacheClient} from './CacheClient';
+import {NoOpDeterminer} from './NoOpDeterminer';
 
 export interface CacheClearOptions {
   cacheKey?: string | CacheKeyBuilder;

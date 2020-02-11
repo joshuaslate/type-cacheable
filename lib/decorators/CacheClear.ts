@@ -1,5 +1,5 @@
-import { CacheClearOptions } from '../interfaces';
-import { getFinalKey, determineOp } from '../util';
+import {CacheClearOptions} from '../interfaces';
+import {determineOp, getFinalKey} from '../util';
 import cacheManager from '../index';
 
 /**

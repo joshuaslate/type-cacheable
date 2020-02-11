@@ -1,5 +1,5 @@
 import * as NodeCache from 'node-cache';
-import { CacheClient } from '../interfaces';
+import {CacheClient} from '../interfaces';
 
 export class NodeCacheAdapter implements CacheClient {
 

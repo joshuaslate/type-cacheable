@@ -1,7 +1,6 @@
-import { CacheOptions } from '../interfaces';
-import { determineOp, getFinalKey, getTTL } from '../util';
+import {CacheOptions} from '../interfaces';
+import {determineOp, getFinalKey, getTTL} from '../util';
 import cacheManager from '../index';
-import {BasicDeserializer} from "../deserializers";
 
 /**
  * Cacheable - This decorator allows you to first check if cached results for the

@@ -1,4 +1,4 @@
-import { TTLBuilder } from '../interfaces';
+import {TTLBuilder} from '../interfaces';
 
 /**
  * getTTL - This is the TTL in seconds to cache data for, or a function to extract it
