@@ -1,4 +1,4 @@
-import * as md5 from 'md5';
+import { createHash } from 'crypto';
 import * as serialize from 'serialize-javascript';
 import { CacheKeyBuilder } from '../interfaces';
 
@@ -54,8 +54,7 @@ export const getCacheKey = (
   };
 
   const serializedKey = serialize(callMap);
-  const hashedKey = md5(serializedKey);
-  return hashedKey;
+  return createHash('md5').update(serializedKey).digest('hex');
 };
 
 export const getFinalKey = (
