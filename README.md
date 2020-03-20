@@ -84,14 +84,14 @@ class TestClass {
 
   // If getUserById('123') were called, the return value would be cached
   // in a hash under user:123, which would expire in 86400 seconds
-  @Cacheable({ cacheKey: TestClass.setCacheKey, hashKey: 'user', client: userClient, ttl: 86400 })
+  @Cacheable({ cacheKey: TestClass.setCacheKey, hashKey: 'user', client: userClient, ttlSeconds: 86400 })
   public async getUserById(id: string): Promise<any> {
     return this.userRepository.findOne(id);
   }
 
   // If getProp('123') were called, the return value would be cached
   // under 123 in this case for 10 seconds
-  @Cacheable({ cacheKey: TestClass.setCacheKey, ttl: args => args[1] })
+  @Cacheable({ cacheKey: TestClass.setCacheKey, ttlSeconds: args => args[1] })
   public async getProp(id: string, cacheForSeconds: number): Promise<any> {
     return this.aProp;
   }
