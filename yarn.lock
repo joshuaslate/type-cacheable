@@ -532,13 +532,6 @@
     jest-diff "^25.1.0"
     pretty-format "^25.1.0"
 
-"@types/md5@^2.1.33":
-  version "2.1.33"
-  resolved "https://registry.yarnpkg.com/@types/md5/-/md5-2.1.33.tgz#8c8dba30df4ad0e92296424f08c4898dd808e8df"
-  integrity sha512-8+X960EtKLoSblhauxLKy3zzotagjoj3Jt1Tx9oaxUdZEPIBl+mkrUz6PNKpzJgkrKSN9YgkWTA29c0KnLshmA==
-  dependencies:
-    "@types/node" "*"
-
 "@types/node-cache@^4.1.3":
   version "4.2.5"
   resolved "https://registry.yarnpkg.com/@types/node-cache/-/node-cache-4.2.5.tgz#dac6be8bf8f486db4eef66f52f7bb9e90b65d2c1"
