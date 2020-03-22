@@ -20,13 +20,13 @@ export function Cacheable(options?: CacheOptions) {
           ? options.client
           : cacheManager.client;
 
+        if (options && options.noop && determineOp(options.noop, args, this)) {
+          return descriptor.value!.apply(this, args);
+        }
+
         // If there is no client, no-op is enabled (else we would have thrown before),
         // just return the result of the decorated method (no caching)
         if (!client) {
-          if (options && options.noop && determineOp(options.noop, args, this)) {
-            return descriptor.value!.apply(this, args);
-          }
-
           // A caching client must exist if not set to noop, otherwise this library is doing nothing.
           if (cacheManager.options.debug) {
             console.warn('type-cacheable @Cacheable was not set up with a caching client. Without a client, type-cacheable is not serving a purpose.');
