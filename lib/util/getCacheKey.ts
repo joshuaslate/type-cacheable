@@ -1,4 +1,4 @@
-import * as md5 from 'md5';
+import { createHash } from 'crypto';
 import * as serialize from 'serialize-javascript';
 import { CacheKeyBuilder } from '../interfaces';
 
@@ -8,17 +8,18 @@ import { CacheKeyBuilder } from '../interfaces';
  * @param passedInKey The desired key, or function to build the key based on arguments/context
  * @param args        The arguments the decorated method was called with
  * @param context     The instance whose method is being called
- * 
+ *
  * @returns {String}
  */
-export const extractKey = (passedInKey: string | CacheKeyBuilder = '', args: any[], context?: any): string => {
+export const extractKey = (
+  passedInKey: string | CacheKeyBuilder = '',
+  args: any[],
+  context?: any,
+): string => {
   // If the user passed in a cacheKey, use that. If it's a string, use it directly.
   // In the case of a function, we'll use the result of the called function.
-  return passedInKey instanceof Function
-    ? passedInKey(args, context)
-    : passedInKey;
+  return passedInKey instanceof Function ? passedInKey(args, context) : passedInKey;
 };
-
 
 /**
  * getCacheKey - Determines the cache key to use. Either from an argument extractor function,
@@ -29,10 +30,15 @@ export const extractKey = (passedInKey: string | CacheKeyBuilder = '', args: any
  * @param passedInKey The desired key, or function to build the key based on arguments
  * @param args        The arguments the decorated method was called with
  * @param context     The instance whose method is being called
- * 
+ *
  * @returns {String}
  */
-export const getCacheKey = (passedInKey: string | CacheKeyBuilder = '', methodName: string, args: any[], context?: any): string => {
+export const getCacheKey = (
+  passedInKey: string | CacheKeyBuilder = '',
+  methodName: string,
+  args: any[],
+  context?: any,
+): string => {
   // If the user passed in a cacheKey, use that. If it's a string, use it directly.
   // In the case of a function, we'll use the result of the called function.
   if (passedInKey) {
@@ -42,14 +48,13 @@ export const getCacheKey = (passedInKey: string | CacheKeyBuilder = '', methodNa
   // Fall back to a default value (md5 hash of serialized arguments and context,
   // which is the instance the method was called from)
   const callMap = {
-    args: args,
+    args,
     methodName,
     context,
   };
 
   const serializedKey = serialize(callMap);
-  const hashedKey = md5(serializedKey);
-  return hashedKey;
+  return createHash('md5').update(serializedKey).digest('hex');
 };
 
 export const getFinalKey = (
@@ -62,7 +67,5 @@ export const getFinalKey = (
   const cacheKey = getCacheKey(passedCacheKey, methodName, args, context);
   const hashKey = extractKey(passedHashKey, args, context);
 
-  return hashKey
-    ? `${hashKey}:${cacheKey}`
-    : cacheKey;
-}
+  return hashKey ? `${hashKey}:${cacheKey}` : cacheKey;
+};

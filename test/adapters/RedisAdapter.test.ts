@@ -1,5 +1,6 @@
 import * as Redis from 'redis';
 import { RedisAdapter } from '../../lib/adapters';
+import { Cacheable } from '../../lib';
 
 let client: Redis.RedisClient;
 let redisAdapter: RedisAdapter;
@@ -75,7 +76,7 @@ describe('RedisAdapter Tests', () => {
   });
 
   describe('Getter tests', () => {
-    it('should get a string set on a simple key', (done) => {
+    it('should get a string set on a simple key', done => {
       client.set(keyName, simpleValue, async (err, setResult) => {
         const result = await redisAdapter.get(keyName);
         expect(result).toBe(simpleValue);
@@ -83,7 +84,7 @@ describe('RedisAdapter Tests', () => {
       });
     });
 
-    it('should get an object set on a simple key', (done) => {
+    it('should get an object set on a simple key', done => {
       client.set(keyName, JSON.stringify(objectValue), async (err, setResult) => {
         const result = await redisAdapter.get(keyName);
         expect(result).toEqual(objectValue);
@@ -91,7 +92,7 @@ describe('RedisAdapter Tests', () => {
       });
     });
 
-    it('should get an array set on a simple key', (done) => {
+    it('should get an array set on a simple key', done => {
       client.set(keyName, JSON.stringify(arrayValue), async (err, setResult) => {
         const result = await redisAdapter.get(keyName);
         expect(result).toEqual(arrayValue);
@@ -99,7 +100,7 @@ describe('RedisAdapter Tests', () => {
       });
     });
 
-    it('should get an object set on a compound (x:y) key', (done) => {
+    it('should get an object set on a compound (x:y) key', done => {
       const args = RedisAdapter.buildSetArgumentsFromObject(objectValue);
       client.hmset(compoundKey, args, async (err, setResult) => {
         const result = await redisAdapter.get(compoundKey);
@@ -108,9 +109,9 @@ describe('RedisAdapter Tests', () => {
       });
     });
 
-    it('should get an array set on a compound (x:y) key', (done) => {
+    it('should get an array set on a compound (x:y) key', done => {
       const args = RedisAdapter.buildSetArgumentsFromObject({ ...arrayValue });
-      client.hmset(compoundKey, args, async (err, setResult) => {
+      client.hmset(compoundKey, args, async () => {
         const result = await redisAdapter.get(compoundKey);
         expect(result).toEqual(arrayValue);
         done();
@@ -118,7 +119,32 @@ describe('RedisAdapter Tests', () => {
     });
   });
 
-  afterEach((done) => {
+  describe('integration', () => {
+    it('should properly set, and get cached, values with the @Cacheable decorator', async () => {
+      const mockGetIdImplementation = jest.fn();
+
+      class TestClass {
+        @Cacheable({ client: redisAdapter, hashKey: 'user' })
+        async getId(id: string): Promise<string> {
+          mockGetIdImplementation();
+
+          return id;
+        }
+      }
+
+      const testClass = new TestClass();
+      const result1 = await testClass.getId('1');
+      expect(result1).toBe('1');
+      expect(mockGetIdImplementation).toHaveBeenCalled();
+      mockGetIdImplementation.mockClear();
+
+      const result2 = await testClass.getId('1');
+      expect(result2).toBe('1');
+      expect(mockGetIdImplementation).not.toHaveBeenCalled();
+    });
+  });
+
+  afterEach(done => {
     client.flushall(done);
   });
 
