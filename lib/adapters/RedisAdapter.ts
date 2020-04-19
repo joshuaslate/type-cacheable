@@ -93,6 +93,19 @@ export class RedisAdapter implements CacheClient {
     }
   };
 
+  static responseScanCommandCallback = (resolve: Function, reject: Function): Callback<any> => (
+    err: any,
+    response: any,
+  ) => {
+    if (err) {
+      reject(err);
+    } else {
+      // array exists at index '1' from SCAN command
+      resolve(response['1']);
+      return;
+    }
+  };
+
   // The node_redis client
   private redisClient: RedisClient;
 
@@ -264,7 +277,7 @@ export class RedisAdapter implements CacheClient {
           `*${pattern}*`,
           'COUNT',
           '1000',
-          RedisAdapter.responseCallback(resolve, reject),
+          RedisAdapter.responseScanCommandCallback(resolve, reject),
         );
       });
     }
