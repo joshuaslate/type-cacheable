@@ -612,9 +612,9 @@
   integrity sha512-5qOlnZscTn4xxM5MeGXAMOsIOIKIbh9e85zJWfBRVPlRMEVawzoPhINYbRGkBZCI8LxvBe7tJCdWiarA99OZfQ==
 
 "@types/redis@^2.8.13":
-  version "2.8.18"
-  resolved "https://registry.yarnpkg.com/@types/redis/-/redis-2.8.18.tgz#6e95de50d848cd9c0aacb89aa8a6aef07a0a34b3"
-  integrity sha512-29ffRZITbLRs4zboL31EPJVDhSC/pHommWpf0rRcpwz45fvH6U2VxdRM6wWPSJu23l/kXQNKrMR8SAlLB7OqbQ==
+  version "2.8.19"
+  resolved "https://registry.yarnpkg.com/@types/redis/-/redis-2.8.19.tgz#a5331c3d97404a2e13b21bcfc01b2b9469500ad3"
+  integrity sha512-93T0Wd7jH+aM3ndIi7duNG9lLABkPHSE2L7zTVZP+JmsByWEaOld7IdMzHAsokM68ypg60hfCcDKPRYfKtqjrA==
   dependencies:
     "@types/node" "*"
 
