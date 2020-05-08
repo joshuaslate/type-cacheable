@@ -1,6 +1,5 @@
 import { RedisClient, Callback } from 'redis';
-import { CacheClient } from '../interfaces';
-import { parseIfRequired } from '../util';
+import cacheManager, { CacheClient, parseIfRequired } from '@type-cacheable/core';
 
 // In order to support scalars in hmsets (likely not the intended use, but support has been requested),
 // we need at least one key. We can use an empty string.
@@ -26,7 +25,7 @@ export class RedisAdapter implements CacheClient {
           break;
         }
         case 'boolean': {
-          value = `${value}${BOOL_IDENTIFIER}`
+          value = `${value}${BOOL_IDENTIFIER}`;
           break;
         }
         default:
@@ -51,11 +50,11 @@ export class RedisAdapter implements CacheClient {
             ) {
               accum[key] = parseFloat(value);
               break;
-            } else if(
+            } else if (
               value.endsWith(BOOL_IDENTIFIER) &&
-              (value === "false"+BOOL_IDENTIFIER || value === "true" + BOOL_IDENTIFIER)
+              (value === 'false' + BOOL_IDENTIFIER || value === 'true' + BOOL_IDENTIFIER)
             ) {
-              accum[key] = value === "true" + BOOL_IDENTIFIER;
+              accum[key] = value === 'true' + BOOL_IDENTIFIER;
               break;
             }
           }
@@ -164,9 +163,9 @@ export class RedisAdapter implements CacheClient {
         if (
           usableResult &&
           typeof usableResult === 'object' &&
-          Object.keys(usableResult).every(key => Number.isInteger(Number(key)))
+          Object.keys(usableResult).every((key) => Number.isInteger(Number(key)))
         ) {
-          return Object.keys(usableResult).map(key => parseIfRequired(usableResult[key]));
+          return Object.keys(usableResult).map((key) => parseIfRequired(usableResult[key]));
         }
 
         return usableResult;
@@ -285,3 +284,8 @@ export class RedisAdapter implements CacheClient {
     throw new Error('Redis client is not accepting connections.');
   }
 }
+
+export const useAdapter = (client: RedisClient): void => {
+  const redisAdapter = new RedisAdapter(client);
+  cacheManager.setClient(redisAdapter);
+};

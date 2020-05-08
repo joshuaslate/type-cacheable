@@ -1,6 +1,6 @@
 import * as Redis from 'redis';
-import { RedisAdapter } from '../../lib/adapters';
-import { Cacheable } from '../../lib';
+import { Cacheable } from '@type-cacheable/core';
+import { RedisAdapter } from '../';
 
 let client: Redis.RedisClient;
 let redisAdapter: RedisAdapter;
@@ -16,7 +16,7 @@ describe('RedisAdapter Tests', () => {
     client = Redis.createClient();
 
     // Wait until the connection is ready before passing the client to the adapter.
-    await new Promise(resolve => {
+    await new Promise((resolve) => {
       client.on('ready', () => {
         resolve();
       });
@@ -26,45 +26,50 @@ describe('RedisAdapter Tests', () => {
   });
 
   describe('Setter tests', () => {
-    it('should set a string value on a standard key', async () => {
+    it('should set a string value on a standard key', async (done) => {
       await redisAdapter.set(keyName, simpleValue);
 
       client.get(keyName, (err, result) => {
         expect(result).toBe(simpleValue);
+        done();
       });
     });
 
-    it('should set an object value on a standard key', async () => {
+    it('should set an object value on a standard key', async (done) => {
       const keyName = 'aSimpleKey';
 
       await redisAdapter.set(keyName, objectValue);
 
       client.get(keyName, (err, result) => {
         expect(result).toBe(JSON.stringify(objectValue));
+        done();
       });
     });
 
-    it('should set an array value on a standard key', async () => {
+    it('should set an array value on a standard key', async (done) => {
       await redisAdapter.set(keyName, arrayValue);
 
       client.get(keyName, (err, result) => {
         expect(result).toBe(JSON.stringify(arrayValue));
+        done();
       });
     });
 
-    it('should set an object value on a compound (x:y) key', async () => {
+    it('should set an object value on a compound (x:y) key', async (done) => {
       await redisAdapter.set(compoundKey, objectValue);
 
       client.hgetall(compoundKey, (err, result) => {
         expect(result).toEqual(objectValue);
+        done();
       });
     });
 
-    it('should set an array value on a compound (x:y) key', async () => {
+    it('should set an array value on a compound (x:y) key', async (done) => {
       await redisAdapter.set(compoundKey, arrayValue);
 
       client.hgetall(compoundKey, (err, result) => {
         expect(result).toEqual({ ...result });
+        done();
       });
     });
 
@@ -76,7 +81,7 @@ describe('RedisAdapter Tests', () => {
   });
 
   describe('Getter tests', () => {
-    it('should get a string set on a simple key', done => {
+    it('should get a string set on a simple key', (done) => {
       client.set(keyName, simpleValue, async (err, setResult) => {
         const result = await redisAdapter.get(keyName);
         expect(result).toBe(simpleValue);
@@ -84,7 +89,7 @@ describe('RedisAdapter Tests', () => {
       });
     });
 
-    it('should get an object set on a simple key', done => {
+    it('should get an object set on a simple key', (done) => {
       client.set(keyName, JSON.stringify(objectValue), async (err, setResult) => {
         const result = await redisAdapter.get(keyName);
         expect(result).toEqual(objectValue);
@@ -92,7 +97,7 @@ describe('RedisAdapter Tests', () => {
       });
     });
 
-    it('should get an array set on a simple key', done => {
+    it('should get an array set on a simple key', (done) => {
       client.set(keyName, JSON.stringify(arrayValue), async (err, setResult) => {
         const result = await redisAdapter.get(keyName);
         expect(result).toEqual(arrayValue);
@@ -100,7 +105,7 @@ describe('RedisAdapter Tests', () => {
       });
     });
 
-    it('should get an object set on a compound (x:y) key', done => {
+    it('should get an object set on a compound (x:y) key', (done) => {
       const args = RedisAdapter.buildSetArgumentsFromObject(objectValue);
       client.hmset(compoundKey, args, async (err, setResult) => {
         const result = await redisAdapter.get(compoundKey);
@@ -109,7 +114,7 @@ describe('RedisAdapter Tests', () => {
       });
     });
 
-    it('should get an array set on a compound (x:y) key', done => {
+    it('should get an array set on a compound (x:y) key', (done) => {
       const args = RedisAdapter.buildSetArgumentsFromObject({ ...arrayValue });
       client.hmset(compoundKey, args, async () => {
         const result = await redisAdapter.get(compoundKey);
@@ -144,7 +149,7 @@ describe('RedisAdapter Tests', () => {
     });
   });
 
-  afterEach(done => {
+  afterEach((done) => {
     client.flushall(done);
   });
 

@@ -1,12 +1,12 @@
 import * as IoRedis from 'ioredis';
-import { IoRedisAdapter } from '../../lib/adapters';
+import { IoRedisAdapter } from '../';
 
 let client: IoRedis.Redis;
 let ioRedisAdapter: IoRedisAdapter;
 
-const keyName = 'aSimpleKey';
-const keyName_2 = 'aSimpleKey2';
-const compoundKey = 'aCompound:key';
+const keyName = 'aSimpleIoRedisKey';
+const keyName_2 = 'aSimpleIoRedisKey2';
+const compoundKey = 'aCompoundIoRedis:key';
 const simpleValue = 'aSimpleValue';
 const objectValue = { myKeyOne: 'myValOne' };
 const arrayValue = ['element1', 2, { complex: 'element' }];
@@ -59,7 +59,10 @@ describe('IoRedisAdapter Tests', () => {
       const ttl = 50000;
       await ioRedisAdapter.set(compoundKey, objectValue, ttl);
 
-      expect(client.set).toHaveBeenCalledWith(compoundKey, JSON.stringify(objectValue), ['EX', ttl]);
+      expect(client.set).toHaveBeenCalledWith(compoundKey, JSON.stringify(objectValue), [
+        'EX',
+        ttl,
+      ]);
     });
   });
 
@@ -130,7 +133,7 @@ describe('IoRedisAdapter Tests', () => {
       expect(result).toBeNull();
     });
 
-    it('should not throw error on an empty array of keys', async done => {
+    it('should not throw error on an empty array of keys', async (done) => {
       await ioRedisAdapter.del([]);
       done();
     });

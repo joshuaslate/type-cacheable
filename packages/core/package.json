@@ -1,0 +1,55 @@
+{
+  "name": "@type-cacheable/core",
+  "version": "5.0.0",
+  "description": "TypeScript-based caching decorators",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/**/*"
+  ],
+  "jest": {
+    "transform": {
+      "^.+\\.ts?$": "ts-jest"
+    },
+    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(js?|ts?)$",
+    "moduleFileExtensions": [
+      "ts",
+      "js",
+      "node"
+    ]
+  },
+  "scripts": {
+    "clean": "rm -rf ./dist",
+    "start": "node ./dist/index.js",
+    "test": "jest --coverage --runInBand",
+    "test:watch": "jest --watch --runInBand",
+    "build": "npm run clean && tsc",
+    "prepare": "npm run-script build",
+    "prepublishOnly": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joshuaslate/type-cacheable.git"
+  },
+  "keywords": [
+    "cache",
+    "typescript"
+  ],
+  "author": "Joshua Slate",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/joshuaslate/type-cacheable/issues"
+  },
+  "homepage": "https://github.com/joshuaslate/type-cacheable#readme",
+  "devDependencies": {
+    "@types/jest": "^25.1.0",
+    "@types/node": "^13.7.0",
+    "@types/serialize-javascript": "^1.5.0",
+    "jest": "^25.1.0",
+    "ts-jest": "^25.0.0",
+    "typescript": "^3.8.3"
+  },
+  "dependencies": {
+    "serialize-javascript": "^3.0.0"
+  }
+}

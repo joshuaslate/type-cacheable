@@ -1,5 +1,5 @@
 import * as NodeCache from 'node-cache';
-import { CacheClient } from '../interfaces';
+import cacheManager, { CacheClient } from '@type-cacheable/core';
 
 export class NodeCacheAdapter implements CacheClient {
   // The node-cache client
@@ -51,3 +51,8 @@ export class NodeCacheAdapter implements CacheClient {
     return matchedKeys;
   }
 }
+
+export const useAdapter = (client: NodeCache): void => {
+  const nodeCacheAdapter = new NodeCacheAdapter(client);
+  cacheManager.setClient(nodeCacheAdapter);
+};

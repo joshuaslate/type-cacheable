@@ -1,59 +1,20 @@
 {
   "name": "type-cacheable",
-  "version": "4.1.2",
-  "description": "TypeScript-based caching decorators",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "files": [
-    "dist/**/*"
-  ],
-  "jest": {
-    "transform": {
-      "^.+\\.ts?$": "ts-jest"
-    },
-    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(js?|ts?)$",
-    "moduleFileExtensions": [
-      "ts",
-      "js",
-      "node"
-    ]
-  },
-  "scripts": {
-    "start": "node ./dist/index.js",
-    "test": "jest --coverage --runInBand",
-    "test:watch": "jest --watch --runInBand",
-    "build": "tsc",
-    "prepare": "npm run-script build"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/joshuaslate/type-cacheable.git"
-  },
-  "keywords": [
-    "cache",
-    "typescript",
-    "redis"
-  ],
+  "private": true,
   "author": "Joshua Slate",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/joshuaslate/type-cacheable/issues"
+  "scripts": {
+    "bootstrap": "lerna bootstrap --hoist",
+    "postinstall": "npm run bootstrap",
+    "clean": "lerna run clean",
+    "build": "lerna run build",
+    "test": "lerna run test",
+    "pub": "lerna publish",
+    "link": "lerna exec -- yarn link",
+    "unlink": "lerna exec -- yarn unlink"
   },
-  "homepage": "https://github.com/joshuaslate/type-cacheable#readme",
   "devDependencies": {
-    "@types/jest": "^25.1.0",
-    "@types/node": "^13.7.0",
-    "@types/serialize-javascript": "^1.5.0",
-    "ioredis": "^4.14.1",
-    "jest": "^25.1.0",
-    "node-cache": "^5.0.0",
-    "redis": "^3.0.2",
-    "ts-jest": "^25.0.0",
-    "typescript": "^3.7.4"
-  },
-  "dependencies": {
-    "@types/ioredis": "^4.14.4",
-    "@types/redis": "^2.8.13",
-    "serialize-javascript": "^3.0.0"
+    "lerna": "^3.20.2",
+    "typescript": "^3.8.3"
   }
 }
