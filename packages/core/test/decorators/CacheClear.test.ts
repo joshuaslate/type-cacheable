@@ -1,17 +1,10 @@
-import * as Redis from 'redis';
 import { Cacheable, CacheClear } from '../../lib/decorators';
 import cacheManager from '../../lib';
-import { useRedisAdapter } from '../../lib/util/useAdapter';
-
-let client: Redis.RedisClient;
+import { useMockAdapter } from '../test-utils';
 
 describe('CacheClear Decorator Tests', () => {
-  beforeAll(() => {
-    client = Redis.createClient();
-  });
-
   beforeEach(() => {
-    useRedisAdapter(client);
+    useMockAdapter();
   });
 
   it('should not throw an error if the client fails', async () => {
@@ -71,7 +64,7 @@ describe('CacheClear Decorator Tests', () => {
         this.aProp = value;
       }
     }
-    
+
     const getSpy = jest.spyOn(cacheManager.client!, 'get');
     const delSpy = jest.spyOn(cacheManager.client!, 'del');
     const testInstance = new TestClass();
@@ -82,13 +75,5 @@ describe('CacheClear Decorator Tests', () => {
 
     expect(delSpy).toHaveBeenCalledTimes(1);
     expect(getSpy).toHaveBeenCalledTimes(2);
-  });
-
-  afterEach((done) => {
-    client.flushall(done);
-  });
-
-  afterAll(() => {
-    client.end(true);
   });
 });

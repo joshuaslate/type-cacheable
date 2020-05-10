@@ -1,6 +1,5 @@
 import { Redis } from 'ioredis';
-import { CacheClient } from '../interfaces';
-import { parseIfRequired } from '../util';
+import cacheManager, { CacheClient, parseIfRequired } from '@type-cacheable/core';
 
 export class IoRedisAdapter implements CacheClient {
   constructor(redisClient: Redis) {
@@ -36,14 +35,13 @@ export class IoRedisAdapter implements CacheClient {
   }
 
   public async keys(pattern: string): Promise<string[]> {
-    const result = await this.redisClient.scan(
-      '0',
-      'MATCH',
-      `*${pattern}*`,
-      'COUNT',
-      1000
-    );
+    const result = await this.redisClient.scan('0', 'MATCH', `*${pattern}*`, 'COUNT', 1000);
 
     return result ? result[1] : [];
   }
 }
+
+export const useAdapter = (client: Redis): void => {
+  const ioRedisAdapter = new IoRedisAdapter(client);
+  cacheManager.setClient(ioRedisAdapter);
+};
