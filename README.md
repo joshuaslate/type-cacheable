@@ -22,35 +22,14 @@ yarn add @type-cacheable/core
 
 You will need to set up the appropriate adapter for your cache of choice.
 
-To use the `redis` adapter, add the following code to your entry point after adding the `@type-cacheable/redis-adapter` dependency to your project:
+Redis:
 
-```ts
-import * as Redis from 'redis';
-import { useAdapter } from '@type-cacheable/redis-adapter';
+- `redis` - `@type-cacheable/redis-adapter` - https://github.com/joshuaslate/type-cacheable/tree/master/packages/redis-adapter
+- `ioredis` - `@type-cacheable/ioredis-adapter` - https://github.com/joshuaslate/type-cacheable/tree/master/packages/ioredis-adapter
 
-const client = Redis.createClient();
-useAdapter(client);
-```
+Node-Cache:
 
-To use the `ioredis` adapter, add the following code to your entry point after adding the `@type-cacheable/ioredis-adapter` dependency to your project:
-
-```ts
-import * as IoRedis from 'ioredis';
-import { useAdapter } from '@type-cacheable/ioredis-adapter';
-
-const client = new IoRedis();
-useAdapter(client);
-```
-
-To use the `node-cache` adapter, add the following code to your entry point after adding the `@type-cacheable/node-cache-adapter` dependency to your project:
-
-```ts
-import * as NodeCache from 'node-cache';
-import { useAdapter } from '@type-cacheable/node-cache-adapter';
-
-const client = new NodeCache();
-useAdapter(client);
-```
+- `node-cache` - `@type-cacheable/node-cache-adapter` https://github.com/joshuaslate/type-cacheable/tree/master/packages/node-cache-adapter
 
 ### Change Global Options
 
