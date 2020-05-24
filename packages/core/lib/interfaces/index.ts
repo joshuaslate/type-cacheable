@@ -3,5 +3,7 @@ export { CacheClient } from './CacheClient';
 export { CacheOptions } from './CacheOptions';
 export { CacheClearOptions } from './CacheClearOptions';
 export { CacheManagerOptions } from './CacheManagerOptions';
+export { CacheStrategy } from './CacheStrategy';
+export { CacheStrategyContext } from './CacheStrategyContext';
 export { NoOpDeterminer } from './NoOpDeterminer';
 export { TTLBuilder } from './TTLBuilder';

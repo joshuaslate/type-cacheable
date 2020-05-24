@@ -1,4 +1,5 @@
 import { CacheClient, CacheManagerOptions } from './interfaces';
+import { DefaultStrategy } from './strategies';
 
 export default class CacheManager {
   public client: CacheClient | null = null;
@@ -6,8 +7,9 @@ export default class CacheManager {
     excludeContext: true,
     ttlSeconds: 0,
     debug: false,
+    strategy: new DefaultStrategy(),
   };
-  
+
   public setClient(client: CacheClient): void {
     this.client = client;
 
