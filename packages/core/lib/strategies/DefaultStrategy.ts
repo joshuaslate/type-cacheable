@@ -16,7 +16,7 @@ export class DefaultStrategy implements CacheStrategy {
     }
 
     // On a cache miss, run the decorated function and cache its return value.
-    const result = await context.origianlFunction!.apply(context.originalFunctionScope, context.originalFunctionArgs);
+    const result = await context.originalFunction!.apply(context.originalFunctionScope, context.originalFunctionArgs);
 
     try {
       await context.client.set(context.key, result, context.ttl);
