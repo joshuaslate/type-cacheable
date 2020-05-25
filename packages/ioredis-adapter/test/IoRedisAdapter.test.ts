@@ -7,9 +7,9 @@ let ioRedisAdapter: IoRedisAdapter;
 const keyName = 'aSimpleIoRedisKey';
 const keyName_2 = 'aSimpleIoRedisKey2';
 const compoundKey = 'aCompoundIoRedis:key';
-const simpleValue = 'aSimpleValue';
-const objectValue = { myKeyOne: 'myValOne' };
-const arrayValue = ['element1', 2, { complex: 'element' }];
+const simpleValue = 'aSimpleIoRedisValue';
+const objectValue = { myKeyOneIoRedis: 'myValOneIoRedis' };
+const arrayValue = ['element1IoRedis', 2, { complex: 'elementIoRedis' }];
 
 describe('IoRedisAdapter Tests', () => {
   beforeAll(async () => {

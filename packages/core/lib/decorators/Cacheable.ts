@@ -1,6 +1,8 @@
 import { CacheOptions } from '../interfaces';
 import { determineOp, getFinalKey, getTTL } from '../util';
 import cacheManager from '../index';
+import { DefaultStrategy } from '../strategies';
+import { CacheStrategyContext } from '../interfaces/CacheStrategyContext';
 
 /**
  * Cacheable - This decorator allows you to first check if cached results for the
@@ -13,12 +15,10 @@ export function Cacheable(options?: CacheOptions) {
   return (target: Object, propertyKey: string, descriptor: PropertyDescriptor) => {
     return {
       ...descriptor,
-      value: async function(...args: any[]): Promise<any> {
+      value: async function (...args: any[]): Promise<any> {
         // Allow a client to be passed in directly for granularity, else use the connected
         // client from the main CacheManager singleton.
-        const client = options && options.client
-          ? options.client
-          : cacheManager.client;
+        const client = options && options.client ? options.client : cacheManager.client;
 
         if (options && options.noop && determineOp(options.noop, args, this)) {
           return descriptor.value!.apply(this, args);
@@ -29,49 +29,44 @@ export function Cacheable(options?: CacheOptions) {
         if (!client) {
           // A caching client must exist if not set to noop, otherwise this library is doing nothing.
           if (cacheManager.options.debug) {
-            console.warn('type-cacheable @Cacheable was not set up with a caching client. Without a client, type-cacheable is not serving a purpose.');
+            console.warn(
+              'type-cacheable @Cacheable was not set up with a caching client. Without a client, type-cacheable is not serving a purpose.',
+            );
           }
 
           return descriptor.value!.apply(this, args);
         }
 
-        const contextToUse = !cacheManager.options.excludeContext
-          ? this
-          : undefined;
-        const finalKey = getFinalKey(options && options.cacheKey, options && options.hashKey, propertyKey, args, contextToUse);
+        const contextToUse = !cacheManager.options.excludeContext ? this : undefined;
 
-        try {
-          const cachedValue = await client.get(finalKey);
-
-          // If a value for the cacheKey was found in cache, simply return that.
-	      if (cachedValue !== undefined && cachedValue !== null) {
-            return cachedValue;
-          }
-        } catch (err) {
-          if (cacheManager.options.debug) {
-            console.warn(`type-cacheable Cacheable cache miss due to client error: ${err.message}`);
-          }
-        }
-
-        // On a cache miss, run the decorated function and cache its return value.
-        const result = await descriptor.value!.apply(this, args);
+        const finalKey = getFinalKey(
+          options && options.cacheKey,
+          options && options.hashKey,
+          propertyKey,
+          args,
+          contextToUse,
+        );
 
         // TTL in seconds should prioritize options set in the decorator first,
         // the CacheManager options second, and be undefined if unset.
-        const ttl = options && options.ttlSeconds
-          ? getTTL(options.ttlSeconds, args, contextToUse)
-          : cacheManager.options.ttlSeconds || undefined;
+        const ttl =
+          options && options.ttlSeconds
+            ? getTTL(options.ttlSeconds, args, contextToUse)
+            : cacheManager.options.ttlSeconds || undefined;
 
-        try {
-          await client.set(finalKey, result, ttl);
-        } catch (err) {
-          if (cacheManager.options.debug) {
-            console.warn(`type-cacheable Cacheable set cache failure due to client error: ${err.message}`);
-          }
-        }
+        const strategy =
+          options?.strategy || cacheManager.options.strategy || new DefaultStrategy();
 
-        return result;
+        return strategy.handle({
+          debug: cacheManager.options.debug,
+          originalFunction: descriptor.value,
+          originalFunctionScope: this,
+          originalFunctionArgs: args,
+          client,
+          key: finalKey,
+          ttl,
+        });
       },
     };
   };
-};
+}

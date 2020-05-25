@@ -1,5 +1,5 @@
 import { Cacheable } from '../../lib/decorators';
-import cacheManager from '../../lib';
+import cacheManager, { CacheStrategy, CacheStrategyContext } from '../../lib';
 import { useMockAdapter } from '../test-utils';
 
 describe('Cacheable Decorator Tests', () => {
@@ -60,5 +60,31 @@ describe('Cacheable Decorator Tests', () => {
 
     expect(getSpy).toHaveBeenCalledTimes(2);
     expect(setSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it('should use the provided strategy', async () => {
+    class CustomStrategy implements CacheStrategy {
+      async handle(context: CacheStrategyContext): Promise<any> {
+        const result = await context.originalFunction.apply(
+          context.originalFunctionScope,
+          context.originalFunctionArgs,
+        );
+        return `hello ${result}`;
+      }
+    }
+
+    class TestClass {
+      public aProp: string = 'aVal!';
+
+      @Cacheable({ strategy: new CustomStrategy() })
+      public async hello(): Promise<any> {
+        return 'world';
+      }
+    }
+
+    const testInstance = new TestClass();
+    const result = await testInstance.hello();
+
+    expect(result).toEqual('hello world');
   });
 });
