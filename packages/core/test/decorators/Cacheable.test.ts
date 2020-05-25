@@ -65,9 +65,9 @@ describe('Cacheable Decorator Tests', () => {
   it('should use the provided strategy', async () => {
     class CustomStrategy implements CacheStrategy {
       async handle(context: CacheStrategyContext): Promise<any> {
-        const result = await context.origianlFunction.apply(
+        const result = await context.originalFunction.apply(
           context.originalFunctionScope,
-          context.originalFunctionArgs
+          context.originalFunctionArgs,
         );
         return `hello ${result}`;
       }
