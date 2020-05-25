@@ -2,7 +2,7 @@ import { CacheClient } from '.';
 
 export interface CacheStrategyContext {
   debug: boolean | undefined;
-  origianlFunction: Function;
+  originalFunction: Function;
   originalFunctionScope: any;
   originalFunctionArgs: any[];
   client: CacheClient;
