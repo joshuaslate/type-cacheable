@@ -6,4 +6,5 @@ export { CacheManagerOptions } from './CacheManagerOptions';
 export { CacheStrategy } from './CacheStrategy';
 export { CacheStrategyContext } from './CacheStrategyContext';
 export { NoOpDeterminer } from './NoOpDeterminer';
+export { CacheStrategyBuilder as StrategyBuilder } from './CacheStrategyBuilder';
 export { TTLBuilder } from './TTLBuilder';
