@@ -1,5 +1,5 @@
 import * as IoRedis from 'ioredis';
-import { IoRedisAdapter } from '../';
+import { IoRedisAdapter } from '../lib';
 
 let client: IoRedis.Redis;
 let ioRedisAdapter: IoRedisAdapter;

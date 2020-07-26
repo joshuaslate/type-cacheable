@@ -3,6 +3,7 @@ import { DefaultStrategy } from './strategies';
 
 export default class CacheManager {
   public client: CacheClient | null = null;
+  public fallbackClient: CacheClient | null = null;
   public options: CacheManagerOptions = {
     excludeContext: true,
     ttlSeconds: 0,
@@ -16,6 +17,10 @@ export default class CacheManager {
     if (this.options && !this.options.ttlSeconds) {
       this.options.ttlSeconds = this.client.getClientTTL();
     }
+  }
+
+  public setFallbackClient(client: CacheClient): void {
+    this.fallbackClient = client;
   }
 
   public setOptions(options: CacheManagerOptions): void {

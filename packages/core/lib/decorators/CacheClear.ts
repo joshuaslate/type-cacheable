@@ -11,12 +11,12 @@ export function CacheClear(options?: CacheClearOptions) {
   return (target: Object, propertyKey: string, descriptor: PropertyDescriptor) => {
     return {
       ...descriptor,
-      value: async function(...args: any[]): Promise<any> {
+      value: async function (...args: any[]): Promise<any> {
         // Allow a client to be passed in directly for granularity, else use the connected
         // client from the main CacheManager singleton.
-        const client = options && options.client
-          ? options.client
-          : cacheManager.client;
+        const client = options && options.client ? options.client : cacheManager.client;
+        const fallbackClient =
+          options && options.fallbackClient ? options.fallbackClient : cacheManager.fallbackClient;
 
         if (options && options.noop && determineOp(options.noop, args, this)) {
           return descriptor.value!.apply(this, args);
@@ -27,16 +27,22 @@ export function CacheClear(options?: CacheClearOptions) {
         if (!client) {
           // A caching client must exist if not set to noop, otherwise this library is doing nothing.
           if (cacheManager.options.debug) {
-            console.warn('type-cacheable @CacheClear was not set up with a caching client. Without a client, type-cacheable is not serving a purpose.');
+            console.warn(
+              'type-cacheable @CacheClear was not set up with a caching client. Without a client, type-cacheable is not serving a purpose.',
+            );
           }
 
           return descriptor.value!.apply(this, args);
         }
 
-        const contextToUse = !cacheManager.options.excludeContext
-          ? this
-          : undefined;
-        const finalKey = getFinalKey(options && options.cacheKey, options && options.hashKey, propertyKey, args, contextToUse);
+        const contextToUse = !cacheManager.options.excludeContext ? this : undefined;
+        const finalKey = getFinalKey(
+          options && options.cacheKey,
+          options && options.hashKey,
+          propertyKey,
+          args,
+          contextToUse,
+        );
 
         // Run the decorated method
         const result = await descriptor.value!.apply(this, args);
@@ -50,6 +56,18 @@ export function CacheClear(options?: CacheClearOptions) {
             await client.del(finalKey);
           }
         } catch (err) {
+          if (fallbackClient) {
+            try {
+              if (options && options.isPattern) {
+                // Delete keys that match a string pattern
+                await fallbackClient.del(await fallbackClient.keys(finalKey));
+              } else {
+                // Delete the requested value from cache
+                await fallbackClient.del(finalKey);
+              }
+            } catch (err) {}
+          }
+
           if (cacheManager.options.debug) {
             console.warn(`type-cacheable CacheClear failure due to client error: ${err.message}`);
           }
@@ -59,4 +77,4 @@ export function CacheClear(options?: CacheClearOptions) {
       },
     };
   };
-};
+}

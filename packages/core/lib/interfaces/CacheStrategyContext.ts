@@ -6,6 +6,7 @@ export interface CacheStrategyContext {
   originalFunctionScope: any;
   originalFunctionArgs: any[];
   client: CacheClient;
+  fallbackClient: CacheClient | null;
   key: string;
   ttl: number | undefined;
 }

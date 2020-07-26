@@ -1,5 +1,5 @@
 import * as NodeCache from 'node-cache';
-import { NodeCacheAdapter } from '../';
+import { NodeCacheAdapter } from '../lib';
 
 let client: NodeCache;
 let nodeCacheAdapter: NodeCacheAdapter;
