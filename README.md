@@ -98,6 +98,7 @@ interface CacheOptions {
   cacheKey?: string | CacheKeyBuilder; // Individual key the result of the decorated method should be stored on
   hashKey?: string | CacheKeyBuilder; // Set name the result of the decorated method should be stored on (for hashes)
   client?: CacheClient; // If you would prefer use a different cache client than passed into the adapter, set that here
+  fallbackClient?: CacheClient; // If you would prefer use a different cache client than passed into the adapter as a fallback, set that here
   noop?: boolean; // Allows for consuming libraries to conditionally disable caching. Set this to true to disable caching for some reason.
   ttlSeconds?: number | TTLBuilder; // Number of seconds the cached key should live for
   strategy?: CacheStrategy; // Strategy by which cached values and computed values are handled
@@ -113,6 +114,7 @@ interface CacheClearOptions {
   cacheKey?: string | CacheKeyBuilder; // Individual key the result of the decorated method should be stored on
   hashKey?: string | CacheKeyBuilder; // Set name the result of the decorated method should be stored on (for hashes)
   client?: CacheClient; // If you would prefer use a different cache client than passed into the adapter, set that here
+  fallbackClient?: CacheClient; // If you would prefer use a different cache client than passed into the adapter as a fallback, set that here
   noop?: boolean; // Allows for consuming libraries to conditionally disable caching. Set this to true to disable caching for some reason.
   isPattern?: boolean; // Will remove pattern matched keys from cache (ie: a 'foo' cacheKey will remove ['foolish', 'foo-bar'] matched keys assuming they exist)
 }

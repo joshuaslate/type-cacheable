@@ -1,6 +1,6 @@
 import * as Redis from 'redis';
 import { Cacheable } from '@type-cacheable/core';
-import { RedisAdapter } from '../';
+import { RedisAdapter } from '../lib';
 
 let client: Redis.RedisClient;
 let redisAdapter: RedisAdapter;

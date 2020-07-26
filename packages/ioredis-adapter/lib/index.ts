@@ -41,7 +41,12 @@ export class IoRedisAdapter implements CacheClient {
   }
 }
 
-export const useAdapter = (client: Redis): void => {
+export const useAdapter = (client: Redis, asFallback?: boolean): void => {
   const ioRedisAdapter = new IoRedisAdapter(client);
-  cacheManager.setClient(ioRedisAdapter);
+
+  if (asFallback) {
+    cacheManager.setFallbackClient(ioRedisAdapter);
+  } else {
+    cacheManager.setClient(ioRedisAdapter);
+  }
 };
