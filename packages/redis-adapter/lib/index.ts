@@ -5,34 +5,10 @@ import cacheManager, { CacheClient, parseIfRequired } from '@type-cacheable/core
 // we need at least one key. We can use an empty string.
 const SCALAR_KEY = '';
 
-// When values are returned from redis, numbers can be converted to strings, so we need to store them
-// in a way that we can differentiate them from numbers that were intentionally stored as strings
-const NUMBER_IDENTIFIER = 'n';
-const BOOL_IDENTIFIER = 'b';
-
 export class RedisAdapter implements CacheClient {
   static buildSetArgumentsFromObject = (objectValue: any): string[] =>
     Object.keys(objectValue).reduce((accum: any, objectKey: any) => {
-      let value = objectValue[objectKey];
-
-      switch (typeof value) {
-        case 'object': {
-          value = JSON.stringify(value);
-          break;
-        }
-        case 'number': {
-          value = `${value}${NUMBER_IDENTIFIER}`;
-          break;
-        }
-        case 'boolean': {
-          value = `${value}${BOOL_IDENTIFIER}`;
-          break;
-        }
-        default:
-          break;
-      }
-
-      accum.push(objectKey, value);
+      accum.push(objectKey, JSON.stringify(objectValue[objectKey]));
 
       return accum;
     }, [] as string[]);
@@ -41,34 +17,17 @@ export class RedisAdapter implements CacheClient {
     if (response && typeof response === 'object') {
       return Object.entries(response).reduce((accum: any, curr: any[]) => {
         const [key, value] = curr;
-
-        switch (typeof value) {
-          case 'string': {
-            if (
-              value.endsWith(NUMBER_IDENTIFIER) &&
-              parseFloat(value).toString() === value.substr(0, value.length - 1)
-            ) {
-              accum[key] = parseFloat(value);
-              break;
-            } else if (
-              value.endsWith(BOOL_IDENTIFIER) &&
-              (value === 'false' + BOOL_IDENTIFIER || value === 'true' + BOOL_IDENTIFIER)
-            ) {
-              accum[key] = value === 'true' + BOOL_IDENTIFIER;
-              break;
-            }
-          }
-          default: {
-            accum[key] = value;
-            break;
-          }
-        }
+        accum[key] = JSON.parse(value);
 
         return accum;
       }, {});
     }
 
-    return response;
+    try {
+      return JSON.parse(response);
+    } catch {
+      return response;
+    }
   };
 
   static responseCallback = (resolve: Function, reject: Function): Callback<any> => (
@@ -164,7 +123,7 @@ export class RedisAdapter implements CacheClient {
           typeof usableResult === 'object' &&
           Object.keys(usableResult).every((key) => Number.isInteger(Number(key)))
         ) {
-          return Object.keys(usableResult).map((key) => parseIfRequired(usableResult[key]));
+          return Object.values(usableResult);
         }
 
         return usableResult;
@@ -209,7 +168,7 @@ export class RedisAdapter implements CacheClient {
           } else {
             this.redisClient.hmset(
               cacheKey,
-              RedisAdapter.buildSetArgumentsFromObject({ [SCALAR_KEY]: value }),
+              RedisAdapter.buildSetArgumentsFromObject({ [SCALAR_KEY]: JSON.stringify(value) }),
               (err, result) => {
                 if (!err) {
                   // hset doesn't add expiration by default, so we have to implement that here if ttl is given
@@ -228,7 +187,7 @@ export class RedisAdapter implements CacheClient {
             );
           }
         } else {
-          const usableValue = typeof value === 'string' ? value : JSON.stringify(value);
+          const usableValue = JSON.stringify(value);
 
           if (ttl) {
             this.redisClient.set(
