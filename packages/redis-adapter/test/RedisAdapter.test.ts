@@ -6,7 +6,9 @@ let client: Redis.RedisClient;
 let redisAdapter: RedisAdapter;
 
 const keyName = 'aSimpleKey';
+const simpleKeyKeys = 'anotherSimpleKey';
 const compoundKey = 'aCompound:key';
+const compoundKeyKeys = 'aCompound:keys';
 const simpleValue = 'aSimpleValue';
 const objectValue = { myKeyOne: 'myValOne' };
 const arrayValue = ['element1', 2, { complex: 'element' }];
@@ -126,17 +128,17 @@ describe('RedisAdapter Tests', () => {
 
   describe('Keys tests', () => {
     it('should get keys by pattern on a compound (x:y) key', (done) => {
-      client.set(compoundKey, simpleValue, async () => {
-        const result = await redisAdapter.keys(`*${compoundKey}*`);
+      client.set(compoundKeyKeys, simpleValue, async () => {
+        const result = await redisAdapter.keys(`*${compoundKeyKeys}*`);
 
         expect(result).toHaveLength(1);
-        expect(result).toContain(compoundKey);
+        expect(result).toContain(compoundKeyKeys);
         done();
       });
     });
 
-    it('should not found keys on a simple key', (done) => {
-      client.set(compoundKey, simpleValue, async () => {
+    it('should not found keys on a simple key with non-match', (done) => {
+      client.set(simpleKeyKeys, simpleValue, async () => {
         const result = await redisAdapter.keys(`*${simpleValue}*`);
 
         expect(result).toHaveLength(0);
