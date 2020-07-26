@@ -99,8 +99,7 @@ export class RedisAdapter implements CacheClient {
     if (err) {
       reject(err);
     } else {
-      // array exists at index '1' from SCAN command
-      resolve(response['1']);
+      resolve(response);
       return;
     }
   };
@@ -267,18 +266,32 @@ export class RedisAdapter implements CacheClient {
 
   public async keys(pattern: string): Promise<string[]> {
     const isReady = this.checkIfReady();
+    let keys: Array<string> = [];
+    let cursor: string | null = '0';
 
     if (isReady) {
-      return new Promise((resolve, reject) => {
-        this.redisClient.scan(
-          '0',
-          'MATCH',
-          `*${pattern}*`,
-          'COUNT',
-          '1000',
-          RedisAdapter.responseScanCommandCallback(resolve, reject),
-        );
-      });
+      while (cursor) {
+        const result = (await new Promise((resolve, reject) => {
+          this.redisClient.scan(
+            cursor as string,
+            'MATCH',
+            pattern,
+            'COUNT',
+            '1000',
+            RedisAdapter.responseScanCommandCallback(resolve, reject),
+          );
+        })) as [string, string[]] | undefined;
+
+        if (result) {
+          // array exists at index 1 from SCAN command, cursor is at 0
+          cursor = cursor !== result[0] ? result[0] : null;
+          keys = [...keys, ...result[1]];
+        } else {
+          cursor = null;
+        }
+      }
+
+      return keys;
     }
 
     throw new Error('Redis client is not accepting connections.');

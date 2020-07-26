@@ -43,6 +43,7 @@ export class NodeCacheAdapter implements CacheClient {
     const allKeys = this.nodeCacheClient.keys();
     const regExp = new RegExp(pattern, 'g');
     let matchedKeys = [];
+
     for (let key of allKeys) {
       if (Array.isArray(key.match(regExp))) {
         matchedKeys.push(key);
