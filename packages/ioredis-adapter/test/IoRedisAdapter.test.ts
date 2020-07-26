@@ -108,7 +108,7 @@ describe('IoRedisAdapter Tests', () => {
   describe('Keys tests', () => {
     it('should get keys by pattern on a compound (x:y) key', async () => {
       await client.set(compoundKey, simpleValue);
-      const result = await ioRedisAdapter.keys(compoundKey);
+      const result = await ioRedisAdapter.keys(`*${compoundKey}*`);
 
       expect(result).toHaveLength(1);
       expect(result).toContain(compoundKey);
@@ -116,8 +116,7 @@ describe('IoRedisAdapter Tests', () => {
 
     it('should not found keys on a simple key', async () => {
       await client.set(compoundKey, simpleValue);
-
-      const result = await ioRedisAdapter.keys(simpleValue);
+      const result = await ioRedisAdapter.keys(`*${simpleValue}*`);
 
       expect(result).toHaveLength(0);
       expect(result).toBeInstanceOf(Array);

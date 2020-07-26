@@ -124,6 +124,28 @@ describe('RedisAdapter Tests', () => {
     });
   });
 
+  describe('Keys tests', () => {
+    it('should get keys by pattern on a compound (x:y) key', (done) => {
+      client.set(compoundKey, simpleValue, async () => {
+        const result = await redisAdapter.keys(`*${compoundKey}*`);
+
+        expect(result).toHaveLength(1);
+        expect(result).toContain(compoundKey);
+        done();
+      });
+    });
+
+    it('should not found keys on a simple key', (done) => {
+      client.set(compoundKey, simpleValue, async () => {
+        const result = await redisAdapter.keys(`*${simpleValue}*`);
+
+        expect(result).toHaveLength(0);
+        expect(result).toBeInstanceOf(Array);
+        done();
+      });
+    });
+  });
+
   describe('integration', () => {
     it('should properly set, and get cached, values with the @Cacheable decorator', async () => {
       const mockGetIdImplementation = jest.fn();
