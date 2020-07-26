@@ -11,12 +11,15 @@ export class IoRedisAdapter implements CacheClient {
   public async get(cacheKey: string): Promise<any> {
     const result = await this.redisClient.get(cacheKey);
 
-    if (!result) return null;
+    if (!result) {
+      return null;
+    }
+
     return parseIfRequired(result);
   }
 
   public async set(cacheKey: string, value: any, ttl?: number): Promise<any> {
-    const usableValue = typeof value === 'string' ? value : JSON.stringify(value);
+    const usableValue = JSON.stringify(value);
     const ex = ttl ? ['EX', ttl] : [];
     await this.redisClient.set(cacheKey, usableValue, ex);
   }
