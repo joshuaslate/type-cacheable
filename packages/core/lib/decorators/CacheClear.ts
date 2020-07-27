@@ -9,6 +9,8 @@ import cacheManager from '../index';
  */
 export function CacheClear(options?: CacheClearOptions) {
   return (target: Object, propertyKey: string, descriptor: PropertyDescriptor) => {
+    const originalMethod = descriptor.value;
+
     return {
       ...descriptor,
       value: async function (...args: any[]): Promise<any> {
@@ -19,7 +21,7 @@ export function CacheClear(options?: CacheClearOptions) {
           options && options.fallbackClient ? options.fallbackClient : cacheManager.fallbackClient;
 
         if (options && options.noop && determineOp(options.noop, args, this)) {
-          return descriptor.value!.apply(this, args);
+          return originalMethod!.apply(this, args);
         }
 
         // If there is no client, no-op is enabled (else we would have thrown before),
@@ -32,7 +34,7 @@ export function CacheClear(options?: CacheClearOptions) {
             );
           }
 
-          return descriptor.value!.apply(this, args);
+          return originalMethod!.apply(this, args);
         }
 
         const contextToUse = !cacheManager.options.excludeContext ? this : undefined;
@@ -45,12 +47,20 @@ export function CacheClear(options?: CacheClearOptions) {
         );
 
         // Run the decorated method
-        const result = await descriptor.value!.apply(this, args);
+        const result = await originalMethod!.apply(this, args);
 
         try {
           if (options && options.isPattern) {
             // Delete keys that match a string pattern
-            await client.del(await client.keys(finalKey));
+            if (Array.isArray(finalKey)) {
+              const keys = (await Promise.all(finalKey.map(client.keys))).reduce(
+                (accum, curr) => [...accum, ...curr],
+                [],
+              );
+              await client.del(keys);
+            } else {
+              await client.del(await client.keys(finalKey));
+            }
           } else {
             // Delete the requested value from cache
             await client.del(finalKey);
@@ -60,7 +70,15 @@ export function CacheClear(options?: CacheClearOptions) {
             try {
               if (options && options.isPattern) {
                 // Delete keys that match a string pattern
-                await fallbackClient.del(await fallbackClient.keys(finalKey));
+                if (Array.isArray(finalKey)) {
+                  const keys = (await Promise.all(finalKey.map(fallbackClient.keys))).reduce(
+                    (accum, curr) => [...accum, ...curr],
+                    [],
+                  );
+                  await fallbackClient.del(keys);
+                } else {
+                  await fallbackClient.del(await fallbackClient.keys(finalKey));
+                }
               } else {
                 // Delete the requested value from cache
                 await fallbackClient.del(finalKey);

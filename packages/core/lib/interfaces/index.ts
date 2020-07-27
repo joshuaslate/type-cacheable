@@ -1,4 +1,5 @@
 export { CacheKeyBuilder } from './CacheKeyBuilder';
+export { CacheKeyDeleteBuilder } from './CacheKeyDeleteBuilder';
 export { CacheClient } from './CacheClient';
 export { CacheOptions } from './CacheOptions';
 export { CacheClearOptions } from './CacheClearOptions';
