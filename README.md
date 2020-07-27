@@ -111,7 +111,7 @@ The `@CacheClear` decorator first runs the decorated method. If that method does
 
 ```ts
 interface CacheClearOptions {
-  cacheKey?: string | CacheKeyBuilder; // Individual key the result of the decorated method should be stored on
+  cacheKey?: string | string[] | CacheKeyDeleteBuilder; // Individual key the result of the decorated method should be stored on
   hashKey?: string | CacheKeyBuilder; // Set name the result of the decorated method should be stored on (for hashes)
   client?: CacheClient; // If you would prefer use a different cache client than passed into the adapter, set that here
   fallbackClient?: CacheClient; // If you would prefer use a different cache client than passed into the adapter as a fallback, set that here
