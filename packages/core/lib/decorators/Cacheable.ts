@@ -12,6 +12,8 @@ import { DefaultStrategy } from '../strategies';
  */
 export function Cacheable(options?: CacheOptions) {
   return (target: Object, propertyKey: string, descriptor: PropertyDescriptor) => {
+    const originalMethod = descriptor.value;
+
     return {
       ...descriptor,
       value: async function (...args: any[]): Promise<any> {
@@ -22,7 +24,7 @@ export function Cacheable(options?: CacheOptions) {
           options && options.fallbackClient ? options.fallbackClient : cacheManager.fallbackClient;
 
         if (options && options.noop && determineOp(options.noop, args, this)) {
-          return descriptor.value!.apply(this, args);
+          return originalMethod!.apply(this, args);
         }
 
         // If there is no client, no-op is enabled (else we would have thrown before),
@@ -35,7 +37,7 @@ export function Cacheable(options?: CacheOptions) {
             );
           }
 
-          return descriptor.value!.apply(this, args);
+          return originalMethod!.apply(this, args);
         }
 
         const contextToUse = !cacheManager.options.excludeContext ? this : undefined;
@@ -63,12 +65,12 @@ export function Cacheable(options?: CacheOptions) {
 
         return strategy.handle({
           debug: cacheManager.options.debug,
-          originalFunction: descriptor.value,
+          originalFunction: originalMethod,
           originalFunctionScope: this,
           originalFunctionArgs: args,
           client,
           fallbackClient,
-          key: finalKey,
+          key: finalKey as string,
           ttl,
         });
       },

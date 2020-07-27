@@ -1,6 +1,9 @@
 import { createHash } from 'crypto';
 import * as serialize from 'serialize-javascript';
-import { CacheKeyBuilder } from '../interfaces';
+import { CacheKeyBuilder, CacheKeyDeleteBuilder } from '../interfaces';
+
+export type CacheClearKey = string | string[] | CacheKeyDeleteBuilder;
+export type CacheableKey = string | CacheKeyBuilder;
 
 /**
  * extractKey - If data should be stored in a hash, this would be the name of the hash
@@ -12,10 +15,10 @@ import { CacheKeyBuilder } from '../interfaces';
  * @returns {String}
  */
 export const extractKey = (
-  passedInKey: string | CacheKeyBuilder = '',
+  passedInKey: string | string[] | CacheKeyBuilder | CacheKeyDeleteBuilder = '',
   args: any[],
   context?: any,
-): string => {
+): string | string[] => {
   // If the user passed in a cacheKey, use that. If it's a string, use it directly.
   // In the case of a function, we'll use the result of the called function.
   return passedInKey instanceof Function ? passedInKey(args, context) : passedInKey;
@@ -34,11 +37,11 @@ export const extractKey = (
  * @returns {String}
  */
 export const getCacheKey = (
-  passedInKey: string | CacheKeyBuilder = '',
+  passedInKey: string | string[] | CacheKeyBuilder | CacheKeyDeleteBuilder = '',
   methodName: string,
   args: any[],
   context?: any,
-): string => {
+): string | string[] => {
   // If the user passed in a cacheKey, use that. If it's a string, use it directly.
   // In the case of a function, we'll use the result of the called function.
   if (passedInKey) {
@@ -58,14 +61,18 @@ export const getCacheKey = (
 };
 
 export const getFinalKey = (
-  passedCacheKey: string | CacheKeyBuilder = '',
+  passedCacheKey: CacheableKey | CacheClearKey = '',
   passedHashKey: string | CacheKeyBuilder = '',
   methodName: string,
   args: any[],
   context?: any,
-) => {
+): string | string[] => {
   const cacheKey = getCacheKey(passedCacheKey, methodName, args, context);
-  const hashKey = extractKey(passedHashKey, args, context);
+  const hashKey = extractKey(passedHashKey, args, context) as string;
+
+  if (Array.isArray(cacheKey)) {
+    return cacheKey.map((key) => (hashKey ? `${hashKey}:${key}` : key));
+  }
 
   return hashKey ? `${hashKey}:${cacheKey}` : cacheKey;
 };

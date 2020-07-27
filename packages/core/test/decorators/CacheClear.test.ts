@@ -51,7 +51,6 @@ describe('CacheClear Decorator Tests', () => {
   it('should clear a cached key when a CacheClear-decorated method is called', async () => {
     class TestClass {
       public aProp: string = 'aVal!';
-
       static setCacheKey = (args: any[]) => args[0];
 
       @Cacheable({ cacheKey: TestClass.setCacheKey })
@@ -75,5 +74,53 @@ describe('CacheClear Decorator Tests', () => {
 
     expect(delSpy).toHaveBeenCalledTimes(1);
     expect(getSpy).toHaveBeenCalledTimes(2);
+  });
+
+  it('should clear multiple cache keys', async () => {
+    const mockGetTodos = jest.fn();
+    const mockGetTodo = jest.fn();
+
+    class TestClass {
+      public todos: any[] = [
+        { id: '1', note: 'Todo' },
+        { id: '2', note: 'Not todo' },
+      ];
+      static setCacheKey = (args: any[]) => args[0];
+
+      @Cacheable({ cacheKey: 'todos' })
+      public async getTodos(): Promise<any> {
+        mockGetTodos();
+        return this.todos;
+      }
+
+      @Cacheable({ cacheKey: TestClass.setCacheKey })
+      public async getTodo(id: string): Promise<any> {
+        mockGetTodo();
+        return this.todos.find((todo) => todo.id === id);
+      }
+
+      @CacheClear({ cacheKey: (args: any[]) => ['todos', args[0]] })
+      public async deleteTodo(id: string): Promise<any> {
+        this.todos = this.todos.filter((todo) => todo.id !== id);
+      }
+    }
+
+    const getSpy = jest.spyOn(cacheManager.client!, 'get');
+    const delSpy = jest.spyOn(cacheManager.client!, 'del');
+    const testInstance = new TestClass();
+
+    await testInstance.getTodos();
+    await testInstance.getTodo('1');
+    await testInstance.deleteTodo('1');
+    const postDeleteTodo = await testInstance.getTodo('1');
+    await testInstance.getTodos();
+    await testInstance.deleteTodo('1');
+
+    expect(postDeleteTodo).toBeFalsy();
+
+    expect(delSpy).toHaveBeenCalledWith(['todos', '1']);
+    expect(getSpy).toHaveBeenCalledTimes(4);
+    expect(mockGetTodos).toHaveBeenCalledTimes(2);
+    expect(mockGetTodo).toHaveBeenCalledTimes(2);
   });
 });

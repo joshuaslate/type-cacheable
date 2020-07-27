@@ -1,9 +1,10 @@
 import { CacheKeyBuilder } from './CacheKeyBuilder';
 import { CacheClient } from './CacheClient';
 import { NoOpDeterminer } from './NoOpDeterminer';
+import { CacheKeyDeleteBuilder } from './CacheKeyDeleteBuilder';
 
 export interface CacheClearOptions {
-  cacheKey?: string | CacheKeyBuilder;
+  cacheKey?: string | string[] | CacheKeyDeleteBuilder;
   hashKey?: string | CacheKeyBuilder;
   client?: CacheClient;
   fallbackClient?: CacheClient;
