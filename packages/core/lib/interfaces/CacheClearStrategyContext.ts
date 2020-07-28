@@ -1,13 +1,12 @@
 import { CacheClient } from '.';
 
-export interface CacheStrategyContext {
+export interface CacheClearStrategyContext {
   debug: boolean | undefined;
   originalMethod: Function;
   originalMethodScope: any;
   originalMethodArgs: any[];
   client: CacheClient;
   fallbackClient: CacheClient | null;
-  forceUpdate?: boolean;
-  key: string;
-  ttl: number | undefined;
+  isPattern?: boolean;
+  key: string | string[];
 }

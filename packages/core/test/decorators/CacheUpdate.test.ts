@@ -1,17 +1,15 @@
-import { Cacheable } from '../../lib/decorators';
+import { CacheUpdate, Cacheable } from '../../lib/decorators';
 import cacheManager, { CacheStrategy, CacheStrategyContext, CacheClient } from '../../lib';
 import { useMockAdapter } from '../test-utils';
 
-describe('Cacheable Decorator Tests', () => {
+describe('CacheUpdate Decorator Tests', () => {
   beforeEach(() => {
     useMockAdapter();
   });
 
   it('should not throw an error if the client fails', async () => {
     class TestClass {
-      public aProp: string = 'aVal!';
-
-      @Cacheable()
+      @CacheUpdate()
       public async hello(): Promise<any> {
         return 'world';
       }
@@ -38,28 +36,61 @@ describe('Cacheable Decorator Tests', () => {
 
   it('should attempt to get and set the cache on an initial call to a decorated method, only get on subsequent calls', async () => {
     class TestClass {
-      public aProp: string = 'aVal!';
+      private values = [1, 2, 3, 4, 5];
 
-      @Cacheable()
-      public async hello(): Promise<any> {
-        return 'world';
+      @Cacheable({ cacheKey: 'values' })
+      public getValues(): Promise<number[]> {
+        return Promise.resolve(this.values);
+      }
+
+      @Cacheable({ cacheKey: (args) => args[0] })
+      public getValue(id: number): Promise<number | undefined> {
+        return Promise.resolve(this.values.find((num) => num === id));
+      }
+
+      @CacheUpdate({ cacheKey: (args) => args[0], cacheKeysToClear: (args) => ['values', args[0]] })
+      public async incrementValue(id: number): Promise<number> {
+        let newValue = 0;
+
+        this.values = this.values.map((value) => {
+          if (value === id) {
+            newValue = value + 1;
+            return newValue;
+          }
+
+          return value;
+        });
+
+        return newValue;
       }
     }
 
     const getSpy = jest.spyOn(cacheManager.client!, 'get');
     const setSpy = jest.spyOn(cacheManager.client!, 'set');
     const testInstance = new TestClass();
-    await testInstance.hello();
+    const freshArrayResult = await testInstance.getValues();
+    expect(freshArrayResult).toEqual([1, 2, 3, 4, 5]);
+    const freshResult = await testInstance.getValue(2);
+    expect(freshResult).toBe(2);
 
-    // Because the cache hasn't been filled yet, a get and set should be called once each
-    expect(getSpy).toHaveBeenCalledTimes(1);
-    expect(setSpy).toHaveBeenCalledTimes(1);
+    // Because the cache hasn't been filled yet, a get and set should be called twice each (once per cached decorator call)
+    expect(getSpy).toHaveBeenCalledTimes(2);
+    expect(setSpy).toHaveBeenCalledTimes(2);
 
     // With the same arguments, the setSpy should not be called again, but the getSpy should
-    await testInstance.hello();
+    const cachedResult = await testInstance.getValue(2);
+    expect(cachedResult).toBe(2);
 
-    expect(getSpy).toHaveBeenCalledTimes(2);
-    expect(setSpy).toHaveBeenCalledTimes(1);
+    expect(getSpy).toHaveBeenCalledTimes(3);
+    expect(setSpy).toHaveBeenCalledTimes(2);
+
+    const incrementedResult = await testInstance.incrementValue(2);
+    const incrementedArrayResult = await testInstance.getValues();
+    expect(incrementedResult).toBe(3);
+    expect(incrementedArrayResult).toEqual([1, 3, 3, 4, 5]);
+
+    expect(getSpy).toHaveBeenCalledTimes(4);
+    expect(setSpy).toHaveBeenCalledTimes(4);
   });
 
   it('should use the provided strategy', async () => {
@@ -74,9 +105,7 @@ describe('Cacheable Decorator Tests', () => {
     }
 
     class TestClass {
-      public aProp: string = 'aVal!';
-
-      @Cacheable({ strategy: new CustomStrategy() })
+      @CacheUpdate({ strategy: new CustomStrategy() })
       public async hello(): Promise<any> {
         return 'world';
       }
@@ -90,7 +119,6 @@ describe('Cacheable Decorator Tests', () => {
 
   it('should use the fallback cache if provided', async () => {
     const inMemMockSet = jest.fn();
-    const inMemMockGet = jest.fn();
 
     class FailingPrimaryClient implements CacheClient {
       get(cacheKey: string): Promise<any> {
@@ -114,7 +142,6 @@ describe('Cacheable Decorator Tests', () => {
       private cache = new Map<string, any>();
 
       get(cacheKey: string): Promise<any> {
-        inMemMockGet();
         return this.cache.get(cacheKey);
       }
       set(cacheKey: string, value: any, ttl?: number): Promise<any> {
@@ -142,9 +169,7 @@ describe('Cacheable Decorator Tests', () => {
     }
 
     class TestClass {
-      public aProp: string = 'aVal!';
-
-      @Cacheable({ client: new FailingPrimaryClient(), fallbackClient: new InMemClient() })
+      @CacheUpdate({ client: new FailingPrimaryClient(), fallbackClient: new InMemClient() })
       public async hello(): Promise<any> {
         return 'world';
       }
@@ -157,7 +182,6 @@ describe('Cacheable Decorator Tests', () => {
     expect(result).toEqual('world');
 
     const result2 = await testInstance.hello();
-    expect(inMemMockGet).toHaveBeenCalled();
     expect(result2).toEqual('world');
   });
 });
