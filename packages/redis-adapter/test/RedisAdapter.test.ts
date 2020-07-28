@@ -5,13 +5,13 @@ import { RedisAdapter } from '../lib';
 let client: Redis.RedisClient;
 let redisAdapter: RedisAdapter;
 
-const keyName = 'aSimpleKey';
-const simpleKeyKeys = 'anotherSimpleKey';
-const compoundKey = 'aCompound:key';
-const compoundKeyKeys = 'aCompound:keys';
-const simpleValue = 'aSimpleValue';
-const objectValue = { myKeyOne: 'myValOne' };
-const arrayValue = ['element1', 2, { complex: 'element' }];
+const keyName = 'aSimpleKeyForRedis';
+const simpleKeyKeys = 'anotherSimpleKeyForRedis';
+const compoundKey = 'aCompound:keyForRedis';
+const compoundKeyKeys = 'aCompound:keysForRedis';
+const simpleValue = 'aSimpleValueForRedis';
+const objectValue = { myKeyOne: 'myValOneForRedis' };
+const arrayValue = ['element1', 2, { complex: 'elementForRedis' }];
 
 describe('RedisAdapter Tests', () => {
   beforeAll(async () => {

@@ -43,7 +43,7 @@ client.setOptions(<CacheManagerOptions>{
 });
 ```
 
-Currently, there are two decorators available in this library: `@Cacheable` and `@CacheClear`. Here is a sample of how they can be used:
+Currently, there are three decorators available in this library: `@Cacheable`, `@CacheClear`, and `@CacheUpdate`. Here is a sample of how they can be used:
 
 ```ts
 import * as Redis from 'redis';
@@ -52,14 +52,51 @@ import { Cacheable, CacheClear } from '@type-cacheable/core';
 const userClient = Redis.createClient();
 
 class TestClass {
-  public aProp: string = 'aVal!';
-
+  private values: any[] = [1, 2, 3, 4, 5];
   private userRepository: Repository<User>;
 
   // This static method is being called to generate a cache key based on the given arguments.
   // Not featured here: the second argument, context, which is the instance the method
   // was called on.
   static setCacheKey = (args: any[]) => args[0];
+
+  @Cacheable({ cacheKey: 'values' })
+  public getValues(): Promise<number[]> {
+    return Promise.resolve(this.values);
+  }
+
+  @Cacheable({ cacheKey: TestClass.setCacheKey })
+  public getValue(id: number): Promise<number | undefined> {
+    return Promise.resolve(this.values.find((num) => num === id));
+  }
+
+  // If incrementValue were called with id '1', this.values would be updated and the cached values for
+  // the 'values' key would be cleared and the value at the cache key '1' would be updated to the return
+  // value of this method call
+  @CacheUpdate({ cacheKey: TestClass.setCacheKey, cacheKeysToClear: (args) => ['values'] })
+  public async incrementValue(id: number): Promise<number> {
+    let newValue = 0;
+
+    this.values = this.values.map((value) => {
+      if (value === id) {
+        newValue = value + 1;
+        return newValue;
+      }
+
+      return value;
+    });
+
+    return newValue;
+  }
+
+  @Cacheable({
+    cacheKey: 'users',
+    client: userClient,
+    ttlSeconds: 86400,
+  })
+  public async getUserById(id: string): Promise<any> {
+    return this.userRepository.findOne(id);
+  }
 
   // If getUserById('123') were called, the return value would be cached
   // in a hash under user:123, which would expire in 86400 seconds
@@ -101,7 +138,7 @@ interface CacheOptions {
   fallbackClient?: CacheClient; // If you would prefer use a different cache client than passed into the adapter as a fallback, set that here
   noop?: boolean; // Allows for consuming libraries to conditionally disable caching. Set this to true to disable caching for some reason.
   ttlSeconds?: number | TTLBuilder; // Number of seconds the cached key should live for
-  strategy?: CacheStrategy; // Strategy by which cached values and computed values are handled
+  strategy?: CacheStrategy | CacheStrategyBuilder; // Strategy by which cached values and computed values are handled
 }
 ```
 
@@ -117,6 +154,26 @@ interface CacheClearOptions {
   fallbackClient?: CacheClient; // If you would prefer use a different cache client than passed into the adapter as a fallback, set that here
   noop?: boolean; // Allows for consuming libraries to conditionally disable caching. Set this to true to disable caching for some reason.
   isPattern?: boolean; // Will remove pattern matched keys from cache (ie: a 'foo' cacheKey will remove ['foolish', 'foo-bar'] matched keys assuming they exist)
+  strategy?: CacheClearStrategy | CacheClearStrategyBuilder; // Strategy by which cached values are cleared
+}
+```
+
+#### `@CacheUpdate`
+
+The `@CacheUpdate` decorator first runs the decorated method. If that method does not throw, `@CacheUpdate` will set the given key(s) in the cache, then clear any keys listed under `cacheKeysToClear`. It takes `CacheUpdateOptions` for an argument. The available options are:
+
+```ts
+interface CacheUpdateOptions {
+  cacheKey?: string | string[] | CacheKeyDeleteBuilder; // Individual key the result of the decorated method should be stored on
+  hashKey?: string | CacheKeyBuilder; // Set name the result of the decorated method should be stored on (for hashes)
+  cacheKeysToClear?: string | string[] | CacheKeyDeleteBuilder; // Keys to be cleared from cache after a successful method call
+  client?: CacheClient; // If you would prefer use a different cache client than passed into the adapter, set that here
+  fallbackClient?: CacheClient; // If you would prefer use a different cache client than passed into the adapter as a fallback, set that here
+  noop?: boolean; // Allows for consuming libraries to conditionally disable caching. Set this to true to disable caching for some reason.
+  isPattern?: boolean; // Will remove pattern matched keys from cache (ie: a 'foo' cacheKey will remove ['foolish', 'foo-bar'] matched keys assuming they exist)
+  strategy?: CacheStrategy | CacheStrategyBuilder; // Strategy by which cached values and computed values are handled
+  clearStrategy?: CacheClearStrategy | CacheClearStrategyBuilder; // Strategy by which cached values are cleared
+  clearAndUpdateInParallel?: boolean; // Whether or not to clear and update at the same time (can improve performance, but could create inconsistency)
 }
 ```
 
@@ -148,8 +205,7 @@ If you need more details you can check the implementation of the default strater
 
 ### Using Adapter directly
 
-It can happen that you need to read/write data from cache directly, without decorators.
-To achieve this you can use `cacheManager`. For example:
+It could be the case that you need to read/write data from the cache directly, without decorators. To achieve this you can use `cacheManager`. For example:
 
 ```ts
 import cacheManager from '@type-cacheable/core';

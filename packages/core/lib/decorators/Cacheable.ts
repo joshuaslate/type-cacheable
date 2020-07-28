@@ -65,9 +65,9 @@ export function Cacheable(options?: CacheOptions) {
 
         return strategy.handle({
           debug: cacheManager.options.debug,
-          originalFunction: originalMethod,
-          originalFunctionScope: this,
-          originalFunctionArgs: args,
+          originalMethod,
+          originalMethodScope: this,
+          originalMethodArgs: args,
           client,
           fallbackClient,
           key: finalKey as string,
