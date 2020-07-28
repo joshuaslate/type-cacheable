@@ -148,7 +148,7 @@ The `@CacheClear` decorator first runs the decorated method. If that method does
 
 ```ts
 interface CacheClearOptions {
-  cacheKey?: string | string[] | CacheKeyDeleteBuilder; // Individual key the result of the decorated method should be stored on
+  cacheKey?: string | string[] | CacheKeyDeleteBuilder; // Individual key the result of the decorated method should be cleared from
   hashKey?: string | CacheKeyBuilder; // Set name the result of the decorated method should be stored on (for hashes)
   client?: CacheClient; // If you would prefer use a different cache client than passed into the adapter, set that here
   fallbackClient?: CacheClient; // If you would prefer use a different cache client than passed into the adapter as a fallback, set that here
@@ -164,7 +164,7 @@ The `@CacheUpdate` decorator first runs the decorated method. If that method doe
 
 ```ts
 interface CacheUpdateOptions {
-  cacheKey?: string | string[] | CacheKeyDeleteBuilder; // Individual key the result of the decorated method should be stored on
+  cacheKey?: string | CacheKeyBuilder; // Individual key the result of the decorated method should be stored on
   hashKey?: string | CacheKeyBuilder; // Set name the result of the decorated method should be stored on (for hashes)
   cacheKeysToClear?: string | string[] | CacheKeyDeleteBuilder; // Keys to be cleared from cache after a successful method call
   client?: CacheClient; // If you would prefer use a different cache client than passed into the adapter, set that here
@@ -203,7 +203,7 @@ export class MyCustomStrategy implements CacheStrategy {
 
 If you need more details you can check the implementation of the default stratergy [here](./packages/core/lib/strategies/DefaultStrategy.ts).
 
-### Using Adapter directly
+### Using the CacheManager Directly
 
 It could be the case that you need to read/write data from the cache directly, without decorators. To achieve this you can use `cacheManager`. For example:
 
