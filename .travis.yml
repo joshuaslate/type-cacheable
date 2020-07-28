@@ -5,5 +5,8 @@ node:js:
   - stable
 install:
   - npm install
+  - npm install codecov -g
 script:
   - npm test
+after_success:
+  - codecov
