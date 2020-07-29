@@ -154,6 +154,16 @@ describe('RedisAdapter Tests', () => {
     });
   });
 
+  describe('Delete tests', () => {
+    it('should delete a set value', async (done) => {
+      client.set(simpleKeyKeys, simpleValue, async () => {
+        await redisAdapter.del(keyName);
+        expect(await redisAdapter.get(keyName)).toBeFalsy();
+        done();
+      });
+    });
+  });
+
   describe('integration', () => {
     describe('@Cacheable decorator', () => {
       const getTestInstance = () => {

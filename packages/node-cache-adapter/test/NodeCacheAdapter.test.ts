@@ -92,6 +92,15 @@ describe('NodeCacheAdapter Tests', () => {
     });
   });
 
+  describe('Delete tests', () => {
+    it('should delete a set value', async () => {
+      client.set<string>(keyName, simpleValue);
+      await nodeCacheAdapter.del(keyName);
+
+      expect(client.get(keyName)).toBeFalsy();
+    });
+  });
+
   describe('integration', () => {
     describe('@Cacheable decorator', () => {
       const getTestInstance = () => {
