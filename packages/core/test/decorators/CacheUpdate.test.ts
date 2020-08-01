@@ -1,5 +1,11 @@
 import { CacheUpdate, Cacheable } from '../../lib/decorators';
-import cacheManager, { CacheStrategy, CacheStrategyContext, CacheClient } from '../../lib';
+import cacheManager, {
+  CacheStrategy,
+  CacheStrategyContext,
+  CacheClient,
+  CacheUpdateStrategy,
+  CacheUpdateStrategyContext,
+} from '../../lib';
 import { useMockAdapter } from '../test-utils';
 
 describe('CacheUpdate Decorator Tests', () => {
@@ -48,7 +54,10 @@ describe('CacheUpdate Decorator Tests', () => {
         return Promise.resolve(this.values.find((num) => num === id));
       }
 
-      @CacheUpdate({ cacheKey: (args) => args[0], cacheKeysToClear: (args) => ['values', args[0]] })
+      @CacheUpdate({
+        cacheKey: (args: any[]) => args[0],
+        cacheKeysToClear: (args) => ['values', args[0]],
+      })
       public async incrementValue(id: number): Promise<number> {
         let newValue = 0;
 
@@ -93,14 +102,48 @@ describe('CacheUpdate Decorator Tests', () => {
     expect(setSpy).toHaveBeenCalledTimes(4);
   });
 
+  it('should use the result to set the final cacheKey', async () => {
+    const mockGetUser = jest.fn();
+
+    class TestClass {
+      private lastCreatedId = 0;
+      private users = [];
+
+      @Cacheable({ cacheKey: 'users' })
+      public getUsers(): Promise<any[]> {
+        return Promise.resolve(this.users);
+      }
+
+      @Cacheable({ cacheKey: (args) => args[0] })
+      public getUser(id: number): Promise<any> {
+        mockGetUser();
+        return Promise.resolve(this.users.find((user: any) => user.id === id));
+      }
+
+      @CacheUpdate({
+        cacheKey: (_, __, result) => result.id,
+        cacheKeysToClear: (args) => ['users', args[0]],
+      })
+      public async createUser(user: any): Promise<any> {
+        const newUser = { id: Math.random() * 100, ...user };
+        this.lastCreatedId = newUser.id;
+
+        return newUser;
+      }
+    }
+
+    const testInstance = new TestClass();
+    const createdUser = await testInstance.createUser({ name: 'Joe', email: 'fake@fakeemail.com' });
+    const fetchedUser = await testInstance.getUser(createdUser.id);
+
+    expect(fetchedUser).toEqual(createdUser);
+    expect(mockGetUser).not.toHaveBeenCalled();
+  });
+
   it('should use the provided strategy', async () => {
-    class CustomStrategy implements CacheStrategy {
-      async handle(context: CacheStrategyContext): Promise<any> {
-        const result = await context.originalMethod.apply(
-          context.originalMethodScope,
-          context.originalMethodArgs,
-        );
-        return `hello ${result}`;
+    class CustomStrategy implements CacheUpdateStrategy {
+      async handle(context: CacheUpdateStrategyContext): Promise<any> {
+        return `hello ${context.result}`;
       }
     }
 
