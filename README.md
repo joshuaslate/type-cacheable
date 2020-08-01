@@ -74,7 +74,10 @@ class TestClass {
   // If incrementValue were called with id '1', this.values would be updated and the cached values for
   // the 'values' key would be cleared and the value at the cache key '1' would be updated to the return
   // value of this method call
-  @CacheUpdate({ cacheKey: TestClass.setCacheKey, cacheKeysToClear: (args) => ['values'] })
+  @CacheUpdate({
+    cacheKey: (args, context, returnValue) => args[0],
+    cacheKeysToClear: (args) => ['values'],
+  })
   public async incrementValue(id: number): Promise<number> {
     let newValue = 0;
 
@@ -165,14 +168,14 @@ The `@CacheUpdate` decorator first runs the decorated method. If that method doe
 
 ```ts
 interface CacheUpdateOptions {
-  cacheKey?: string | CacheKeyBuilder; // Individual key the result of the decorated method should be stored on
-  hashKey?: string | CacheKeyBuilder; // Set name the result of the decorated method should be stored on (for hashes)
+  cacheKey?: string | CacheKeyBuilder | PostRunKeyBuilder; // Individual key the result of the decorated method should be stored on
+  hashKey?: string | CacheKeyBuilder | PostRunKeyBuilder; // Set name the result of the decorated method should be stored on (for hashes)
   cacheKeysToClear?: string | string[] | CacheKeyDeleteBuilder; // Keys to be cleared from cache after a successful method call
   client?: CacheClient; // If you would prefer use a different cache client than passed into the adapter, set that here
   fallbackClient?: CacheClient; // If you would prefer use a different cache client than passed into the adapter as a fallback, set that here
   noop?: boolean; // Allows for consuming libraries to conditionally disable caching. Set this to true to disable caching for some reason.
   isPattern?: boolean; // Will remove pattern matched keys from cache (ie: a 'foo' cacheKey will remove ['foolish', 'foo-bar'] matched keys assuming they exist)
-  strategy?: CacheStrategy | CacheStrategyBuilder; // Strategy by which cached values and computed values are handled
+  strategy?: CacheUpdateStrategy | CacheUpdateStrategyBuilder; // Strategy by which cached values and computed values are handled
   clearStrategy?: CacheClearStrategy | CacheClearStrategyBuilder; // Strategy by which cached values are cleared
   clearAndUpdateInParallel?: boolean; // Whether or not to clear and update at the same time (can improve performance, but could create inconsistency)
 }

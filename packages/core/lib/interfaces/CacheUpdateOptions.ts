@@ -2,8 +2,6 @@ import { CacheKeyBuilder } from './CacheKeyBuilder';
 import { CacheClient } from './CacheClient';
 import { NoOpDeterminer } from './NoOpDeterminer';
 import { TTLBuilder } from './TTLBuilder';
-import { CacheStrategy } from './CacheStrategy';
-import { CacheStrategyBuilder } from './CacheStrategyBuilder';
 import { CacheKeyDeleteBuilder } from './CacheKeyDeleteBuilder';
 import { CacheClearStrategy } from './CacheClearStrategy';
 import { CacheClearStrategyBuilder } from './CacheClearStrategyBuilder';
