@@ -1,6 +1,7 @@
 import { CacheClient, CacheManagerOptions } from './interfaces';
 import { DefaultStrategy } from './strategies';
 import { DefaultClearStrategy } from './strategies/DefaultClearStrategy';
+import { DefaultUpdateStrategy } from './strategies/DefaultUpdateStrategy';
 
 export default class CacheManager {
   public client: CacheClient | null = null;
@@ -11,6 +12,7 @@ export default class CacheManager {
     debug: false,
     clearStrategy: new DefaultClearStrategy(),
     strategy: new DefaultStrategy(),
+    updateStrategy: new DefaultUpdateStrategy(),
   };
 
   public setClient(client: CacheClient): void {

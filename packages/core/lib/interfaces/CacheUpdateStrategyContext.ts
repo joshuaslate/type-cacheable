@@ -1,6 +1,6 @@
 import { CacheClient } from '.';
 
-export interface CacheStrategyContext {
+export interface CacheUpdateStrategyContext {
   debug: boolean | undefined;
   originalMethod: Function;
   originalMethodScope: any;
@@ -9,4 +9,5 @@ export interface CacheStrategyContext {
   fallbackClient: CacheClient | null;
   key: string;
   ttl: number | undefined;
+  result?: any;
 }

@@ -1,9 +1,11 @@
 import { createHash } from 'crypto';
 import * as serialize from 'serialize-javascript';
 import { CacheKeyBuilder, CacheKeyDeleteBuilder } from '../interfaces';
+import { PostRunKeyBuilder } from '../interfaces/PostRunKeyBuilder';
 
 export type CacheClearKey = string | string[] | CacheKeyDeleteBuilder;
 export type CacheableKey = string | CacheKeyBuilder;
+export type CacheUpdateKey = string | CacheKeyBuilder | PostRunKeyBuilder;
 
 /**
  * extractKey - If data should be stored in a hash, this would be the name of the hash
@@ -15,13 +17,14 @@ export type CacheableKey = string | CacheKeyBuilder;
  * @returns {String}
  */
 export const extractKey = (
-  passedInKey: string | string[] | CacheKeyBuilder | CacheKeyDeleteBuilder = '',
+  passedInKey: string | string[] | CacheKeyBuilder | CacheKeyDeleteBuilder | PostRunKeyBuilder = '',
   args: any[],
   context?: any,
+  returnValue?: any,
 ): string | string[] => {
   // If the user passed in a cacheKey, use that. If it's a string, use it directly.
   // In the case of a function, we'll use the result of the called function.
-  return passedInKey instanceof Function ? passedInKey(args, context) : passedInKey;
+  return passedInKey instanceof Function ? passedInKey(args, context, returnValue) : passedInKey;
 };
 
 /**
@@ -37,15 +40,16 @@ export const extractKey = (
  * @returns {String}
  */
 export const getCacheKey = (
-  passedInKey: string | string[] | CacheKeyBuilder | CacheKeyDeleteBuilder = '',
+  passedInKey: string | string[] | CacheKeyBuilder | CacheKeyDeleteBuilder | PostRunKeyBuilder = '',
   methodName: string,
   args: any[],
   context?: any,
+  returnValue?: any,
 ): string | string[] => {
   // If the user passed in a cacheKey, use that. If it's a string, use it directly.
   // In the case of a function, we'll use the result of the called function.
   if (passedInKey) {
-    return extractKey(passedInKey, args, context);
+    return extractKey(passedInKey, args, context, returnValue);
   }
 
   // Fall back to a default value (md5 hash of serialized arguments and context,
@@ -61,14 +65,15 @@ export const getCacheKey = (
 };
 
 export const getFinalKey = (
-  passedCacheKey: CacheableKey | CacheClearKey = '',
-  passedHashKey: string | CacheKeyBuilder = '',
+  passedCacheKey: CacheableKey | CacheClearKey | PostRunKeyBuilder = '',
+  passedHashKey: string | CacheKeyBuilder | PostRunKeyBuilder = '',
   methodName: string,
   args: any[],
   context?: any,
+  returnValue?: any,
 ): string | string[] => {
-  const cacheKey = getCacheKey(passedCacheKey, methodName, args, context);
-  const hashKey = extractKey(passedHashKey, args, context) as string;
+  const cacheKey = getCacheKey(passedCacheKey, methodName, args, context, returnValue);
+  const hashKey = extractKey(passedHashKey, args, context, returnValue) as string;
 
   if (Array.isArray(cacheKey)) {
     return cacheKey.map((key) => (hashKey ? `${hashKey}:${key}` : key));
