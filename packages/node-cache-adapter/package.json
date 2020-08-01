@@ -1,6 +1,6 @@
 {
   "name": "@type-cacheable/node-cache-adapter",
-  "version": "6.2.0",
+  "version": "7.0.0",
   "description": "Adapter for using node-cache with type-cacheable",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -56,6 +56,6 @@
     "node-cache": "^5.0.0"
   },
   "dependencies": {
-    "@type-cacheable/core": "^6.2.0"
+    "@type-cacheable/core": "^7.0.0"
   }
 }
