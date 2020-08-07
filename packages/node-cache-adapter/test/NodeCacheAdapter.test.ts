@@ -1,5 +1,5 @@
 import * as NodeCache from 'node-cache';
-import { Cacheable } from '@type-cacheable/core/lib';
+import { Cacheable } from '@type-cacheable/core';
 import { NodeCacheAdapter } from '../lib';
 
 let client: NodeCache;
@@ -111,35 +111,55 @@ describe('NodeCacheAdapter Tests', () => {
         const mockGetObjectValueImplementation = jest.fn();
 
         class TestClass {
-          @Cacheable({ client: nodeCacheAdapter, hashKey: 'user', cacheKey: (x) => x[0] })
+          @Cacheable({
+            client: nodeCacheAdapter,
+            hashKey: 'user',
+            cacheKey: (x) => x[0],
+          })
           async getId(id: string): Promise<string> {
             mockGetIdImplementation();
 
             return id;
           }
 
-          @Cacheable({ client: nodeCacheAdapter, hashKey: 'userInt', cacheKey: (x) => x[0] })
+          @Cacheable({
+            client: nodeCacheAdapter,
+            hashKey: 'userInt',
+            cacheKey: (x) => x[0],
+          })
           async getIntId(id: number): Promise<number> {
             mockGetIntIdImplementation();
 
             return id;
           }
 
-          @Cacheable({ client: nodeCacheAdapter, hashKey: 'boolVal', cacheKey: (x) => x[0] })
+          @Cacheable({
+            client: nodeCacheAdapter,
+            hashKey: 'boolVal',
+            cacheKey: (x) => x[0],
+          })
           async getBoolValue(value: boolean): Promise<boolean> {
             mockGetBooleanValueImplementation();
 
             return value;
           }
 
-          @Cacheable({ client: nodeCacheAdapter, hashKey: 'arrVal', cacheKey: (x) => x[0] })
+          @Cacheable({
+            client: nodeCacheAdapter,
+            hashKey: 'arrVal',
+            cacheKey: (x) => x[0],
+          })
           async getArrayValue(value: string): Promise<any[]> {
             mockGetArrayValueImplementation();
 
             return ['true', true, 'false', false, 1, '1'];
           }
 
-          @Cacheable({ client: nodeCacheAdapter, hashKey: 'objVal', cacheKey: (x) => x[0] })
+          @Cacheable({
+            client: nodeCacheAdapter,
+            hashKey: 'objVal',
+            cacheKey: (x) => x[0],
+          })
           async getObjectValue(value: string): Promise<any> {
             mockGetObjectValueImplementation();
 
@@ -184,7 +204,10 @@ describe('NodeCacheAdapter Tests', () => {
       });
 
       it('should properly set, and get, cached boolean values', async () => {
-        const { testClass, mockGetBooleanValueImplementation } = getTestInstance();
+        const {
+          testClass,
+          mockGetBooleanValueImplementation,
+        } = getTestInstance();
         const getBooleanValueResult1 = await testClass.getBoolValue(true);
         expect(getBooleanValueResult1).toBe(true);
         expect(mockGetBooleanValueImplementation).toHaveBeenCalled();
@@ -196,10 +219,20 @@ describe('NodeCacheAdapter Tests', () => {
       });
 
       it('should properly set, and get, cached array values', async () => {
-        const { testClass, mockGetArrayValueImplementation } = getTestInstance();
+        const {
+          testClass,
+          mockGetArrayValueImplementation,
+        } = getTestInstance();
         const getArrayValueResult1 = await testClass.getArrayValue('test');
         expect(mockGetArrayValueImplementation).toHaveBeenCalled();
-        expect(getArrayValueResult1).toEqual(['true', true, 'false', false, 1, '1']);
+        expect(getArrayValueResult1).toEqual([
+          'true',
+          true,
+          'false',
+          false,
+          1,
+          '1',
+        ]);
         mockGetArrayValueImplementation.mockClear();
 
         const getArrayValueResult2 = await testClass.getArrayValue('test');
@@ -208,7 +241,10 @@ describe('NodeCacheAdapter Tests', () => {
       });
 
       it('should properly set, and get, cached object values', async () => {
-        const { testClass, mockGetObjectValueImplementation } = getTestInstance();
+        const {
+          testClass,
+          mockGetObjectValueImplementation,
+        } = getTestInstance();
         const getObjectValueResult1 = await testClass.getObjectValue('test');
         expect(mockGetObjectValueImplementation).toHaveBeenCalled();
         expect(getObjectValueResult1).toEqual({
