@@ -123,4 +123,34 @@ describe('CacheClear Decorator Tests', () => {
     expect(mockGetTodos).toHaveBeenCalledTimes(2);
     expect(mockGetTodo).toHaveBeenCalledTimes(2);
   });
+
+  it('should clear a full hash when a hashKey is provided, but no cacheKey is', async () => {
+    class TestClass {
+      public todos: any[] = [
+        { id: '1', note: 'Todo' },
+        { id: '2', note: 'Not todo' },
+      ];
+      static setCacheKey = (args: any[]) => args[0];
+
+      @Cacheable({ hashKey: 'todo', cacheKey: TestClass.setCacheKey })
+      public async getTodo(id: string): Promise<any> {
+        return this.todos.find((todo) => todo.id === id);
+      }
+
+      @CacheClear({ hashKey: 'todo' })
+      public async deleteTodo(id: string): Promise<any> {
+        this.todos = this.todos.filter((todo) => todo.id !== id);
+      }
+    }
+
+    const testInstance = new TestClass();
+    await testInstance.getTodo('1');
+    await testInstance.getTodo('2');
+
+    expect(await cacheManager.client?.keys('')).toHaveLength(2);
+
+    await testInstance.deleteTodo('1');
+
+    expect(await cacheManager.client?.keys('')).toHaveLength(0);
+  });
 });

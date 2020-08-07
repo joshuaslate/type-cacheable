@@ -7,6 +7,13 @@ export class NodeCacheAdapter implements CacheClient {
 
   constructor(nodeCacheClient: NodeCache) {
     this.nodeCacheClient = nodeCacheClient;
+
+    this.get = this.get.bind(this);
+    this.del = this.del.bind(this);
+    this.delHash = this.delHash.bind(this);
+    this.getClientTTL = this.getClientTTL.bind(this);
+    this.keys = this.keys.bind(this);
+    this.set = this.set.bind(this);
   }
 
   public getClientTTL(): number {
@@ -42,14 +49,23 @@ export class NodeCacheAdapter implements CacheClient {
   public async keys(pattern: string): Promise<string[]> {
     const allKeys = this.nodeCacheClient.keys();
     const regExp = new RegExp(pattern, 'g');
-    let matchedKeys = [];
+    const matchedKeys = [];
 
-    for (let key of allKeys) {
+    for (const key of allKeys) {
       if (Array.isArray(key.match(regExp))) {
         matchedKeys.push(key);
       }
     }
+
     return matchedKeys;
+  }
+
+  public async delHash(hashKeyOrKeys: string | string[]): Promise<any> {
+    const finalDeleteKeys = Array.isArray(hashKeyOrKeys) ? hashKeyOrKeys : [hashKeyOrKeys];
+    const deletePromises = finalDeleteKeys.map((key) => this.keys(key).then(this.del));
+
+    await Promise.all(deletePromises);
+    return;
   }
 }
 

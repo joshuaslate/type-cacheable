@@ -1,8 +1,9 @@
 {
-  "name": "@type-cacheable/core",
+  "name": "@type-cacheable/lru-cache-adapter",
   "version": "8.0.1",
-  "description": "TypeScript-based caching decorators",
+  "description": "Adapter for using lru-cache with type-cacheable",
   "main": "dist/index.js",
+  "module": "./index.ts",
   "types": "dist/index.d.ts",
   "files": [
     "dist/**/*"
@@ -36,7 +37,8 @@
   },
   "keywords": [
     "cache",
-    "typescript"
+    "typescript",
+    "lru-cache"
   ],
   "author": "Joshua Slate",
   "license": "MIT",
@@ -46,13 +48,14 @@
   "homepage": "https://github.com/joshuaslate/type-cacheable#readme",
   "devDependencies": {
     "@types/jest": "^26.0.0",
-    "@types/node": "^14.0.1",
-    "@types/serialize-javascript": "^4.0.0",
-    "jest": "^25.1.0",
-    "ts-jest": "^25.0.0",
+    "@types/lru-cache": "^5.1.0",
+    "lru-cache": "^6.0.0",
     "typescript": "^3.8.3"
   },
+  "peerDependencies": {
+    "lru-cache": "^6.0.0"
+  },
   "dependencies": {
-    "serialize-javascript": "^4.0.0"
+    "@type-cacheable/core": "^8.0.1"
   }
 }

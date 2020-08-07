@@ -1,5 +1,5 @@
 import * as IoRedis from 'ioredis';
-import { Cacheable } from '@type-cacheable/core';
+import { Cacheable } from '@type-cacheable/core/lib';
 import { IoRedisAdapter } from '../lib';
 
 let client: IoRedis.Redis;
@@ -60,11 +60,10 @@ describe('IoRedisAdapter Tests', () => {
       const ttl = 50000;
       await ioRedisAdapter.set(compoundKey, objectValue, ttl);
 
-      expect(client.set).toHaveBeenCalledWith(
-        compoundKey,
-        JSON.stringify(objectValue),
-        ['EX', ttl],
-      );
+      expect(client.set).toHaveBeenCalledWith(compoundKey, JSON.stringify(objectValue), [
+        'EX',
+        ttl,
+      ]);
     });
   });
 
@@ -157,6 +156,23 @@ describe('IoRedisAdapter Tests', () => {
     });
   });
 
+  describe('Delete full hash', () => {
+    it('should delete a full hash', async (done) => {
+      const hashKey = compoundKey.split(':')[0];
+
+      client.hmset(compoundKey, objectValue, async () => {
+        const keys = await ioRedisAdapter.keys(`*${hashKey}:*`);
+        expect(keys).toHaveLength(1);
+
+        await ioRedisAdapter.delHash(hashKey);
+
+        const keysPostDelete = await ioRedisAdapter.keys(`*${hashKey}:*`);
+        expect(keysPostDelete).toHaveLength(0);
+        done();
+      });
+    });
+  });
+
   describe('integration', () => {
     describe('@Cacheable decorator', () => {
       const getTestInstance = () => {
@@ -170,7 +186,7 @@ describe('IoRedisAdapter Tests', () => {
           @Cacheable({
             client: ioRedisAdapter,
             hashKey: 'user',
-            cacheKey: (x) => x[0],
+            cacheKey: (x: any) => x[0],
           })
           async getId(id: string): Promise<string> {
             mockGetIdImplementation();
@@ -181,7 +197,7 @@ describe('IoRedisAdapter Tests', () => {
           @Cacheable({
             client: ioRedisAdapter,
             hashKey: 'userInt',
-            cacheKey: (x) => x[0],
+            cacheKey: (x: any) => x[0],
           })
           async getIntId(id: number): Promise<number> {
             mockGetIntIdImplementation();
@@ -192,7 +208,7 @@ describe('IoRedisAdapter Tests', () => {
           @Cacheable({
             client: ioRedisAdapter,
             hashKey: 'boolVal',
-            cacheKey: (x) => x[0],
+            cacheKey: (x: any) => x[0],
           })
           async getBoolValue(value: boolean): Promise<boolean> {
             mockGetBooleanValueImplementation();
@@ -203,7 +219,7 @@ describe('IoRedisAdapter Tests', () => {
           @Cacheable({
             client: ioRedisAdapter,
             hashKey: 'arrVal',
-            cacheKey: (x) => x[0],
+            cacheKey: (x: any) => x[0],
           })
           async getArrayValue(value: string): Promise<any[]> {
             mockGetArrayValueImplementation();
@@ -214,7 +230,7 @@ describe('IoRedisAdapter Tests', () => {
           @Cacheable({
             client: ioRedisAdapter,
             hashKey: 'objVal',
-            cacheKey: (x) => x[0],
+            cacheKey: (x: any) => x[0],
           })
           async getObjectValue(value: string): Promise<any> {
             mockGetObjectValueImplementation();
@@ -260,10 +276,7 @@ describe('IoRedisAdapter Tests', () => {
       });
 
       it('should properly set, and get, cached boolean values', async () => {
-        const {
-          testClass,
-          mockGetBooleanValueImplementation,
-        } = getTestInstance();
+        const { testClass, mockGetBooleanValueImplementation } = getTestInstance();
         const getBooleanValueResult1 = await testClass.getBoolValue(true);
         expect(getBooleanValueResult1).toBe(true);
         expect(mockGetBooleanValueImplementation).toHaveBeenCalled();
@@ -275,20 +288,10 @@ describe('IoRedisAdapter Tests', () => {
       });
 
       it('should properly set, and get, cached array values', async () => {
-        const {
-          testClass,
-          mockGetArrayValueImplementation,
-        } = getTestInstance();
+        const { testClass, mockGetArrayValueImplementation } = getTestInstance();
         const getArrayValueResult1 = await testClass.getArrayValue('test');
         expect(mockGetArrayValueImplementation).toHaveBeenCalled();
-        expect(getArrayValueResult1).toEqual([
-          'true',
-          true,
-          'false',
-          false,
-          1,
-          '1',
-        ]);
+        expect(getArrayValueResult1).toEqual(['true', true, 'false', false, 1, '1']);
         mockGetArrayValueImplementation.mockClear();
 
         const getArrayValueResult2 = await testClass.getArrayValue('test');
@@ -297,10 +300,7 @@ describe('IoRedisAdapter Tests', () => {
       });
 
       it('should properly set, and get, cached object values', async () => {
-        const {
-          testClass,
-          mockGetObjectValueImplementation,
-        } = getTestInstance();
+        const { testClass, mockGetObjectValueImplementation } = getTestInstance();
         const getObjectValueResult1 = await testClass.getObjectValue('test');
         expect(mockGetObjectValueImplementation).toHaveBeenCalled();
         expect(getObjectValueResult1).toEqual({

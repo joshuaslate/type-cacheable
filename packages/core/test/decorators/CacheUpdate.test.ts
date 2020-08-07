@@ -176,6 +176,9 @@ describe('CacheUpdate Decorator Tests', () => {
       keys(pattern: string): Promise<string[]> {
         throw new Error('Method not implemented.');
       }
+      delHash(hashKeyOrKeys: string | string[]): Promise<any> {
+        throw new Error('Method not implemented.');
+      }
       getClientTTL(): number {
         throw new Error('Method not implemented.');
       }
@@ -204,6 +207,9 @@ describe('CacheUpdate Decorator Tests', () => {
         return Promise.resolve();
       }
       keys(pattern: string): Promise<string[]> {
+        throw new Error('Method not implemented.');
+      }
+      delHash(hashKeyOrKeys: string | string[]): Promise<any> {
         throw new Error('Method not implemented.');
       }
       getClientTTL(): number {

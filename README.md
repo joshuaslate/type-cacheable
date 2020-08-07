@@ -1,8 +1,8 @@
 # type-cacheable
 
-[![Build Status](https://travis-ci.org/joshuaslate/type-cacheable.svg?branch=master)](https://travis-ci.org/joshuaslate/type-cacheable) [![Node version](https://img.shields.io/npm/dm/@type-cacheable/core.svg?maxAge=43200&label=v7.0.0%20downloads)](https://www.npmjs.com/package/@type-cacheable/core) [![Code coverage](https://codecov.io/gh/joshuaslate/type-cacheable/branch/master/graph/badge.svg)](https://codecov.io/gh/joshuaslate/type-cacheable)
+[![Build Status](https://travis-ci.org/joshuaslate/type-cacheable.svg?branch=master)](https://travis-ci.org/joshuaslate/type-cacheable) [![Node version](https://img.shields.io/npm/dm/@type-cacheable/core.svg?maxAge=43200&label=v8.0.0%20downloads)](https://www.npmjs.com/package/@type-cacheable/core) [![Code coverage](https://codecov.io/gh/joshuaslate/type-cacheable/branch/master/graph/badge.svg)](https://codecov.io/gh/joshuaslate/type-cacheable)
 
-TypeScript-based caching decorators to assist with caching (and clearing cache for) async methods. Currently supports Redis (`redis`, `ioredis`) and `node-cache`. If you would like to see more adapters added, please open an issue or, better yet, a pull request with an implementation.
+TypeScript-based caching decorators to assist with caching (and clearing cache for) async methods. Currently supports Redis (`redis`, `ioredis`), `lru-cache`, and `node-cache`. If you would like to see more adapters added, please open an issue or, better yet, a pull request with an implementation.
 
 ## Usage
 
@@ -26,6 +26,10 @@ Redis:
 
 - `redis` - `@type-cacheable/redis-adapter` - https://github.com/joshuaslate/type-cacheable/tree/master/packages/redis-adapter
 - `ioredis` - `@type-cacheable/ioredis-adapter` - https://github.com/joshuaslate/type-cacheable/tree/master/packages/ioredis-adapter
+
+LRU-Cache
+
+- `lru-cache` - `@type-cacheable/lru-cache-adapter` - https://github.com/joshuaslate/type-cacheable/tree/master/packages/lru-cache-adapter
 
 Node-Cache:
 
@@ -183,7 +187,7 @@ interface CacheUpdateOptions {
 
 ##### CacheKeyBuilder
 
-`CacheKeyBuilder` can be passed in as the value for cacheKey or hashKey on either `@Cacheable` or `@CacheClear`. This is a function that is passed two arguments, `args` and `context`, where `args` is the arguments the decorated method was called with, and `context` is the object (`this` value) the method was called on. This function must return a string.
+`CacheKeyBuilder` can be passed in as the value for cacheKey or hashKey on `@Cacheable`, `@CacheUpdate`, or `@CacheClear`. This is a function that is passed two arguments, `args` and `context`, where `args` is the arguments the decorated method was called with, and `context` is the object (`this` value) the method was called on. This function must return a string.
 
 For example, if you would like to cache a user, you might want to cache them by id. Refer to the sample above to see how this could be done.
 

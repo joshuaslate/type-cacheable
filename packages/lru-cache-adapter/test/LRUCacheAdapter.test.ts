@@ -1,101 +1,101 @@
-import * as NodeCache from 'node-cache';
+import * as LRUCache from 'lru-cache';
 import { Cacheable } from '@type-cacheable/core';
-import { NodeCacheAdapter } from '../lib';
+import { LRUCacheAdapter } from '../lib';
 
-let client: NodeCache;
-let nodeCacheAdapter: NodeCacheAdapter;
+let client: LRUCache<string, any>;
+let lruCacheAdapter: LRUCacheAdapter<any>;
 
-const keyName = 'aSimpleKey';
-const compoundKey1 = 'aCompound';
-const compoundKey2 = 'key';
-const compoundCombined = `${compoundKey1}:${compoundKey2}`;
-const simpleValue = 'aSimpleValue';
-const objectValue = { myKeyOne: 'myValOne' };
-const arrayValue = ['element1', 2, { complex: 'element' }];
+const keyName = 'aSimpleLRUCacheKey';
+const keyName_2 = 'aSimpleLRUCacheKey2';
+const compoundKey = 'aCompoundLRUCache:key';
+const simpleValue = 'aSimpleLRUCacheValue';
+const objectValue = { myKeyOneLRUCache: 'myValOneLRUCache' };
+const arrayValue = ['element1LRUCache', 2, { complex: 'elementLRUCache' }];
 
-describe('NodeCacheAdapter Tests', () => {
-  beforeAll(() => {
-    client = new NodeCache();
-    nodeCacheAdapter = new NodeCacheAdapter(client);
+describe('LRUCacheAdapter Tests', () => {
+  beforeAll(async () => {
+    client = new LRUCache();
+
+    lruCacheAdapter = new LRUCacheAdapter(client);
   });
 
   describe('Setter tests', () => {
     it('should set a string value on a standard key', async () => {
-      await nodeCacheAdapter.set(keyName, simpleValue);
+      await lruCacheAdapter.set(keyName, simpleValue);
 
-      expect(client.get<string>(keyName)).toBe(simpleValue);
+      expect(client.get(keyName)).toBe(simpleValue);
     });
 
     it('should set an object value on a standard key', async () => {
       const keyName = 'aSimpleKey';
 
-      await nodeCacheAdapter.set(keyName, objectValue);
-      expect(client.get<Object>(keyName)).toEqual(objectValue);
+      await lruCacheAdapter.set(keyName, objectValue);
+      expect(client.get(keyName)).toEqual(objectValue);
     });
 
     it('should set an array value on a standard key', async () => {
-      await nodeCacheAdapter.set(keyName, arrayValue);
-      expect(client.get<any[]>(keyName)).toEqual(arrayValue);
+      await lruCacheAdapter.set(keyName, arrayValue);
+      expect(client.get(keyName)).toEqual(arrayValue);
     });
 
     it('should set a string value on a compound (x:y) key', async () => {
-      await nodeCacheAdapter.set(compoundCombined, simpleValue);
-      expect(client.get<string>(compoundCombined)).toBe(simpleValue);
+      await lruCacheAdapter.set(compoundKey, simpleValue);
+      expect(client.get(compoundKey)).toBe(simpleValue);
     });
 
     it('should set an object value on a compound (x:y) key', async () => {
-      await nodeCacheAdapter.set(compoundCombined, objectValue);
-      expect(client.get<Object>(compoundCombined)).toEqual(objectValue);
+      await lruCacheAdapter.set(compoundKey, objectValue);
+      expect(client.get(compoundKey)).toEqual(objectValue);
     });
 
     it('should set an array value on a compound (x:y) key', async () => {
-      await nodeCacheAdapter.set(compoundCombined, arrayValue);
-      expect(client.get<any[]>(compoundCombined)).toEqual(arrayValue);
+      await lruCacheAdapter.set(compoundKey, arrayValue);
+      expect(client.get(compoundKey)).toEqual(arrayValue);
     });
   });
 
   describe('Getter tests', () => {
     it('should get a string set on a simple key', async () => {
-      client.set<string>(keyName, simpleValue);
-      const result = await nodeCacheAdapter.get(keyName);
+      client.set(keyName, simpleValue);
+      const result = await lruCacheAdapter.get(keyName);
       expect(result).toBe(simpleValue);
     });
 
     it('should get an object set on a simple key', async () => {
-      client.set<Object>(keyName, objectValue);
-      const result = await nodeCacheAdapter.get(keyName);
+      client.set(keyName, objectValue);
+      const result = await lruCacheAdapter.get(keyName);
       expect(result).toEqual(objectValue);
     });
 
     it('should get an array set on a simple key', async () => {
-      client.set<any[]>(keyName, arrayValue);
-      const result = await nodeCacheAdapter.get(keyName);
+      client.set(keyName, arrayValue);
+      const result = await lruCacheAdapter.get(keyName);
       expect(result).toEqual(arrayValue);
     });
 
     it('should get a string set on a compound (x:y) key', async () => {
-      client.set<string>(compoundCombined, simpleValue);
-      const result = await nodeCacheAdapter.get<string>(compoundCombined);
+      client.set(compoundKey, simpleValue);
+      const result = await lruCacheAdapter.get(compoundKey);
       expect(result).toBe(simpleValue);
     });
 
     it('should get an object set on a compound (x:y) key', async () => {
-      client.set<Object>(compoundCombined, objectValue);
-      const result = await nodeCacheAdapter.get<Object>(compoundCombined);
+      client.set(compoundKey, objectValue);
+      const result = await lruCacheAdapter.get(compoundKey);
       expect(result).toEqual(objectValue);
     });
 
     it('should get an array set on a compound (x:y) key', async () => {
-      client.set<any[]>(compoundCombined, arrayValue);
-      const result = await nodeCacheAdapter.get<any[]>(compoundCombined);
+      client.set(compoundKey, arrayValue);
+      const result = await lruCacheAdapter.get(compoundKey);
       expect(result).toEqual(arrayValue);
     });
   });
 
   describe('Delete tests', () => {
     it('should delete a set value', async () => {
-      client.set<string>(keyName, simpleValue);
-      await nodeCacheAdapter.del(keyName);
+      client.set(keyName, simpleValue);
+      await lruCacheAdapter.del(keyName);
 
       expect(client.get(keyName)).toBeFalsy();
     });
@@ -103,15 +103,15 @@ describe('NodeCacheAdapter Tests', () => {
 
   describe('Delete full hash', () => {
     it('should delete a full hash', async () => {
-      const hashKey = compoundCombined.split(':')[0];
+      const hashKey = compoundKey.split(':')[0];
 
-      client.set<any>(compoundCombined, objectValue);
-      const keys = await nodeCacheAdapter.keys(hashKey);
+      client.set(compoundKey, objectValue);
+      const keys = await lruCacheAdapter.keys(hashKey);
       expect(keys).toHaveLength(1);
 
-      await nodeCacheAdapter.delHash(hashKey);
+      await lruCacheAdapter.delHash(hashKey);
 
-      const keysPostDelete = await nodeCacheAdapter.keys(hashKey);
+      const keysPostDelete = await lruCacheAdapter.keys(hashKey);
       expect(keysPostDelete).toHaveLength(0);
     });
   });
@@ -126,35 +126,55 @@ describe('NodeCacheAdapter Tests', () => {
         const mockGetObjectValueImplementation = jest.fn();
 
         class TestClass {
-          @Cacheable({ client: nodeCacheAdapter, hashKey: 'user', cacheKey: (x) => x[0] })
+          @Cacheable({
+            client: lruCacheAdapter,
+            hashKey: 'user',
+            cacheKey: (x) => x[0],
+          })
           async getId(id: string): Promise<string> {
             mockGetIdImplementation();
 
             return id;
           }
 
-          @Cacheable({ client: nodeCacheAdapter, hashKey: 'userInt', cacheKey: (x) => x[0] })
+          @Cacheable({
+            client: lruCacheAdapter,
+            hashKey: 'userInt',
+            cacheKey: (x) => x[0],
+          })
           async getIntId(id: number): Promise<number> {
             mockGetIntIdImplementation();
 
             return id;
           }
 
-          @Cacheable({ client: nodeCacheAdapter, hashKey: 'boolVal', cacheKey: (x) => x[0] })
+          @Cacheable({
+            client: lruCacheAdapter,
+            hashKey: 'boolVal',
+            cacheKey: (x) => x[0],
+          })
           async getBoolValue(value: boolean): Promise<boolean> {
             mockGetBooleanValueImplementation();
 
             return value;
           }
 
-          @Cacheable({ client: nodeCacheAdapter, hashKey: 'arrVal', cacheKey: (x) => x[0] })
+          @Cacheable({
+            client: lruCacheAdapter,
+            hashKey: 'arrVal',
+            cacheKey: (x) => x[0],
+          })
           async getArrayValue(value: string): Promise<any[]> {
             mockGetArrayValueImplementation();
 
             return ['true', true, 'false', false, 1, '1'];
           }
 
-          @Cacheable({ client: nodeCacheAdapter, hashKey: 'objVal', cacheKey: (x) => x[0] })
+          @Cacheable({
+            client: lruCacheAdapter,
+            hashKey: 'objVal',
+            cacheKey: (x) => x[0],
+          })
           async getObjectValue(value: string): Promise<any> {
             mockGetObjectValueImplementation();
 
@@ -242,7 +262,7 @@ describe('NodeCacheAdapter Tests', () => {
     });
   });
 
-  afterEach(() => {
-    client.flushAll();
+  afterEach(async () => {
+    client.reset();
   });
 });

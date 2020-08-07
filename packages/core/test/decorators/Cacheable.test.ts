@@ -93,6 +93,9 @@ describe('Cacheable Decorator Tests', () => {
     const inMemMockGet = jest.fn();
 
     class FailingPrimaryClient implements CacheClient {
+      delHash(hashKeyOrKeys: string | string[]): Promise<any> {
+        throw new Error('Method not implemented.');
+      }
       get(cacheKey: string): Promise<any> {
         throw new Error('Method not implemented.');
       }
@@ -138,6 +141,9 @@ describe('Cacheable Decorator Tests', () => {
       }
       getClientTTL(): number {
         return 0;
+      }
+      delHash(hashKeyOrKeys: string | string[]): Promise<any> {
+        throw new Error('Method not implemented.');
       }
     }
 

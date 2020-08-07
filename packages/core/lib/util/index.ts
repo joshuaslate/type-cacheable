@@ -5,4 +5,3 @@ export { getCacheClearStrategy } from './getCacheClearStrategy';
 export { getCacheUpdateStrategy } from './getCacheUpdateStrategy';
 export { getTTL } from './getTTL';
 export { parseIfRequired } from './parseIfRequired';
-export { withTimeout } from './withTimeout';
