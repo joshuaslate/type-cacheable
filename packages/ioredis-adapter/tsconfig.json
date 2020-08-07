@@ -1,7 +1,7 @@
 {
   "extends": "../../tsconfig.json",
-  "files": ["./lib/index.ts"],
   "compilerOptions": {
+    "rootDir": "./lib",
     "target": "es2015",
     "module": "commonjs",
     "declaration": true,
@@ -11,5 +11,5 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true
   },
-  "include": ["./lib/**/*"]
+  "include": ["lib/**/*"]
 }

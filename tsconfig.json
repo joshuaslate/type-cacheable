@@ -1,5 +1,4 @@
 {
-  "include": ["./packages/**/*"],
   "compilerOptions": {
     "rootDir": ".",
     "baseUrl": ".",
