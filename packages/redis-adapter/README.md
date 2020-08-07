@@ -28,4 +28,4 @@ const client = Redis.createClient();
 useAdapter(client);
 ```
 
-Then you can rely on the `@Cacheable` and `@CacheClear` decorators from `@type-cacheable/core`. [See core documentation](https://github.com/joshuaslate/type-cacheable/tree/master/packages/core)
+Then you can rely on the `@Cacheable`, `@CacheUpdate`, and `@CacheClear` decorators from `@type-cacheable/core`. [See core documentation](https://github.com/joshuaslate/type-cacheable/tree/master/packages/core)

@@ -49,13 +49,14 @@ export class NodeCacheAdapter implements CacheClient {
   public async keys(pattern: string): Promise<string[]> {
     const allKeys = this.nodeCacheClient.keys();
     const regExp = new RegExp(pattern, 'g');
-    let matchedKeys = [];
+    const matchedKeys = [];
 
-    for (let key of allKeys) {
+    for (const key of allKeys) {
       if (Array.isArray(key.match(regExp))) {
         matchedKeys.push(key);
       }
     }
+
     return matchedKeys;
   }
 
