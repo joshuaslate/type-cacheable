@@ -1,6 +1,6 @@
 {
   "name": "@type-cacheable/lru-cache-adapter",
-  "version": "8.0.0",
+  "version": "8.0.1",
   "description": "Adapter for using lru-cache with type-cacheable",
   "main": "dist/index.js",
   "module": "./index.ts",
@@ -56,6 +56,6 @@
     "lru-cache": "^6.0.0"
   },
   "dependencies": {
-    "@type-cacheable/core": "^8.0.0"
+    "@type-cacheable/core": "^8.0.1"
   }
 }
