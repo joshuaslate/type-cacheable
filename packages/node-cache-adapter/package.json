@@ -3,23 +3,13 @@
   "version": "7.0.0",
   "description": "Adapter for using node-cache with type-cacheable",
   "main": "dist/index.js",
+  "module": "./index.ts",
   "types": "dist/index.d.ts",
   "files": [
     "dist/**/*"
   ],
   "publishConfig": {
     "access": "public"
-  },
-  "jest": {
-    "transform": {
-      "^.+\\.ts?$": "ts-jest"
-    },
-    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(js?|ts?)$",
-    "moduleFileExtensions": [
-      "ts",
-      "js",
-      "node"
-    ]
   },
   "scripts": {
     "clean": "rm -rf ./dist",
@@ -47,9 +37,7 @@
   "homepage": "https://github.com/joshuaslate/type-cacheable#readme",
   "devDependencies": {
     "@types/jest": "^26.0.0",
-    "jest": "^25.1.0",
     "node-cache": "^5.0.0",
-    "ts-jest": "^25.0.0",
     "typescript": "^3.8.3"
   },
   "peerDependencies": {

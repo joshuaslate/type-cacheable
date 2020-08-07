@@ -1,5 +1,8 @@
 import { Redis } from 'ioredis';
-import cacheManager, { CacheClient, parseIfRequired } from '@type-cacheable/core';
+import cacheManager, {
+  CacheClient,
+  parseIfRequired,
+} from '@type-cacheable/core';
 
 export class IoRedisAdapter implements CacheClient {
   constructor(redisClient: Redis) {
@@ -42,9 +45,13 @@ export class IoRedisAdapter implements CacheClient {
     let cursor: number | null = 0;
 
     while (cursor !== null) {
-      const result = (await this.redisClient.scan(cursor, 'MATCH', pattern, 'COUNT', 1000)) as
-        | [string, string[]]
-        | undefined;
+      const result = (await this.redisClient.scan(
+        cursor,
+        'MATCH',
+        pattern,
+        'COUNT',
+        1000,
+      )) as [string, string[]] | undefined;
 
       if (result) {
         // array exists at index 1 from SCAN command, cursor is at 0
