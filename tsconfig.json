@@ -1,0 +1,8 @@
+{
+  "include": ["./packages/**/*"],
+  "compilerOptions": {
+    "rootDir": ".",
+    "baseUrl": ".",
+    "paths": { "@type-cacheable/*": ["./packages/*"] }
+  }
+}

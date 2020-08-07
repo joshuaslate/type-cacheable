@@ -3,23 +3,13 @@
   "version": "7.0.0",
   "description": "Adapter for using redis with type-cacheable",
   "main": "dist/index.js",
+  "module": "./index.ts",
   "types": "dist/index.d.ts",
   "files": [
     "dist/**/*"
   ],
   "publishConfig": {
     "access": "public"
-  },
-  "jest": {
-    "transform": {
-      "^.+\\.ts?$": "ts-jest"
-    },
-    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(js?|ts?)$",
-    "moduleFileExtensions": [
-      "ts",
-      "js",
-      "node"
-    ]
   },
   "scripts": {
     "clean": "rm -rf ./dist",
@@ -48,9 +38,7 @@
   "devDependencies": {
     "@types/jest": "^26.0.0",
     "@types/redis": "^2.8.13",
-    "jest": "^25.1.0",
     "redis": "^3.0.2",
-    "ts-jest": "^25.0.0",
     "typescript": "^3.8.3"
   },
   "peerDependencies": {
