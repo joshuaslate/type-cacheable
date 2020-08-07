@@ -1,6 +1,6 @@
 {
   "name": "@type-cacheable/redis-adapter",
-  "version": "8.0.3",
+  "version": "8.0.4",
   "description": "Adapter for using redis with type-cacheable",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
