@@ -1,0 +1,50 @@
+{
+  "name": "@type-cacheable/lru-cache-adapter",
+  "version": "7.0.0",
+  "description": "Adapter for using lru-cache with type-cacheable",
+  "main": "dist/index.js",
+  "module": "./index.ts",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/**/*"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "clean": "rm -rf ./dist",
+    "start": "node ./dist/index.js",
+    "test": "jest --coverage --runInBand",
+    "test:watch": "jest --watch --runInBand",
+    "build": "npm run clean && tsc",
+    "prepare": "npm run-script build",
+    "prepublishOnly": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joshuaslate/type-cacheable.git"
+  },
+  "keywords": [
+    "cache",
+    "typescript",
+    "lru-cache"
+  ],
+  "author": "Joshua Slate",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/joshuaslate/type-cacheable/issues"
+  },
+  "homepage": "https://github.com/joshuaslate/type-cacheable#readme",
+  "devDependencies": {
+    "@types/jest": "^26.0.0",
+    "@types/lru-cache": "^5.1.0",
+    "lru-cache": "^6.0.0",
+    "typescript": "^3.8.3"
+  },
+  "peerDependencies": {
+    "lru-cache": "^6.0.0"
+  },
+  "dependencies": {
+    "@type-cacheable/core": "^7.0.0"
+  }
+}
