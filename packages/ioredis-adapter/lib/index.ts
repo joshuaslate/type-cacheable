@@ -17,7 +17,7 @@ export class IoRedisAdapter implements CacheClient {
     this.keys = this.keys.bind(this);
     this.set = this.set.bind(this);
 
-    this.init.call(this);
+    this.init.call(this).catch();
   }
 
   private async init() {
