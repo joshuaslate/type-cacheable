@@ -126,55 +126,35 @@ describe('NodeCacheAdapter Tests', () => {
         const mockGetObjectValueImplementation = jest.fn();
 
         class TestClass {
-          @Cacheable({
-            client: nodeCacheAdapter,
-            hashKey: 'user',
-            cacheKey: (x) => x[0],
-          })
+          @Cacheable({ client: nodeCacheAdapter, hashKey: 'user', cacheKey: (x) => x[0] })
           async getId(id: string): Promise<string> {
             mockGetIdImplementation();
 
             return id;
           }
 
-          @Cacheable({
-            client: nodeCacheAdapter,
-            hashKey: 'userInt',
-            cacheKey: (x) => x[0],
-          })
+          @Cacheable({ client: nodeCacheAdapter, hashKey: 'userInt', cacheKey: (x) => x[0] })
           async getIntId(id: number): Promise<number> {
             mockGetIntIdImplementation();
 
             return id;
           }
 
-          @Cacheable({
-            client: nodeCacheAdapter,
-            hashKey: 'boolVal',
-            cacheKey: (x) => x[0],
-          })
+          @Cacheable({ client: nodeCacheAdapter, hashKey: 'boolVal', cacheKey: (x) => x[0] })
           async getBoolValue(value: boolean): Promise<boolean> {
             mockGetBooleanValueImplementation();
 
             return value;
           }
 
-          @Cacheable({
-            client: nodeCacheAdapter,
-            hashKey: 'arrVal',
-            cacheKey: (x) => x[0],
-          })
+          @Cacheable({ client: nodeCacheAdapter, hashKey: 'arrVal', cacheKey: (x) => x[0] })
           async getArrayValue(value: string): Promise<any[]> {
             mockGetArrayValueImplementation();
 
             return ['true', true, 'false', false, 1, '1'];
           }
 
-          @Cacheable({
-            client: nodeCacheAdapter,
-            hashKey: 'objVal',
-            cacheKey: (x) => x[0],
-          })
+          @Cacheable({ client: nodeCacheAdapter, hashKey: 'objVal', cacheKey: (x) => x[0] })
           async getObjectValue(value: string): Promise<any> {
             mockGetObjectValueImplementation();
 
