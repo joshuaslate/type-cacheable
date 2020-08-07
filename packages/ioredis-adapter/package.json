@@ -1,6 +1,6 @@
 {
   "name": "@type-cacheable/ioredis-adapter",
-  "version": "7.0.0",
+  "version": "8.0.0",
   "description": "Adapter for using ioredis with type-cacheable",
   "main": "dist/index.js",
   "module": "./index.ts",
@@ -45,7 +45,7 @@
     "ioredis": "^4.14.1"
   },
   "dependencies": {
-    "@type-cacheable/core": "^7.0.0",
+    "@type-cacheable/core": "^8.0.0",
     "compare-versions": "^3.6.0"
   }
 }
