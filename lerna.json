@@ -1,5 +1,5 @@
 {
-  "version": "independent",
+  "version": "fixed",
   "packages": ["packages/*"],
   "useWorkspaces": true,
   "npmClient": "yarn"
