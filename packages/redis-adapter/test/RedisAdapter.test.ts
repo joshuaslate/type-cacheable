@@ -172,6 +172,24 @@ describe('RedisAdapter Tests', () => {
     });
   });
 
+  describe('Delete full hash', () => {
+    it('should delete a full hash', async (done) => {
+      const hashKey = compoundKey.split(':')[0];
+      const args = RedisAdapter.buildSetArgumentsFromObject({ ...objectValue });
+
+      client.hmset(compoundKey, args, async () => {
+        const keys = await redisAdapter.keys(`*${hashKey}:*`);
+        expect(keys).toHaveLength(1);
+
+        await redisAdapter.delHash(hashKey);
+
+        const keysPostDelete = await redisAdapter.keys(`*${hashKey}:*`);
+        expect(keysPostDelete).toHaveLength(0);
+        done();
+      });
+    });
+  });
+
   describe('integration', () => {
     describe('@Cacheable decorator', () => {
       const getTestInstance = () => {

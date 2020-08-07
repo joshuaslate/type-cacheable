@@ -9,4 +9,5 @@ export interface CacheClearStrategyContext {
   fallbackClient: CacheClient | null;
   isPattern?: boolean;
   key: string | string[];
+  hashesToClear?: string | string[];
 }
