@@ -1,5 +1,5 @@
 import * as IoRedis from 'ioredis';
-import { Cacheable } from '@type-cacheable/core/lib';
+import { Cacheable } from '@type-cacheable/core';
 import { IoRedisAdapter } from '../lib';
 
 let client: IoRedis.Redis;

@@ -11,17 +11,6 @@
   "publishConfig": {
     "access": "public"
   },
-  "jest": {
-    "transform": {
-      "^.+\\.ts?$": "ts-jest"
-    },
-    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(js?|ts?)$",
-    "moduleFileExtensions": [
-      "ts",
-      "js",
-      "node"
-    ]
-  },
   "scripts": {
     "clean": "rm -rf ./dist",
     "start": "node ./dist/index.js",

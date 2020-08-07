@@ -3,23 +3,13 @@
   "version": "8.0.1",
   "description": "TypeScript-based caching decorators",
   "main": "dist/index.js",
+  "module": "./index.ts",
   "types": "dist/index.d.ts",
   "files": [
     "dist/**/*"
   ],
   "publishConfig": {
     "access": "public"
-  },
-  "jest": {
-    "transform": {
-      "^.+\\.ts?$": "ts-jest"
-    },
-    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(js?|ts?)$",
-    "moduleFileExtensions": [
-      "ts",
-      "js",
-      "node"
-    ]
   },
   "scripts": {
     "clean": "rm -rf ./dist",
@@ -48,8 +38,6 @@
     "@types/jest": "^26.0.0",
     "@types/node": "^14.0.1",
     "@types/serialize-javascript": "^4.0.0",
-    "jest": "^25.1.0",
-    "ts-jest": "^25.0.0",
     "typescript": "^3.8.3"
   },
   "dependencies": {
