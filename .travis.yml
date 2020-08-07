@@ -4,9 +4,9 @@ language: node_js
 node:js:
   - stable
 install:
-  - npm install
-  - npm install codecov -g
+  - yarn install
+  - yarn install codecov -g
 script:
-  - npm test
+  - yarn run test
 after_success:
   - codecov
