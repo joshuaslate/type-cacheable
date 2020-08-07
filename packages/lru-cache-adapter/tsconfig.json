@@ -1,11 +1,13 @@
 {
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
+    "rootDir": "./lib",
     "target": "es2015",
     "module": "commonjs",
     "declaration": true,
     "outDir": "./dist",
-    "strict": true,
     "sourceMap": true,
+    "strict": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true
   },
