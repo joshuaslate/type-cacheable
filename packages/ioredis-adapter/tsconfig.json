@@ -1,6 +1,4 @@
 {
-  "extends": "../../tsconfig.json",
-  "files": ["./lib/index.ts"],
   "compilerOptions": {
     "target": "es2015",
     "module": "commonjs",
@@ -11,5 +9,5 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true
   },
-  "include": ["./lib/**/*"]
+  "include": ["lib/**/*"]
 }

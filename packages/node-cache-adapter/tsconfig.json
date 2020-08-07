@@ -1,6 +1,4 @@
 {
-  "extends": "../../tsconfig.json",
-  "files": ["./lib/index.ts"],
   "compilerOptions": {
     "target": "es2015",
     "module": "commonjs",
@@ -9,9 +7,7 @@
     "strict": true,
     "sourceMap": true,
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "rootDir": ".",
-    "baseUrl": "./packages/node-cache-adapter"
+    "emitDecoratorMetadata": true
   },
-  "include": ["./lib/**/*"]
+  "include": ["lib/**/*"]
 }
