@@ -1,6 +1,6 @@
 # @type-cacheable/core
 
-TypeScript-based caching decorators to assist with caching (and clearing cache for) async methods. Currently supports Redis (`redis`, `ioredis`) and `node-cache`. If you would like to see more adapters added, please open an issue or, better yet, a pull request with an implementation.
+TypeScript-based caching decorators to assist with caching (and clearing cache for) async methods. Currently supports Redis (`redis`, `ioredis`), `lru-cache`, and `node-cache`. If you would like to see more adapters added, please open an issue or, better yet, a pull request with an implementation.
 
 To learn how to set up an adapter for your cache of choice, [view the full documentation](https://github.com/joshuaslate/type-cacheable).
 
@@ -26,6 +26,10 @@ Redis:
 
 - `redis` - `@type-cacheable/redis-adapter` - https://github.com/joshuaslate/type-cacheable/tree/master/packages/redis-adapter
 - `ioredis` - `@type-cacheable/ioredis-adapter` - https://github.com/joshuaslate/type-cacheable/tree/master/packages/ioredis-adapter
+
+LRU-Cache
+
+- `lru-cache` - `@type-cacheable/lru-cache-adapter` - https://github.com/joshuaslate/type-cacheable/tree/master/packages/lru-cache-adapter
 
 Node-Cache:
 
