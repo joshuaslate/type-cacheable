@@ -36,7 +36,7 @@
   "homepage": "https://github.com/joshuaslate/type-cacheable#readme",
   "devDependencies": {
     "@types/jest": "^26.0.0",
-    "jest": "^25.1.0",
+    "jest": "^26.3.0",
     "node-cache": "^5.0.0",
     "ts-jest": "^25.0.0",
     "typescript": "^3.8.3"
