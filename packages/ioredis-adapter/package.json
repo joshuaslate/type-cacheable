@@ -38,7 +38,7 @@
     "@types/ioredis": "^4.14.4",
     "@types/jest": "^26.0.0",
     "ioredis": "^4.14.1",
-    "jest": "^25.1.0",
+    "jest": "^26.3.0",
     "ts-jest": "^25.0.0",
     "typescript": "^3.8.3"
   },
