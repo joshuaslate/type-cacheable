@@ -38,7 +38,7 @@
     "@types/jest": "^26.0.0",
     "jest": "^26.3.0",
     "node-cache": "^5.0.0",
-    "ts-jest": "^25.0.0",
+    "ts-jest": "^26.2.0",
     "typescript": "^3.8.3"
   },
   "peerDependencies": {
