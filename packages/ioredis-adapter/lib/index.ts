@@ -78,7 +78,7 @@ export class IoRedisAdapter implements CacheClient {
       if (result) {
         // array exists at index 1 from SCAN command, cursor is at 0
         keys = [...keys, ...result[1]];
-        cursor = Number(result[0]) !== cursor ? Number(result[0]) : null;
+        cursor = Number(result[0]) !== 0 ? Number(result[0]) : null;
       } else {
         cursor = null;
       }

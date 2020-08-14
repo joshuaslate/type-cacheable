@@ -263,7 +263,7 @@ export class RedisAdapter implements CacheClient {
 
         if (result) {
           // array exists at index 1 from SCAN command, cursor is at 0
-          cursor = cursor !== result[0] ? result[0] : null;
+          cursor = result[0] !== 0 ? result[0] : null;
           keys = [...keys, ...result[1]];
         } else {
           cursor = null;
