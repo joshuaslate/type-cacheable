@@ -98,27 +98,19 @@ describe('RedisAdapter Tests', () => {
     });
 
     it('should get an object set on a simple key', (done) => {
-      client.set(
-        keyName,
-        JSON.stringify(objectValue),
-        async (err, setResult) => {
-          const result = await redisAdapter.get(keyName);
-          expect(result).toEqual(objectValue);
-          done();
-        },
-      );
+      client.set(keyName, JSON.stringify(objectValue), async (err, setResult) => {
+        const result = await redisAdapter.get(keyName);
+        expect(result).toEqual(objectValue);
+        done();
+      });
     });
 
     it('should get an array set on a simple key', (done) => {
-      client.set(
-        keyName,
-        JSON.stringify(arrayValue),
-        async (err, setResult) => {
-          const result = await redisAdapter.get(keyName);
-          expect(result).toEqual(arrayValue);
-          done();
-        },
-      );
+      client.set(keyName, JSON.stringify(arrayValue), async (err, setResult) => {
+        const result = await redisAdapter.get(keyName);
+        expect(result).toEqual(arrayValue);
+        done();
+      });
     });
 
     it('should get an object set on a compound (x:y) key', (done) => {
@@ -151,12 +143,23 @@ describe('RedisAdapter Tests', () => {
       });
     });
 
-    it('should not found keys on a simple key with non-match', (done) => {
+    it('should not find keys for a non-existent simple key', (done) => {
       client.set(simpleKeyKeys, simpleValue, async () => {
         const result = await redisAdapter.keys(`*${simpleValue}*`);
 
         expect(result).toHaveLength(0);
         expect(result).toBeInstanceOf(Array);
+        done();
+      });
+    });
+
+    it('should return multiple pages worth of keys when more than the max page size exist', (done) => {
+      const vals = new Array(5000)
+        .fill(undefined)
+        .reduce((accum, _, i) => [...accum, `key-${i}`, `val-${i}`], []);
+      client.mset(...vals, async () => {
+        const result = await redisAdapter.keys('*key-*');
+        expect(result).toHaveLength(5000);
         done();
       });
     });
@@ -293,10 +296,7 @@ describe('RedisAdapter Tests', () => {
       });
 
       it('should properly set, and get, cached boolean values', async () => {
-        const {
-          testClass,
-          mockGetBooleanValueImplementation,
-        } = getTestInstance();
+        const { testClass, mockGetBooleanValueImplementation } = getTestInstance();
         const getBooleanValueResult1 = await testClass.getBoolValue(true);
         expect(getBooleanValueResult1).toBe(true);
         expect(mockGetBooleanValueImplementation).toHaveBeenCalled();
@@ -308,20 +308,10 @@ describe('RedisAdapter Tests', () => {
       });
 
       it('should properly set, and get, cached array values', async () => {
-        const {
-          testClass,
-          mockGetArrayValueImplementation,
-        } = getTestInstance();
+        const { testClass, mockGetArrayValueImplementation } = getTestInstance();
         const getArrayValueResult1 = await testClass.getArrayValue('test');
         expect(mockGetArrayValueImplementation).toHaveBeenCalled();
-        expect(getArrayValueResult1).toEqual([
-          'true',
-          true,
-          'false',
-          false,
-          1,
-          '1',
-        ]);
+        expect(getArrayValueResult1).toEqual(['true', true, 'false', false, 1, '1']);
         mockGetArrayValueImplementation.mockClear();
 
         const getArrayValueResult2 = await testClass.getArrayValue('test');
@@ -330,10 +320,7 @@ describe('RedisAdapter Tests', () => {
       });
 
       it('should properly set, and get, cached object values', async () => {
-        const {
-          testClass,
-          mockGetObjectValueImplementation,
-        } = getTestInstance();
+        const { testClass, mockGetObjectValueImplementation } = getTestInstance();
         const getObjectValueResult1 = await testClass.getObjectValue('test');
         expect(mockGetObjectValueImplementation).toHaveBeenCalled();
         expect(getObjectValueResult1).toEqual({

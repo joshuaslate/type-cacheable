@@ -115,12 +115,22 @@ describe('IoRedisAdapter Tests', () => {
       expect(result).toContain(compoundKey);
     });
 
-    it('should not found keys on a simple key', async () => {
+    it('should not find keys for a non-existent simple key', async () => {
       await client.set(compoundKey, simpleValue);
       const result = await ioRedisAdapter.keys(`*${simpleValue}*`);
 
       expect(result).toHaveLength(0);
       expect(result).toBeInstanceOf(Array);
+    });
+
+    it('should return multiple pages worth of keys when more than the max page size exist', async () => {
+      const vals = new Array(5000)
+        .fill(undefined)
+        .reduce((accum, _, i) => [...accum, `key-${i}`, `val-${i}`], []);
+      await client.mset(...vals);
+
+      const result = await ioRedisAdapter.keys('*key-*');
+      expect(result).toHaveLength(5000);
     });
   });
 
