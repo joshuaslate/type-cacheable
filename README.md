@@ -102,8 +102,8 @@ class TestClass {
     client: userClient,
     ttlSeconds: 86400,
   })
-  public async getUserById(id: string): Promise<any> {
-    return this.userRepository.findOne(id);
+  public async getUsers(): Promise<any> {
+    return this.userRepository.findAll();
   }
 
   // If getUserById('123') were called, the return value would be cached
