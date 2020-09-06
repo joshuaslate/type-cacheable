@@ -1,6 +1,6 @@
 {
   "name": "@type-cacheable/redis-adapter",
-  "version": "8.0.5",
+  "version": "8.0.6",
   "description": "Adapter for using redis with type-cacheable",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -46,7 +46,7 @@
     "redis": "^3.0.2"
   },
   "dependencies": {
-    "@type-cacheable/core": "^8.0.4",
+    "@type-cacheable/core": "^8.0.5",
     "compare-versions": "^3.6.0"
   },
   "gitHead": "fc819565536432e484c60432a6c184ba700b3c92"
