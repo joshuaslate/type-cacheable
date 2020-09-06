@@ -22,7 +22,9 @@ export class DefaultStrategy implements CacheStrategy {
       }
 
       if (context.debug) {
-        console.warn(`type-cacheable Cacheable cache miss due to client error: ${err.message}`);
+        console.warn(
+          `type-cacheable Cacheable cache miss on method ${context.originalMethod.name} due to client error: ${err.message}`,
+        );
       }
     }
 
@@ -43,7 +45,7 @@ export class DefaultStrategy implements CacheStrategy {
 
       if (context.debug) {
         console.warn(
-          `type-cacheable Cacheable set cache failure due to client error: ${err.message}`,
+          `type-cacheable Cacheable set cache failure on method ${context.originalMethod.name} due to client error: ${err.message}`,
         );
       }
     }

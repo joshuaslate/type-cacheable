@@ -72,7 +72,9 @@ export function CacheClear(options?: CacheClearOptions) {
           });
         } catch (err) {
           if (cacheManager.options.debug) {
-            console.warn(`type-cacheable CacheClear failed to clear cached value: ${err.message}`);
+            console.warn(
+              `type-cacheable CacheClear failed to clear cached on method ${propertyKey} value: ${err.message}`,
+            );
           }
         }
 
