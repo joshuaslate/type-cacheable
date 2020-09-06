@@ -13,7 +13,7 @@ export class DefaultUpdateStrategy implements CacheUpdateStrategy {
 
       if (context.debug) {
         console.warn(
-          `type-cacheable CacheUpdate set cache failure due to client error: ${err.message}`,
+          `type-cacheable CacheUpdate set cache failure on method ${context.originalMethod.name} due to client error: ${err.message}`,
         );
       }
     }
