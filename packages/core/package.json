@@ -41,7 +41,7 @@
     "typescript": "^4.0.2"
   },
   "dependencies": {
-    "serialize-javascript": "^4.0.0"
+    "serialize-javascript": "^5.0.0"
   },
   "gitHead": "fc819565536432e484c60432a6c184ba700b3c92"
 }
