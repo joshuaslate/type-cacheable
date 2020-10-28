@@ -24,13 +24,13 @@ You will need to set up the appropriate adapter for your cache of choice.
 
 Redis:
 
-- `redis` - `@type-cacheable/redis-adapter` - https://github.com/joshuaslate/type-cacheable/tree/master/packages/redis-adapter
-- `ioredis` - `@type-cacheable/ioredis-adapter` - https://github.com/joshuaslate/type-cacheable/tree/master/packages/ioredis-adapter
+- `redis` - `@type-cacheable/redis-adapter` - https://github.com/joshuaslate/type-cacheable/tree/main/packages/redis-adapter
+- `ioredis` - `@type-cacheable/ioredis-adapter` - https://github.com/joshuaslate/type-cacheable/tree/main/packages/ioredis-adapter
 
 LRU-Cache
 
-- `lru-cache` - `@type-cacheable/lru-cache-adapter` - https://github.com/joshuaslate/type-cacheable/tree/master/packages/lru-cache-adapter
+- `lru-cache` - `@type-cacheable/lru-cache-adapter` - https://github.com/joshuaslate/type-cacheable/tree/main/packages/lru-cache-adapter
 
 Node-Cache:
 
-- `node-cache` - `@type-cacheable/node-cache-adapter` https://github.com/joshuaslate/type-cacheable/tree/master/packages/node-cache-adapter
+- `node-cache` - `@type-cacheable/node-cache-adapter` https://github.com/joshuaslate/type-cacheable/tree/main/packages/node-cache-adapter

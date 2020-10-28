@@ -1,6 +1,6 @@
 # type-cacheable
 
-[![Build Status](https://travis-ci.org/joshuaslate/type-cacheable.svg?branch=master)](https://travis-ci.org/joshuaslate/type-cacheable) [![Node version](https://img.shields.io/npm/dm/@type-cacheable/core.svg?maxAge=43200&label=v8.0.4%20downloads)](https://www.npmjs.com/package/@type-cacheable/core) [![Code coverage](https://codecov.io/gh/joshuaslate/type-cacheable/branch/master/graph/badge.svg)](https://codecov.io/gh/joshuaslate/type-cacheable)
+[![Build Status](https://travis-ci.org/joshuaslate/type-cacheable.svg?branch=main)](https://travis-ci.org/joshuaslate/type-cacheable) [![Node version](https://img.shields.io/npm/dm/@type-cacheable/core.svg?maxAge=43200&label=v8.0.4%20downloads)](https://www.npmjs.com/package/@type-cacheable/core) [![Code coverage](https://codecov.io/gh/joshuaslate/type-cacheable/branch/main/graph/badge.svg)](https://codecov.io/gh/joshuaslate/type-cacheable)
 
 TypeScript-based caching decorators to assist with caching (and clearing cache for) async methods. Currently supports Redis (`redis`, `ioredis`), `lru-cache`, and `node-cache`. If you would like to see more adapters added, please open an issue or, better yet, a pull request with a working implementation.
 
@@ -24,16 +24,16 @@ You will need to set up the appropriate adapter for your cache of choice.
 
 Redis:
 
-- `redis` - `@type-cacheable/redis-adapter` - https://github.com/joshuaslate/type-cacheable/tree/master/packages/redis-adapter
-- `ioredis` - `@type-cacheable/ioredis-adapter` - https://github.com/joshuaslate/type-cacheable/tree/master/packages/ioredis-adapter
+- `redis` - `@type-cacheable/redis-adapter` - https://github.com/joshuaslate/type-cacheable/tree/main/packages/redis-adapter
+- `ioredis` - `@type-cacheable/ioredis-adapter` - https://github.com/joshuaslate/type-cacheable/tree/main/packages/ioredis-adapter
 
 LRU-Cache
 
-- `lru-cache` - `@type-cacheable/lru-cache-adapter` - https://github.com/joshuaslate/type-cacheable/tree/master/packages/lru-cache-adapter
+- `lru-cache` - `@type-cacheable/lru-cache-adapter` - https://github.com/joshuaslate/type-cacheable/tree/main/packages/lru-cache-adapter
 
 Node-Cache:
 
-- `node-cache` - `@type-cacheable/node-cache-adapter` https://github.com/joshuaslate/type-cacheable/tree/master/packages/node-cache-adapter
+- `node-cache` - `@type-cacheable/node-cache-adapter` https://github.com/joshuaslate/type-cacheable/tree/main/packages/node-cache-adapter
 
 ### Change Global Options
 
