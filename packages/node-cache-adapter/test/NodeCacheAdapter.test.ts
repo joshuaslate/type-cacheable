@@ -1,5 +1,5 @@
 import * as NodeCache from 'node-cache';
-import { Cacheable } from '@type-cacheable/core';
+import { Cacheable, CacheClear } from '@type-cacheable/core';
 import { NodeCacheAdapter } from '../lib';
 
 let client: NodeCache;
@@ -258,6 +258,62 @@ describe('NodeCacheAdapter Tests', () => {
         const getObjectValueResult2 = await testClass.getObjectValue('test');
         expect(getObjectValueResult2).toEqual(getObjectValueResult1);
         expect(mockGetObjectValueImplementation).not.toHaveBeenCalled();
+      });
+    });
+    describe('@CacheClear Decorator', () => {
+      const getTestInstance = () => {
+        class TestClass {
+          @Cacheable({
+            client: nodeCacheAdapter,
+            cacheKey: 'users',
+          })
+          async getUsers(): Promise<{ id: string; name: string }[]> {
+            return [{ id: '123', name: 'Kodiak' }];
+          }
+
+          @Cacheable({
+            client: nodeCacheAdapter,
+            cacheKey: 'todos',
+          })
+          async getTodos(): Promise<{ id: string; done: boolean }[]> {
+            return [{ id: '456', done: false }];
+          }
+
+          @CacheClear({
+            client: nodeCacheAdapter,
+            cacheKey: ['users', 'todos'],
+          })
+          async clearAll(): Promise<void> {
+            return;
+          }
+        }
+
+        const testInstance = new TestClass();
+
+        return {
+          testInstance,
+        };
+      };
+
+      it('should clear multiple cacheKeys when an array is passed', async () => {
+        const { testInstance } = getTestInstance();
+
+        await testInstance.getUsers();
+        await testInstance.getTodos();
+
+        const userCacheResult = await nodeCacheAdapter.get('users');
+        expect(userCacheResult).toEqual([{ id: '123', name: 'Kodiak' }]);
+
+        const todoCacheResult = await nodeCacheAdapter.get('todos');
+        expect(todoCacheResult).toEqual([{ id: '456', done: false }]);
+
+        await testInstance.clearAll();
+
+        const userCacheResultPostClear = await nodeCacheAdapter.get('users');
+        expect(userCacheResultPostClear).toEqual(undefined);
+
+        const todoCacheResultPostClear = await nodeCacheAdapter.get('todos');
+        expect(todoCacheResultPostClear).toEqual(undefined);
       });
     });
   });

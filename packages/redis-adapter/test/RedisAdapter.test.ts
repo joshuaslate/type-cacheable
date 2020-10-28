@@ -1,5 +1,5 @@
 import * as Redis from 'redis';
-import { Cacheable } from '@type-cacheable/core';
+import { Cacheable, CacheClear } from '@type-cacheable/core';
 import { RedisAdapter } from '../lib';
 
 let client: Redis.RedisClient;
@@ -335,6 +335,63 @@ describe('RedisAdapter Tests', () => {
         const getObjectValueResult2 = await testClass.getObjectValue('test');
         expect(getObjectValueResult2).toEqual(getObjectValueResult1);
         expect(mockGetObjectValueImplementation).not.toHaveBeenCalled();
+      });
+    });
+
+    describe('@CacheClear Decorator', () => {
+      const getTestInstance = () => {
+        class TestClass {
+          @Cacheable({
+            client: redisAdapter,
+            cacheKey: 'users',
+          })
+          async getUsers(): Promise<{ id: string; name: string }[]> {
+            return [{ id: '123', name: 'Kodiak' }];
+          }
+
+          @Cacheable({
+            client: redisAdapter,
+            cacheKey: 'todos',
+          })
+          async getTodos(): Promise<{ id: string; done: boolean }[]> {
+            return [{ id: '456', done: false }];
+          }
+
+          @CacheClear({
+            client: redisAdapter,
+            cacheKey: ['users', 'todos'],
+          })
+          async clearAll(): Promise<void> {
+            return;
+          }
+        }
+
+        const testInstance = new TestClass();
+
+        return {
+          testInstance,
+        };
+      };
+
+      it('should clear multiple cacheKeys when an array is passed', async () => {
+        const { testInstance } = getTestInstance();
+
+        await testInstance.getUsers();
+        await testInstance.getTodos();
+
+        const userCacheResult = await redisAdapter.get('users');
+        expect(userCacheResult).toEqual([{ id: '123', name: 'Kodiak' }]);
+
+        const todoCacheResult = await redisAdapter.get('todos');
+        expect(todoCacheResult).toEqual([{ id: '456', done: false }]);
+
+        await testInstance.clearAll();
+
+        const userCacheResultPostClear = await redisAdapter.get('users');
+        expect(userCacheResultPostClear).toEqual(null);
+
+        const todoCacheResultPostClear = await redisAdapter.get('todos');
+        expect(todoCacheResultPostClear).toEqual(null);
       });
     });
   });
