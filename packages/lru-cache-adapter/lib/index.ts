@@ -20,11 +20,18 @@ export class LRUCacheAdapter<T> implements CacheClient {
   }
 
   public async set(cacheKey: string, value: any, ttl?: number): Promise<any> {
-    return Promise.resolve(this.lruClient.set(cacheKey, value as T, ttl));
+    // the lru-cache takes ttl in ms instead of seconds, so convert seconds to ms
+    return Promise.resolve(
+      this.lruClient.set(cacheKey, value as T, ttl ? ttl * 1000 : undefined)
+    );
   }
 
   public getClientTTL(): number {
-    return this.lruClient.maxAge;
+    try {
+      return this.lruClient.maxAge / 1000;
+    } catch {
+      return 0;
+    }
   }
 
   public async del(keyOrKeys: string | string[]): Promise<any> {
@@ -55,15 +62,22 @@ export class LRUCacheAdapter<T> implements CacheClient {
   }
 
   public async delHash(hashKeyOrKeys: string | string[]): Promise<any> {
-    const finalDeleteKeys = Array.isArray(hashKeyOrKeys) ? hashKeyOrKeys : [hashKeyOrKeys];
-    const deletePromises = finalDeleteKeys.map((key) => this.keys(key).then(this.del));
+    const finalDeleteKeys = Array.isArray(hashKeyOrKeys)
+      ? hashKeyOrKeys
+      : [hashKeyOrKeys];
+    const deletePromises = finalDeleteKeys.map((key) =>
+      this.keys(key).then(this.del)
+    );
 
     await Promise.all(deletePromises);
     return;
   }
 }
 
-export const useAdapter = <T>(client: LRUCache<string, T>, asFallback?: boolean): void => {
+export const useAdapter = <T>(
+  client: LRUCache<string, T>,
+  asFallback?: boolean
+): void => {
   const lruCacheAdapter = new LRUCacheAdapter(client);
 
   if (asFallback) {
