@@ -1,6 +1,6 @@
 # type-cacheable
 
-[![Build Status](https://travis-ci.org/joshuaslate/type-cacheable.svg?branch=main)](https://travis-ci.org/joshuaslate/type-cacheable) [![Node version](https://img.shields.io/npm/dm/@type-cacheable/core.svg?maxAge=43200&label=v8.0.5%20downloads)](https://www.npmjs.com/package/@type-cacheable/core) [![Code coverage](https://codecov.io/gh/joshuaslate/type-cacheable/branch/main/graph/badge.svg)](https://codecov.io/gh/joshuaslate/type-cacheable)
+[![Build Status](https://travis-ci.org/joshuaslate/type-cacheable.svg?branch=main)](https://travis-ci.org/joshuaslate/type-cacheable) [![Node version](https://img.shields.io/npm/dm/@type-cacheable/core.svg?maxAge=43200&label=v9.0.0%20downloads)](https://www.npmjs.com/package/@type-cacheable/core) [![Code coverage](https://codecov.io/gh/joshuaslate/type-cacheable/branch/main/graph/badge.svg)](https://codecov.io/gh/joshuaslate/type-cacheable)
 
 TypeScript-based caching decorators to assist with caching (and clearing cache for) async methods. Currently supports Redis (`redis`, `ioredis`), `lru-cache`, and `node-cache`. If you would like to see more adapters added, please open an issue or, better yet, a pull request with a working implementation.
 
