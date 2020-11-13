@@ -39,13 +39,13 @@
     "jest": "^26.3.0",
     "node-cache": "^5.0.0",
     "ts-jest": "^26.2.0",
-    "typescript": "^4.0.2"
-  },
-  "peerDependencies": {
-    "node-cache": "^5.0.0"
-  },
-  "dependencies": {
+    "typescript": "^4.0.2",
     "@type-cacheable/core": "^8.0.5"
   },
+  "peerDependencies": {
+    "@type-cacheable/core": "^8.0.5",
+    "node-cache": "^5.0.0"
+  },
+  "dependencies": {},
   "gitHead": "fc819565536432e484c60432a6c184ba700b3c92"
 }
