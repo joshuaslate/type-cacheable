@@ -1,6 +1,6 @@
 {
   "name": "@type-cacheable/ioredis-adapter",
-  "version": "9.0.0",
+  "version": "9.0.1",
   "description": "Adapter for using ioredis with type-cacheable",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -35,7 +35,7 @@
   },
   "homepage": "https://github.com/joshuaslate/type-cacheable#readme",
   "devDependencies": {
-    "@type-cacheable/core": "^9.0.0",
+    "@type-cacheable/core": "^9.0.1",
     "@types/ioredis": "^4.14.4",
     "@types/jest": "^26.0.0",
     "ioredis": "^4.14.1",
