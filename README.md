@@ -55,6 +55,7 @@ import * as Redis from 'redis';
 import { Cacheable, CacheClear } from '@type-cacheable/core';
 
 const userClient = Redis.createClient();
+const clientAdapter = useAdapter(userClient)
 
 class TestClass {
   private values: any[] = [1, 2, 3, 4, 5];
@@ -99,7 +100,7 @@ class TestClass {
 
   @Cacheable({
     cacheKey: 'users',
-    client: userClient,
+    client: clientAdapter,
     ttlSeconds: 86400,
   })
   public async getUsers(): Promise<any> {
@@ -111,7 +112,7 @@ class TestClass {
   @Cacheable({
     cacheKey: TestClass.setCacheKey,
     hashKey: 'user',
-    client: userClient,
+    client: clientAdapter,
     ttlSeconds: 86400,
   })
   public async getUserById(id: string): Promise<any> {

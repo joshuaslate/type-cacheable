@@ -77,7 +77,7 @@ export class LRUCacheAdapter<T> implements CacheClient {
 export const useAdapter = <T>(
   client: LRUCache<string, T>,
   asFallback?: boolean
-): void => {
+): LRUCacheAdapter<T> => {
   const lruCacheAdapter = new LRUCacheAdapter(client);
 
   if (asFallback) {
@@ -85,4 +85,5 @@ export const useAdapter = <T>(
   } else {
     cacheManager.setClient(lruCacheAdapter);
   }
+  return lruCacheAdapter;
 };

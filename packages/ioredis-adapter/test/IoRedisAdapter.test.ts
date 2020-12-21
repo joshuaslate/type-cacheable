@@ -1,6 +1,6 @@
 import * as IoRedis from 'ioredis';
 import { Cacheable, CacheClear } from '@type-cacheable/core';
-import { IoRedisAdapter } from '../lib';
+import { IoRedisAdapter, useAdapter } from '../lib';
 
 let client: IoRedis.Redis;
 let ioRedisAdapter: IoRedisAdapter;
@@ -15,8 +15,7 @@ const arrayValue = ['element1IoRedis', 2, { complex: 'elementIoRedis' }];
 describe('IoRedisAdapter Tests', () => {
   beforeAll(async () => {
     client = new IoRedis();
-
-    ioRedisAdapter = new IoRedisAdapter(client);
+    ioRedisAdapter = useAdapter(client);
   });
 
   describe('Setter tests', () => {

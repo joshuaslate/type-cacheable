@@ -1,12 +1,11 @@
 import * as LRUCache from 'lru-cache';
 import { Cacheable } from '@type-cacheable/core';
-import { LRUCacheAdapter } from '../lib';
+import { LRUCacheAdapter, useAdapter } from '../lib';
 
 let client: LRUCache<string, any>;
 let lruCacheAdapter: LRUCacheAdapter<any>;
 
 const keyName = 'aSimpleLRUCacheKey';
-const keyName_2 = 'aSimpleLRUCacheKey2';
 const compoundKey = 'aCompoundLRUCache:key';
 const simpleValue = 'aSimpleLRUCacheValue';
 const objectValue = { myKeyOneLRUCache: 'myValOneLRUCache' };
@@ -15,8 +14,7 @@ const arrayValue = ['element1LRUCache', 2, { complex: 'elementLRUCache' }];
 describe('LRUCacheAdapter Tests', () => {
   beforeAll(async () => {
     client = new LRUCache();
-
-    lruCacheAdapter = new LRUCacheAdapter(client);
+    lruCacheAdapter = useAdapter(client);
   });
 
   describe('Setter tests', () => {

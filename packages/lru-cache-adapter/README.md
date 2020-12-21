@@ -25,7 +25,7 @@ import * as LRUCache from 'lru-cache';
 import { useAdapter } from '@type-cacheable/lru-cache-adapter';
 
 const client = new LRUCache();
-useAdapter(client);
+const clientAdapter = useAdapter(client);
 ```
 
 Then you can rely on the `@Cacheable`, `@CacheUpdate`, and `@CacheClear` decorators from `@type-cacheable/core`. [See core documentation](https://github.com/joshuaslate/type-cacheable/tree/main/packages/core)
