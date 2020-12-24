@@ -1,6 +1,6 @@
 import * as NodeCache from 'node-cache';
 import { Cacheable, CacheClear } from '@type-cacheable/core';
-import { NodeCacheAdapter } from '../lib';
+import { NodeCacheAdapter, useAdapter } from '../lib';
 
 let client: NodeCache;
 let nodeCacheAdapter: NodeCacheAdapter;
@@ -16,7 +16,7 @@ const arrayValue = ['element1', 2, { complex: 'element' }];
 describe('NodeCacheAdapter Tests', () => {
   beforeAll(() => {
     client = new NodeCache();
-    nodeCacheAdapter = new NodeCacheAdapter(client);
+    nodeCacheAdapter = useAdapter(client);
   });
 
   describe('Setter tests', () => {

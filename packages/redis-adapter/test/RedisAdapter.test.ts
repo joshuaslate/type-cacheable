@@ -1,6 +1,6 @@
 import * as Redis from 'redis';
 import { Cacheable, CacheClear } from '@type-cacheable/core';
-import { RedisAdapter } from '../lib';
+import { RedisAdapter, useAdapter } from '../lib';
 
 let client: Redis.RedisClient;
 let redisAdapter: RedisAdapter;
@@ -20,11 +20,11 @@ describe('RedisAdapter Tests', () => {
     // Wait until the connection is ready before passing the client to the adapter.
     await new Promise((resolve) => {
       client.on('ready', () => {
-        resolve();
+        resolve(null);
       });
     });
 
-    redisAdapter = new RedisAdapter(client);
+    redisAdapter = useAdapter(client);
   });
 
   describe('Setter tests', () => {

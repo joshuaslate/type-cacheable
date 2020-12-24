@@ -290,7 +290,7 @@ export class RedisAdapter implements CacheClient {
   }
 }
 
-export const useAdapter = (client: RedisClient, asFallback?: boolean): void => {
+export const useAdapter = (client: RedisClient, asFallback?: boolean): RedisAdapter => {
   const redisAdapter = new RedisAdapter(client);
 
   if (asFallback) {
@@ -298,4 +298,6 @@ export const useAdapter = (client: RedisClient, asFallback?: boolean): void => {
   } else {
     cacheManager.setClient(redisAdapter);
   }
+
+  return redisAdapter;
 };

@@ -69,7 +69,7 @@ export class NodeCacheAdapter implements CacheClient {
   }
 }
 
-export const useAdapter = (client: NodeCache, asFallback?: boolean): void => {
+export const useAdapter = (client: NodeCache, asFallback?: boolean): NodeCacheAdapter => {
   const nodeCacheAdapter = new NodeCacheAdapter(client);
 
   if (asFallback) {
@@ -77,4 +77,6 @@ export const useAdapter = (client: NodeCache, asFallback?: boolean): void => {
   } else {
     cacheManager.setClient(nodeCacheAdapter);
   }
+
+  return nodeCacheAdapter;
 };
