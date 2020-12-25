@@ -2,7 +2,7 @@ import { CacheStrategy, CacheStrategyContext } from '../interfaces';
 import { Observable, isObservable } from 'rxjs';
 
 
-export class DefaultStrategyEx implements CacheStrategy {
+export class DefaultStrategy implements CacheStrategy {
   async handle(context: CacheStrategyContext): Promise<any> {
     try {
       const cachedValue = await context.client.get(context.key);

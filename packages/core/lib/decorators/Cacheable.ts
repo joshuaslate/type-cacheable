@@ -10,7 +10,7 @@ import { DefaultStrategy } from '../strategies';
  *
  * @param options {CacheOptions}
  */
-export function CacheableEx(options?: CacheOptions) {
+export function Cacheable(options?: CacheOptions) {
   return (target: unknown, propertyKey: string, descriptor: PropertyDescriptor) => {
     const originalMethod = descriptor.value;
 
