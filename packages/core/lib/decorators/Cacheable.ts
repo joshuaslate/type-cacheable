@@ -58,7 +58,7 @@ export function Cacheable(options?: CacheOptions) {
             : cacheManager.options.ttlSeconds || undefined;
 
         const strategy = getCacheStrategy(
-          options?.strategy || cacheManager.options.strategy || new DefaultStrategyEx(),
+          options?.strategy || cacheManager.options.strategy || new DefaultStrategy(),
           args,
           contextToUse,
         );
