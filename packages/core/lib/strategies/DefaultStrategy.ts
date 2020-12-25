@@ -1,6 +1,8 @@
 import { CacheStrategy, CacheStrategyContext } from '../interfaces';
+import { Observable, isObservable } from 'rxjs';
 
-export class DefaultStrategy implements CacheStrategy {
+
+export class DefaultStrategyEx implements CacheStrategy {
   async handle(context: CacheStrategyContext): Promise<any> {
     try {
       const cachedValue = await context.client.get(context.key);
@@ -28,11 +30,27 @@ export class DefaultStrategy implements CacheStrategy {
       }
     }
 
+
+
     // On a cache miss, run the decorated method and cache its return value.
-    const result = await context.originalMethod!.apply(
+    const resultOrDeffered = context.originalMethod!.apply(
       context.originalMethodScope,
       context.originalMethodArgs,
     );
+
+    // Check return type
+    let resultPromise: Promise<any>;
+    if (resultOrDeffered instanceof Promise) {
+      resultPromise = resultOrDeffered as Promise<any>;
+    } else if (isObservable(resultOrDeffered)) {
+      resultPromise = (resultOrDeffered as Observable<any>).toPromise();
+    }
+    else {
+      resultPromise =  Promise.resolve(resultOrDeffered);
+    }
+
+    const result = await resultPromise;
+
 
     try {
       await context.client.set(context.key, result, context.ttl);
