@@ -1421,9 +1421,9 @@
     "@types/node" "*"
 
 "@types/ioredis@^4.14.4":
-  version "4.17.11"
-  resolved "https://registry.yarnpkg.com/@types/ioredis/-/ioredis-4.17.11.tgz#08ee0324ec0c0770b025a66a9fb6534ca1d87c8e"
-  integrity sha512-XAg9kOLyClyyP2BjfO9NWQmDDJFTNxvz2qkE+BMBfQoAN0/o6X53X2gefgfm4bn89A9462DyzNEL1q23oeCRSg==
+  version "4.19.1"
+  resolved "https://registry.yarnpkg.com/@types/ioredis/-/ioredis-4.19.1.tgz#354c4907498b90fe14c2edff8e8ea9e5aea9821f"
+  integrity sha512-+q10eLAgjbYJMY/fAM7+zmNBegCAk3FZwcvgjdsPy5xK4MzFcVXB6yxa69bTB5Ouz24WqJiub6lPzasLE5BYZQ==
   dependencies:
     "@types/node" "*"
 
