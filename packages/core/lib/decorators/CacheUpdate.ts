@@ -1,8 +1,15 @@
-import { CacheUpdateOptions } from '../interfaces';
-import { determineOp, getFinalKey, getTTL, getCacheStrategy, getCacheClearStrategy } from '../util';
+import { CacheUpdateOptions, CacheUpdateStrategyContext } from '../interfaces';
+import {
+  determineOp,
+  getFinalKey,
+  getTTL,
+  getCacheClearStrategy,
+  getCacheUpdateStrategy,
+} from '../util';
 import cacheManager from '../index';
 import { DefaultStrategy } from '../strategies';
 import { DefaultClearStrategy } from '../strategies/DefaultClearStrategy';
+import { DefaultUpdateStrategy } from '../strategies/DefaultUpdateStrategy';
 
 /**
  * CacheUpdate - This decorator allows you to update a cached value
@@ -39,6 +46,7 @@ export function CacheUpdate(options?: CacheUpdateOptions) {
           return originalMethod!.apply(this, args);
         }
 
+        const result = await originalMethod!.apply(this, args);
         const contextToUse = !cacheManager.options.excludeContext ? this : undefined;
 
         const finalKey = getFinalKey(
@@ -47,6 +55,7 @@ export function CacheUpdate(options?: CacheUpdateOptions) {
           propertyKey,
           args,
           contextToUse,
+          result,
         );
 
         // TTL in seconds should prioritize options set in the decorator first,
@@ -56,10 +65,11 @@ export function CacheUpdate(options?: CacheUpdateOptions) {
             ? getTTL(options.ttlSeconds, args, contextToUse)
             : cacheManager.options.ttlSeconds || undefined;
 
-        const strategy = getCacheStrategy(
-          options?.strategy || cacheManager.options.strategy || new DefaultStrategy(),
+        const strategy = getCacheUpdateStrategy(
+          options?.strategy || cacheManager.options.updateStrategy || new DefaultUpdateStrategy(),
           args,
           contextToUse,
+          result,
         );
 
         const finalClearKey = getFinalKey(
@@ -78,65 +88,47 @@ export function CacheUpdate(options?: CacheUpdateOptions) {
           contextToUse,
         );
 
-        if (options?.clearAndUpdateInParallel) {
-          const promises = [
-            strategy.handle({
-              debug: cacheManager.options.debug,
-              originalMethod,
-              originalMethodScope: this,
-              originalMethodArgs: args,
-              client,
-              fallbackClient,
-              forceUpdate: true,
-              key: finalKey as string,
-              ttl,
-            }),
-          ];
-
-          if (finalClearKey.length) {
-            promises.push(
-              clearStrategy.handle({
-                debug: cacheManager.options.debug,
-                originalMethod,
-                originalMethodScope: this,
-                originalMethodArgs: args,
-                client,
-                fallbackClient,
-                key: finalClearKey,
-              }),
-            );
-          }
-
-          const [result] = await Promise.all(promises);
-
-          return result;
-        }
-
-        const result = await strategy.handle({
+        const cacheParams: CacheUpdateStrategyContext = {
           debug: cacheManager.options.debug,
           originalMethod,
           originalMethodScope: this,
           originalMethodArgs: args,
           client,
           fallbackClient,
-          forceUpdate: true,
           key: finalKey as string,
           ttl,
-        });
+          result,
+        };
 
-        if (finalClearKey.length) {
-          await clearStrategy.handle({
-            debug: cacheManager.options.debug,
-            originalMethod,
-            originalMethodScope: this,
-            originalMethodArgs: args,
-            client,
-            fallbackClient,
-            key: finalClearKey,
-          });
+        const clearParams = {
+          debug: cacheManager.options.debug,
+          originalMethod,
+          originalMethodScope: this,
+          originalMethodArgs: args,
+          client,
+          fallbackClient,
+          key: finalClearKey,
+        };
+
+        if (options?.clearAndUpdateInParallel) {
+          const promises = [strategy.handle(cacheParams)];
+
+          if (finalClearKey.length) {
+            promises.push(clearStrategy.handle(clearParams));
+          }
+
+          const [strategyResult] = await Promise.all(promises);
+
+          return strategyResult;
         }
 
-        return result;
+        const strategyResult = await strategy.handle(cacheParams);
+
+        if (finalClearKey.length) {
+          await clearStrategy.handle(clearParams);
+        }
+
+        return strategyResult;
       },
     };
   };

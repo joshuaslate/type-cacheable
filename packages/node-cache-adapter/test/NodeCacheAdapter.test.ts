@@ -1,6 +1,6 @@
 import * as NodeCache from 'node-cache';
-import { Cacheable } from '@type-cacheable/core/lib';
-import { NodeCacheAdapter } from '../lib';
+import { Cacheable, CacheClear } from '@type-cacheable/core';
+import { NodeCacheAdapter, useAdapter } from '../lib';
 
 let client: NodeCache;
 let nodeCacheAdapter: NodeCacheAdapter;
@@ -16,7 +16,7 @@ const arrayValue = ['element1', 2, { complex: 'element' }];
 describe('NodeCacheAdapter Tests', () => {
   beforeAll(() => {
     client = new NodeCache();
-    nodeCacheAdapter = new NodeCacheAdapter(client);
+    nodeCacheAdapter = useAdapter(client);
   });
 
   describe('Setter tests', () => {
@@ -92,6 +92,30 @@ describe('NodeCacheAdapter Tests', () => {
     });
   });
 
+  describe('Delete tests', () => {
+    it('should delete a set value', async () => {
+      client.set<string>(keyName, simpleValue);
+      await nodeCacheAdapter.del(keyName);
+
+      expect(client.get(keyName)).toBeFalsy();
+    });
+  });
+
+  describe('Delete full hash', () => {
+    it('should delete a full hash', async () => {
+      const hashKey = compoundCombined.split(':')[0];
+
+      client.set<any>(compoundCombined, objectValue);
+      const keys = await nodeCacheAdapter.keys(hashKey);
+      expect(keys).toHaveLength(1);
+
+      await nodeCacheAdapter.delHash(hashKey);
+
+      const keysPostDelete = await nodeCacheAdapter.keys(hashKey);
+      expect(keysPostDelete).toHaveLength(0);
+    });
+  });
+
   describe('integration', () => {
     describe('@Cacheable decorator', () => {
       const getTestInstance = () => {
@@ -102,35 +126,55 @@ describe('NodeCacheAdapter Tests', () => {
         const mockGetObjectValueImplementation = jest.fn();
 
         class TestClass {
-          @Cacheable({ client: nodeCacheAdapter, hashKey: 'user', cacheKey: (x) => x[0] })
+          @Cacheable({
+            client: nodeCacheAdapter,
+            hashKey: 'user',
+            cacheKey: (x) => x[0],
+          })
           async getId(id: string): Promise<string> {
             mockGetIdImplementation();
 
             return id;
           }
 
-          @Cacheable({ client: nodeCacheAdapter, hashKey: 'userInt', cacheKey: (x) => x[0] })
+          @Cacheable({
+            client: nodeCacheAdapter,
+            hashKey: 'userInt',
+            cacheKey: (x) => x[0],
+          })
           async getIntId(id: number): Promise<number> {
             mockGetIntIdImplementation();
 
             return id;
           }
 
-          @Cacheable({ client: nodeCacheAdapter, hashKey: 'boolVal', cacheKey: (x) => x[0] })
+          @Cacheable({
+            client: nodeCacheAdapter,
+            hashKey: 'boolVal',
+            cacheKey: (x) => x[0],
+          })
           async getBoolValue(value: boolean): Promise<boolean> {
             mockGetBooleanValueImplementation();
 
             return value;
           }
 
-          @Cacheable({ client: nodeCacheAdapter, hashKey: 'arrVal', cacheKey: (x) => x[0] })
+          @Cacheable({
+            client: nodeCacheAdapter,
+            hashKey: 'arrVal',
+            cacheKey: (x) => x[0],
+          })
           async getArrayValue(value: string): Promise<any[]> {
             mockGetArrayValueImplementation();
 
             return ['true', true, 'false', false, 1, '1'];
           }
 
-          @Cacheable({ client: nodeCacheAdapter, hashKey: 'objVal', cacheKey: (x) => x[0] })
+          @Cacheable({
+            client: nodeCacheAdapter,
+            hashKey: 'objVal',
+            cacheKey: (x) => x[0],
+          })
           async getObjectValue(value: string): Promise<any> {
             mockGetObjectValueImplementation();
 
@@ -214,6 +258,62 @@ describe('NodeCacheAdapter Tests', () => {
         const getObjectValueResult2 = await testClass.getObjectValue('test');
         expect(getObjectValueResult2).toEqual(getObjectValueResult1);
         expect(mockGetObjectValueImplementation).not.toHaveBeenCalled();
+      });
+    });
+    describe('@CacheClear Decorator', () => {
+      const getTestInstance = () => {
+        class TestClass {
+          @Cacheable({
+            client: nodeCacheAdapter,
+            cacheKey: 'users',
+          })
+          async getUsers(): Promise<{ id: string; name: string }[]> {
+            return [{ id: '123', name: 'Kodiak' }];
+          }
+
+          @Cacheable({
+            client: nodeCacheAdapter,
+            cacheKey: 'todos',
+          })
+          async getTodos(): Promise<{ id: string; done: boolean }[]> {
+            return [{ id: '456', done: false }];
+          }
+
+          @CacheClear({
+            client: nodeCacheAdapter,
+            cacheKey: ['users', 'todos'],
+          })
+          async clearAll(): Promise<void> {
+            return;
+          }
+        }
+
+        const testInstance = new TestClass();
+
+        return {
+          testInstance,
+        };
+      };
+
+      it('should clear multiple cacheKeys when an array is passed', async () => {
+        const { testInstance } = getTestInstance();
+
+        await testInstance.getUsers();
+        await testInstance.getTodos();
+
+        const userCacheResult = await nodeCacheAdapter.get('users');
+        expect(userCacheResult).toEqual([{ id: '123', name: 'Kodiak' }]);
+
+        const todoCacheResult = await nodeCacheAdapter.get('todos');
+        expect(todoCacheResult).toEqual([{ id: '456', done: false }]);
+
+        await testInstance.clearAll();
+
+        const userCacheResultPostClear = await nodeCacheAdapter.get('users');
+        expect(userCacheResultPostClear).toEqual(undefined);
+
+        const todoCacheResultPostClear = await nodeCacheAdapter.get('todos');
+        expect(todoCacheResultPostClear).toEqual(undefined);
       });
     });
   });

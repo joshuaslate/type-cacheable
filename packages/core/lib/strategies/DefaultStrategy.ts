@@ -2,29 +2,29 @@ import { CacheStrategy, CacheStrategyContext } from '../interfaces';
 
 export class DefaultStrategy implements CacheStrategy {
   async handle(context: CacheStrategyContext): Promise<any> {
-    if (!context.forceUpdate) {
-      try {
-        const cachedValue = await context.client.get(context.key);
+    try {
+      const cachedValue = await context.client.get(context.key);
 
-        // If a value for the cacheKey was found in cache, simply return that.
-        if (cachedValue !== undefined && cachedValue !== null) {
-          return cachedValue;
-        }
-      } catch (err) {
-        if (context.fallbackClient) {
-          try {
-            const cachedValue = await context.fallbackClient.get(context.key);
+      // If a value for the cacheKey was found in cache, simply return that.
+      if (cachedValue !== undefined && cachedValue !== null) {
+        return cachedValue;
+      }
+    } catch (err) {
+      if (context.fallbackClient) {
+        try {
+          const cachedValue = await context.fallbackClient.get(context.key);
 
-            // If a value for the cacheKey was found in cache, simply return that.
-            if (cachedValue !== undefined && cachedValue !== null) {
-              return cachedValue;
-            }
-          } catch (err) {}
-        }
+          // If a value for the cacheKey was found in cache, simply return that.
+          if (cachedValue !== undefined && cachedValue !== null) {
+            return cachedValue;
+          }
+        } catch (err) {}
+      }
 
-        if (context.debug) {
-          console.warn(`type-cacheable Cacheable cache miss due to client error: ${err.message}`);
-        }
+      if (context.debug) {
+        console.warn(
+          `type-cacheable Cacheable cache miss on method ${context.originalMethod.name} due to client error: ${err.message}`,
+        );
       }
     }
 
@@ -45,7 +45,7 @@ export class DefaultStrategy implements CacheStrategy {
 
       if (context.debug) {
         console.warn(
-          `type-cacheable Cacheable set cache failure due to client error: ${err.message}`,
+          `type-cacheable Cacheable set cache failure on method ${context.originalMethod.name} due to client error: ${err.message}`,
         );
       }
     }

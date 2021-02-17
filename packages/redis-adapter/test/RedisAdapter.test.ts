@@ -1,6 +1,6 @@
 import * as Redis from 'redis';
-import { Cacheable } from '@type-cacheable/core';
-import { RedisAdapter } from '../lib';
+import { Cacheable, CacheClear } from '@type-cacheable/core';
+import { RedisAdapter, useAdapter } from '../lib';
 
 let client: Redis.RedisClient;
 let redisAdapter: RedisAdapter;
@@ -20,11 +20,11 @@ describe('RedisAdapter Tests', () => {
     // Wait until the connection is ready before passing the client to the adapter.
     await new Promise((resolve) => {
       client.on('ready', () => {
-        resolve();
+        resolve(null);
       });
     });
 
-    redisAdapter = new RedisAdapter(client);
+    redisAdapter = useAdapter(client);
   });
 
   describe('Setter tests', () => {
@@ -143,12 +143,51 @@ describe('RedisAdapter Tests', () => {
       });
     });
 
-    it('should not found keys on a simple key with non-match', (done) => {
+    it('should not find keys for a non-existent simple key', (done) => {
       client.set(simpleKeyKeys, simpleValue, async () => {
         const result = await redisAdapter.keys(`*${simpleValue}*`);
 
         expect(result).toHaveLength(0);
         expect(result).toBeInstanceOf(Array);
+        done();
+      });
+    });
+
+    it('should return multiple pages worth of keys when more than the max page size exist', (done) => {
+      const vals = new Array(5000)
+        .fill(undefined)
+        .reduce((accum, _, i) => [...accum, `key-${i}`, `val-${i}`], []);
+      client.mset(...vals, async () => {
+        const result = await redisAdapter.keys('*key-*');
+        expect(result).toHaveLength(5000);
+        done();
+      });
+    });
+  });
+
+  describe('Delete tests', () => {
+    it('should delete a set value', async (done) => {
+      client.set(simpleKeyKeys, simpleValue, async () => {
+        await redisAdapter.del(keyName);
+        expect(await redisAdapter.get(keyName)).toBeFalsy();
+        done();
+      });
+    });
+  });
+
+  describe('Delete full hash', () => {
+    it('should delete a full hash', async (done) => {
+      const hashKey = compoundKey.split(':')[0];
+      const args = RedisAdapter.buildSetArgumentsFromObject({ ...objectValue });
+
+      client.hmset(compoundKey, args, async () => {
+        const keys = await redisAdapter.keys(`*${hashKey}:*`);
+        expect(keys).toHaveLength(1);
+
+        await redisAdapter.delHash(hashKey);
+
+        const keysPostDelete = await redisAdapter.keys(`*${hashKey}:*`);
+        expect(keysPostDelete).toHaveLength(0);
         done();
       });
     });
@@ -164,35 +203,55 @@ describe('RedisAdapter Tests', () => {
         const mockGetObjectValueImplementation = jest.fn();
 
         class TestClass {
-          @Cacheable({ client: redisAdapter, hashKey: 'user', cacheKey: (x) => x[0] })
+          @Cacheable({
+            client: redisAdapter,
+            hashKey: 'user',
+            cacheKey: (x) => x[0],
+          })
           async getId(id: string): Promise<string> {
             mockGetIdImplementation();
 
             return id;
           }
 
-          @Cacheable({ client: redisAdapter, hashKey: 'userInt', cacheKey: (x) => x[0] })
+          @Cacheable({
+            client: redisAdapter,
+            hashKey: 'userInt',
+            cacheKey: (x) => x[0],
+          })
           async getIntId(id: number): Promise<number> {
             mockGetIntIdImplementation();
 
             return id;
           }
 
-          @Cacheable({ client: redisAdapter, hashKey: 'boolVal', cacheKey: (x) => x[0] })
+          @Cacheable({
+            client: redisAdapter,
+            hashKey: 'boolVal',
+            cacheKey: (x) => x[0],
+          })
           async getBoolValue(value: boolean): Promise<boolean> {
             mockGetBooleanValueImplementation();
 
             return value;
           }
 
-          @Cacheable({ client: redisAdapter, hashKey: 'arrVal', cacheKey: (x) => x[0] })
+          @Cacheable({
+            client: redisAdapter,
+            hashKey: 'arrVal',
+            cacheKey: (x) => x[0],
+          })
           async getArrayValue(value: string): Promise<any[]> {
             mockGetArrayValueImplementation();
 
             return ['true', true, 'false', false, 1, '1'];
           }
 
-          @Cacheable({ client: redisAdapter, hashKey: 'objVal', cacheKey: (x) => x[0] })
+          @Cacheable({
+            client: redisAdapter,
+            hashKey: 'objVal',
+            cacheKey: (x) => x[0],
+          })
           async getObjectValue(value: string): Promise<any> {
             mockGetObjectValueImplementation();
 
@@ -276,6 +335,63 @@ describe('RedisAdapter Tests', () => {
         const getObjectValueResult2 = await testClass.getObjectValue('test');
         expect(getObjectValueResult2).toEqual(getObjectValueResult1);
         expect(mockGetObjectValueImplementation).not.toHaveBeenCalled();
+      });
+    });
+
+    describe('@CacheClear Decorator', () => {
+      const getTestInstance = () => {
+        class TestClass {
+          @Cacheable({
+            client: redisAdapter,
+            cacheKey: 'users',
+          })
+          async getUsers(): Promise<{ id: string; name: string }[]> {
+            return [{ id: '123', name: 'Kodiak' }];
+          }
+
+          @Cacheable({
+            client: redisAdapter,
+            cacheKey: 'todos',
+          })
+          async getTodos(): Promise<{ id: string; done: boolean }[]> {
+            return [{ id: '456', done: false }];
+          }
+
+          @CacheClear({
+            client: redisAdapter,
+            cacheKey: ['users', 'todos'],
+          })
+          async clearAll(): Promise<void> {
+            return;
+          }
+        }
+
+        const testInstance = new TestClass();
+
+        return {
+          testInstance,
+        };
+      };
+
+      it('should clear multiple cacheKeys when an array is passed', async () => {
+        const { testInstance } = getTestInstance();
+
+        await testInstance.getUsers();
+        await testInstance.getTodos();
+
+        const userCacheResult = await redisAdapter.get('users');
+        expect(userCacheResult).toEqual([{ id: '123', name: 'Kodiak' }]);
+
+        const todoCacheResult = await redisAdapter.get('todos');
+        expect(todoCacheResult).toEqual([{ id: '456', done: false }]);
+
+        await testInstance.clearAll();
+
+        const userCacheResultPostClear = await redisAdapter.get('users');
+        expect(userCacheResultPostClear).toEqual(null);
+
+        const todoCacheResultPostClear = await redisAdapter.get('todos');
+        expect(todoCacheResultPostClear).toEqual(null);
       });
     });
   });

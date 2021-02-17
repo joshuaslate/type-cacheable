@@ -1,9 +1,12 @@
 import { RedisClient, Callback } from 'redis';
+import * as compareVersions from 'compare-versions';
 import cacheManager, { CacheClient, parseIfRequired } from '@type-cacheable/core';
 
 // In order to support scalars in hmsets (likely not the intended use, but support has been requested),
 // we need at least one key. We can use an empty string.
 const SCALAR_KEY = '';
+
+const REDIS_VERSION_UNLINK_INTRODUCED = '4.0.0';
 
 export class RedisAdapter implements CacheClient {
   static buildSetArgumentsFromObject = (objectValue: any): string[] =>
@@ -78,6 +81,14 @@ export class RedisAdapter implements CacheClient {
     this.redisClient.on('error', () => {
       this.clientReady = false;
     });
+
+    this.get = this.get.bind(this);
+    this.del = this.del.bind(this);
+    this.delHash = this.delHash.bind(this);
+    this.getClientTTL = this.getClientTTL.bind(this);
+    this.keys = this.keys.bind(this);
+    this.set = this.set.bind(this);
+    this.checkIfReady = this.checkIfReady.bind(this);
 
     this.checkIfReady();
   }
@@ -216,7 +227,16 @@ export class RedisAdapter implements CacheClient {
 
     if (isReady) {
       return new Promise((resolve, reject) => {
-        this.redisClient.del(keyOrKeys, RedisAdapter.responseCallback(resolve, reject));
+        if (
+          compareVersions(
+            this.redisClient.server_info.redis_version,
+            REDIS_VERSION_UNLINK_INTRODUCED,
+          ) >= 0
+        ) {
+          this.redisClient.unlink(keyOrKeys, RedisAdapter.responseCallback(resolve, reject));
+        } else {
+          this.redisClient.del(keyOrKeys, RedisAdapter.responseCallback(resolve, reject));
+        }
       });
     }
 
@@ -243,7 +263,7 @@ export class RedisAdapter implements CacheClient {
 
         if (result) {
           // array exists at index 1 from SCAN command, cursor is at 0
-          cursor = cursor !== result[0] ? result[0] : null;
+          cursor = result[0] !== '0' ? result[0] : null;
           keys = [...keys, ...result[1]];
         } else {
           cursor = null;
@@ -255,9 +275,22 @@ export class RedisAdapter implements CacheClient {
 
     throw new Error('Redis client is not accepting connections.');
   }
+
+  public async delHash(hashKeyOrKeys: string | string[]): Promise<any> {
+    const finalDeleteKeys = Array.isArray(hashKeyOrKeys) ? hashKeyOrKeys : [hashKeyOrKeys];
+    const isReady = this.checkIfReady();
+
+    if (isReady) {
+      const deletePromises = finalDeleteKeys.map((key) => this.keys(`*${key}*`).then(this.del));
+      await Promise.all(deletePromises);
+      return;
+    }
+
+    throw new Error('Redis client is not accepting connections.');
+  }
 }
 
-export const useAdapter = (client: RedisClient, asFallback?: boolean): void => {
+export const useAdapter = (client: RedisClient, asFallback?: boolean): RedisAdapter => {
   const redisAdapter = new RedisAdapter(client);
 
   if (asFallback) {
@@ -265,4 +298,6 @@ export const useAdapter = (client: RedisClient, asFallback?: boolean): void => {
   } else {
     cacheManager.setClient(redisAdapter);
   }
+
+  return redisAdapter;
 };

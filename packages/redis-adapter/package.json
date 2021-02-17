@@ -1,6 +1,6 @@
 {
   "name": "@type-cacheable/redis-adapter",
-  "version": "6.2.0",
+  "version": "9.1.0",
   "description": "Adapter for using redis with type-cacheable",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -10,23 +10,12 @@
   "publishConfig": {
     "access": "public"
   },
-  "jest": {
-    "transform": {
-      "^.+\\.ts?$": "ts-jest"
-    },
-    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(js?|ts?)$",
-    "moduleFileExtensions": [
-      "ts",
-      "js",
-      "node"
-    ]
-  },
   "scripts": {
     "clean": "rm -rf ./dist",
     "start": "node ./dist/index.js",
     "test": "jest --coverage --runInBand",
     "test:watch": "jest --watch --runInBand",
-    "build": "npm run clean && tsc",
+    "build": "npm run clean && tsc -p ./tsconfig.json",
     "prepare": "npm run-script build",
     "prepublishOnly": "npm run build"
   },
@@ -46,17 +35,20 @@
   },
   "homepage": "https://github.com/joshuaslate/type-cacheable#readme",
   "devDependencies": {
+    "@type-cacheable/core": "^9.1.0",
     "@types/jest": "^26.0.0",
     "@types/redis": "^2.8.13",
-    "jest": "^25.1.0",
+    "jest": "^26.3.0",
     "redis": "^3.0.2",
-    "ts-jest": "^25.0.0",
-    "typescript": "^3.8.3"
+    "ts-jest": "^26.2.0",
+    "typescript": "^4.0.2"
   },
   "peerDependencies": {
+    "@type-cacheable/core": "^8.0.5",
     "redis": "^3.0.2"
   },
   "dependencies": {
-    "@type-cacheable/core": "^6.2.0"
-  }
+    "compare-versions": "^3.6.0"
+  },
+  "gitHead": "fc819565536432e484c60432a6c184ba700b3c92"
 }

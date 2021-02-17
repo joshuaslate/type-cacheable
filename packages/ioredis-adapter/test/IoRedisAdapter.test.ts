@@ -1,6 +1,6 @@
 import * as IoRedis from 'ioredis';
-import { Cacheable } from '@type-cacheable/core/lib';
-import { IoRedisAdapter } from '../lib';
+import { Cacheable, CacheClear } from '@type-cacheable/core';
+import { IoRedisAdapter, useAdapter } from '../lib';
 
 let client: IoRedis.Redis;
 let ioRedisAdapter: IoRedisAdapter;
@@ -15,8 +15,7 @@ const arrayValue = ['element1IoRedis', 2, { complex: 'elementIoRedis' }];
 describe('IoRedisAdapter Tests', () => {
   beforeAll(async () => {
     client = new IoRedis();
-
-    ioRedisAdapter = new IoRedisAdapter(client);
+    ioRedisAdapter = useAdapter(client);
   });
 
   describe('Setter tests', () => {
@@ -115,12 +114,22 @@ describe('IoRedisAdapter Tests', () => {
       expect(result).toContain(compoundKey);
     });
 
-    it('should not found keys on a simple key', async () => {
+    it('should not find keys for a non-existent simple key', async () => {
       await client.set(compoundKey, simpleValue);
       const result = await ioRedisAdapter.keys(`*${simpleValue}*`);
 
       expect(result).toHaveLength(0);
       expect(result).toBeInstanceOf(Array);
+    });
+
+    it('should return multiple pages worth of keys when more than the max page size exist', async () => {
+      const vals = new Array(5000)
+        .fill(undefined)
+        .reduce((accum, _, i) => [...accum, `key-${i}`, `val-${i}`], []);
+      await client.mset(...vals);
+
+      const result = await ioRedisAdapter.keys('*key-*');
+      expect(result).toHaveLength(5000);
     });
   });
 
@@ -156,6 +165,23 @@ describe('IoRedisAdapter Tests', () => {
     });
   });
 
+  describe('Delete full hash', () => {
+    it('should delete a full hash', async (done) => {
+      const hashKey = compoundKey.split(':')[0];
+
+      client.hmset(compoundKey, objectValue, async () => {
+        const keys = await ioRedisAdapter.keys(`*${hashKey}:*`);
+        expect(keys).toHaveLength(1);
+
+        await ioRedisAdapter.delHash(hashKey);
+
+        const keysPostDelete = await ioRedisAdapter.keys(`*${hashKey}:*`);
+        expect(keysPostDelete).toHaveLength(0);
+        done();
+      });
+    });
+  });
+
   describe('integration', () => {
     describe('@Cacheable decorator', () => {
       const getTestInstance = () => {
@@ -166,35 +192,55 @@ describe('IoRedisAdapter Tests', () => {
         const mockGetObjectValueImplementation = jest.fn();
 
         class TestClass {
-          @Cacheable({ client: ioRedisAdapter, hashKey: 'user', cacheKey: (x) => x[0] })
+          @Cacheable({
+            client: ioRedisAdapter,
+            hashKey: 'user',
+            cacheKey: (x: any) => x[0],
+          })
           async getId(id: string): Promise<string> {
             mockGetIdImplementation();
 
             return id;
           }
 
-          @Cacheable({ client: ioRedisAdapter, hashKey: 'userInt', cacheKey: (x) => x[0] })
+          @Cacheable({
+            client: ioRedisAdapter,
+            hashKey: 'userInt',
+            cacheKey: (x: any) => x[0],
+          })
           async getIntId(id: number): Promise<number> {
             mockGetIntIdImplementation();
 
             return id;
           }
 
-          @Cacheable({ client: ioRedisAdapter, hashKey: 'boolVal', cacheKey: (x) => x[0] })
+          @Cacheable({
+            client: ioRedisAdapter,
+            hashKey: 'boolVal',
+            cacheKey: (x: any) => x[0],
+          })
           async getBoolValue(value: boolean): Promise<boolean> {
             mockGetBooleanValueImplementation();
 
             return value;
           }
 
-          @Cacheable({ client: ioRedisAdapter, hashKey: 'arrVal', cacheKey: (x) => x[0] })
+          @Cacheable({
+            client: ioRedisAdapter,
+            hashKey: 'arrVal',
+            cacheKey: (x: any) => x[0],
+          })
           async getArrayValue(value: string): Promise<any[]> {
             mockGetArrayValueImplementation();
 
             return ['true', true, 'false', false, 1, '1'];
           }
 
-          @Cacheable({ client: ioRedisAdapter, hashKey: 'objVal', cacheKey: (x) => x[0] })
+          @Cacheable({
+            client: ioRedisAdapter,
+            hashKey: 'objVal',
+            cacheKey: (x: any) => x[0],
+          })
           async getObjectValue(value: string): Promise<any> {
             mockGetObjectValueImplementation();
 
@@ -278,6 +324,63 @@ describe('IoRedisAdapter Tests', () => {
         const getObjectValueResult2 = await testClass.getObjectValue('test');
         expect(getObjectValueResult2).toEqual(getObjectValueResult1);
         expect(mockGetObjectValueImplementation).not.toHaveBeenCalled();
+      });
+    });
+
+    describe('@CacheClear Decorator', () => {
+      const getTestInstance = () => {
+        class TestClass {
+          @Cacheable({
+            client: ioRedisAdapter,
+            cacheKey: 'users',
+          })
+          async getUsers(): Promise<{ id: string; name: string }[]> {
+            return [{ id: '123', name: 'Kodiak' }];
+          }
+
+          @Cacheable({
+            client: ioRedisAdapter,
+            cacheKey: 'todos',
+          })
+          async getTodos(): Promise<{ id: string; done: boolean }[]> {
+            return [{ id: '456', done: false }];
+          }
+
+          @CacheClear({
+            client: ioRedisAdapter,
+            cacheKey: ['users', 'todos'],
+          })
+          async clearAll(): Promise<void> {
+            return;
+          }
+        }
+
+        const testInstance = new TestClass();
+
+        return {
+          testInstance,
+        };
+      };
+
+      it('should clear multiple cacheKeys when an array is passed', async () => {
+        const { testInstance } = getTestInstance();
+
+        await testInstance.getUsers();
+        await testInstance.getTodos();
+
+        const userCacheResult = await ioRedisAdapter.get('users');
+        expect(userCacheResult).toEqual([{ id: '123', name: 'Kodiak' }]);
+
+        const todoCacheResult = await ioRedisAdapter.get('todos');
+        expect(todoCacheResult).toEqual([{ id: '456', done: false }]);
+
+        await testInstance.clearAll();
+
+        const userCacheResultPostClear = await ioRedisAdapter.get('users');
+        expect(userCacheResultPostClear).toEqual(null);
+
+        const todoCacheResultPostClear = await ioRedisAdapter.get('todos');
+        expect(todoCacheResultPostClear).toEqual(null);
       });
     });
   });

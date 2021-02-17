@@ -1,5 +1,5 @@
 import { CacheClearOptions } from '../interfaces';
-import { getFinalKey, determineOp, getCacheClearStrategy } from '../util';
+import { getFinalKey, determineOp, getCacheClearStrategy, extractKey } from '../util';
 import cacheManager from '../index';
 import { DefaultClearStrategy } from '../strategies/DefaultClearStrategy';
 
@@ -49,6 +49,7 @@ export function CacheClear(options?: CacheClearOptions) {
             args,
             contextToUse,
           );
+          const clearHash = options?.hashKey && !options?.cacheKey;
 
           const strategy = getCacheClearStrategy(
             options?.strategy || cacheManager.options.clearStrategy || new DefaultClearStrategy(),
@@ -65,10 +66,15 @@ export function CacheClear(options?: CacheClearOptions) {
             fallbackClient,
             key: finalKey,
             isPattern: options?.isPattern,
+            hashesToClear: clearHash
+              ? (extractKey(options?.hashKey, args, contextToUse) as string)
+              : undefined,
           });
         } catch (err) {
           if (cacheManager.options.debug) {
-            console.warn(`type-cacheable CacheClear failed to clear cached value: ${err.message}`);
+            console.warn(
+              `type-cacheable CacheClear failed to clear cached on method ${propertyKey} value: ${err.message}`,
+            );
           }
         }
 

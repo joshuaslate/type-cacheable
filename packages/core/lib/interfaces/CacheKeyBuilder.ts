@@ -1,3 +1,3 @@
-export interface CacheKeyBuilder {
-  (args: any[], context?: any): string;
-};
+export interface CacheKeyBuilder<T = any[], U = any> {
+  (args: T, context?: U): string;
+}

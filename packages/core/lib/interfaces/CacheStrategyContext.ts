@@ -7,7 +7,6 @@ export interface CacheStrategyContext {
   originalMethodArgs: any[];
   client: CacheClient;
   fallbackClient: CacheClient | null;
-  forceUpdate?: boolean;
   key: string;
   ttl: number | undefined;
 }

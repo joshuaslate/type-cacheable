@@ -3,18 +3,26 @@
   "private": true,
   "author": "Joshua Slate",
   "license": "MIT",
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ]
+  },
   "scripts": {
-    "bootstrap": "lerna bootstrap --hoist",
-    "postinstall": "npm run bootstrap",
-    "clean": "lerna run clean",
-    "build": "lerna run build",
-    "test": "lerna run test",
+    "clean": "lerna run clean --concurrency 20 --stream",
+    "build": "lerna run build --concurrency 20 --stream",
+    "test": "jest --coverage --runInBand",
+    "watch": "jest --watch --runInBand",
     "pub": "lerna publish",
     "link": "lerna exec -- yarn link",
     "unlink": "lerna exec -- yarn unlink"
   },
   "devDependencies": {
     "lerna": "^3.20.2",
-    "typescript": "^3.8.3"
+    "typescript": "^4.0.2"
+  },
+  "dependencies": {
+    "jest": "^26.2.2",
+    "ts-jest": "^26.1.4"
   }
 }
