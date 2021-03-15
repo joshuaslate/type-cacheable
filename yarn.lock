@@ -2412,7 +2412,7 @@ dateformat@^3.0.0:
   resolved "https://registry.yarnpkg.com/dateformat/-/dateformat-3.0.3.tgz#a6e37499a4d9a9cf85ef5872044d62901c9889ae"
   integrity sha512-jyCETtSl3VMZMWeRo7iY1FL19ges1t55hMo5yaam4Jrsm5EPL89UQkoQRyiI+Yf4k8r2ZpdngkV8hr1lIdjb3Q==
 
-debug@4, debug@^4.1.0, debug@^4.1.1:
+debug@4, debug@^4.1.0, debug@^4.1.1, debug@^4.3.1:
   version "4.3.1"
   resolved "https://registry.yarnpkg.com/debug/-/debug-4.3.1.tgz#f0d229c505e0c6d8c49ac553d1b13dc183f6b2ee"
   integrity sha512-doEwdvm4PCeK4K3RQN2ZC2BYUBaxwLARCqZmMjtF8a51J2Rb0xpVloFRnCODwqjpwnAoao4pelN8l3RJdv3gRQ==
@@ -3464,12 +3464,12 @@ interpret@^1.0.0:
   integrity sha512-agE4QfB2Lkp9uICn7BAqoscw4SZP9kTE2hxiFI3jBPmXJfdqiahTbUuKGsMoN2GtqL9AxhYioAcVvgsb1HvRbA==
 
 ioredis@^4.14.1:
-  version "4.23.0"
-  resolved "https://registry.yarnpkg.com/ioredis/-/ioredis-4.23.0.tgz#f61b65633a25c93f43fccebcacac2f4342e418f9"
-  integrity sha512-R5TDCODwnEH3J3A5TSoB17+6a+SeJTtIOW6vsy5Q1yag/AM8FejHjZC5R2O1QepSXV8hwOnGSm/4buJc/LeXTQ==
+  version "4.24.2"
+  resolved "https://registry.yarnpkg.com/ioredis/-/ioredis-4.24.2.tgz#ca827cb22b579827ac2999c8d5950d7605f286ed"
+  integrity sha512-SSuVXwoG747sZetxxs9gyAno5kfUfvo4s5mSZp4dh8vzuTnrtA5mTf2OjL6sPfIfNbVTROg2c+VbXceGlpucPQ==
   dependencies:
     cluster-key-slot "^1.1.0"
-    debug "^4.1.1"
+    debug "^4.3.1"
     denque "^1.1.0"
     lodash.defaults "^4.2.0"
     lodash.flatten "^4.4.0"
@@ -3477,7 +3477,7 @@ ioredis@^4.14.1:
     redis-commands "1.7.0"
     redis-errors "^1.2.0"
     redis-parser "^3.0.0"
-    standard-as-callback "^2.0.1"
+    standard-as-callback "^2.1.0"
 
 ip-regex@^2.1.0:
   version "2.1.0"
@@ -6315,10 +6315,10 @@ stack-utils@^2.0.2:
   dependencies:
     escape-string-regexp "^2.0.0"
 
-standard-as-callback@^2.0.1:
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/standard-as-callback/-/standard-as-callback-2.0.1.tgz#ed8bb25648e15831759b6023bdb87e6b60b38126"
-  integrity sha512-NQOxSeB8gOI5WjSaxjBgog2QFw55FV8TkS6Y07BiB3VJ8xNTvUYm0wl0s8ObgQ5NhdpnNfigMIKjgPESzgr4tg==
+standard-as-callback@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/standard-as-callback/-/standard-as-callback-2.1.0.tgz#8953fc05359868a77b5b9739a665c5977bb7df45"
+  integrity sha512-qoRRSyROncaz1z0mvYqIE4lCd9p2R90i6GxW3uZv5ucSu8tU7B5HXUP1gG8pVZsYNVaXjk8ClXHPttLyxAL48A==
 
 static-extend@^0.1.1:
   version "0.1.2"
