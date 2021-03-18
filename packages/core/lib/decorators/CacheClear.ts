@@ -15,32 +15,35 @@ export function CacheClear(options?: CacheClearOptions) {
     return {
       ...descriptor,
       value: async function (...args: any[]): Promise<any> {
+        // Allow a client to be passed in directly for granularity, else use the connected
+        // client from the main CacheManager singleton.
+        const client = options && options.client ? options.client : cacheManager.client;
+        const fallbackClient =
+          options && options.fallbackClient
+            ? options.fallbackClient
+            : cacheManager.fallbackClient;
+
+        if (options && options.noop && determineOp(options.noop, args, this)) {
+          return originalMethod!.apply(this, args);
+        }
+
+        // If there is no client, no-op is enabled (else we would have thrown before),
+        // just return the result of the decorated method (no caching)
+        if (!client) {
+          // A caching client must exist if not set to noop, otherwise this library is doing nothing.
+          if (cacheManager.options.debug) {
+            console.warn(
+              'type-cacheable @CacheClear was not set up with a caching client. Without a client, type-cacheable is not serving a purpose.',
+            );
+          }
+
+          return originalMethod!.apply(this, args);
+        }
+
+        // Run the decorated method
+        const result = await originalMethod!.apply(this, args);
+
         try {
-          // Allow a client to be passed in directly for granularity, else use the connected
-          // client from the main CacheManager singleton.
-          const client = options && options.client ? options.client : cacheManager.client;
-          const fallbackClient =
-            options && options.fallbackClient
-              ? options.fallbackClient
-              : cacheManager.fallbackClient;
-
-          if (options && options.noop && determineOp(options.noop, args, this)) {
-            return originalMethod!.apply(this, args);
-          }
-
-          // If there is no client, no-op is enabled (else we would have thrown before),
-          // just return the result of the decorated method (no caching)
-          if (!client) {
-            // A caching client must exist if not set to noop, otherwise this library is doing nothing.
-            if (cacheManager.options.debug) {
-              console.warn(
-                'type-cacheable @CacheClear was not set up with a caching client. Without a client, type-cacheable is not serving a purpose.',
-              );
-            }
-
-            return originalMethod!.apply(this, args);
-          }
-
           const contextToUse = !cacheManager.options.excludeContext ? this : undefined;
           const finalKey = getFinalKey(
             options && options.cacheKey,
@@ -78,8 +81,7 @@ export function CacheClear(options?: CacheClearOptions) {
           }
         }
 
-        // Run the decorated method
-        return originalMethod!.apply(this, args);
+        return result;
       },
     };
   };

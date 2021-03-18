@@ -76,6 +76,34 @@ describe('CacheClear Decorator Tests', () => {
     expect(getSpy).toHaveBeenCalledTimes(2);
   });
 
+  it('should not clear a cached key when a CacheClear-decorated method throws', async () => {
+    class TestClass {
+      public aProp: string = 'aVal!';
+      static setCacheKey = (args: any[]) => args[0];
+
+      @Cacheable({ cacheKey: TestClass.setCacheKey })
+      public async getProp(id: string): Promise<any> {
+        return this.aProp;
+      }
+
+      @CacheClear({ cacheKey: TestClass.setCacheKey })
+      public async setProp(id: string, value: string): Promise<void> {
+        throw new Error();
+      }
+    }
+
+    const getSpy = jest.spyOn(cacheManager.client!, 'get');
+    const delSpy = jest.spyOn(cacheManager.client!, 'del');
+    const testInstance = new TestClass();
+
+    await testInstance.getProp('1');
+    await expect(testInstance.setProp('1', 'anotherValue!')).rejects.toEqual(new Error);
+    await testInstance.getProp('1');
+
+    expect(delSpy).toHaveBeenCalledTimes(0);
+    expect(getSpy).toHaveBeenCalledTimes(2);
+  });
+
   it('should clear multiple cache keys', async () => {
     const mockGetTodos = jest.fn();
     const mockGetTodo = jest.fn();
