@@ -1,6 +1,6 @@
 {
   "name": "@type-cacheable/core",
-  "version": "9.1.0",
+  "version": "9.2.0",
   "description": "TypeScript-based caching decorators",
   "main": "dist/index.js",
   "module": "./index.ts",
