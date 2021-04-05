@@ -3464,9 +3464,9 @@ interpret@^1.0.0:
   integrity sha512-agE4QfB2Lkp9uICn7BAqoscw4SZP9kTE2hxiFI3jBPmXJfdqiahTbUuKGsMoN2GtqL9AxhYioAcVvgsb1HvRbA==
 
 ioredis@^4.14.1:
-  version "4.24.5"
-  resolved "https://registry.yarnpkg.com/ioredis/-/ioredis-4.24.5.tgz#32f56ccb04d2e9ff00aa935caf348fd4e19867b0"
-  integrity sha512-a1uk8WXM4Xe9bfYUJH17Up9ODEASjYCWiD/BKojPHp5YDDMX/QBOWxgSmrtpRE+ARdLYUoXSLeyGZyegLdHcOg==
+  version "4.25.0"
+  resolved "https://registry.yarnpkg.com/ioredis/-/ioredis-4.25.0.tgz#bc78d1fcda9d2b6f120f47c5764672734810b369"
+  integrity sha512-UoeqXpZB05aerGD3gB9NiigMsAyph+N+GWH8+3lX1+26caVV03GkL6JoLxS2HCxyvqCWbNsVSZTAp5W12qe23A==
   dependencies:
     cluster-key-slot "^1.1.0"
     debug "^4.3.1"
