@@ -11,12 +11,12 @@ import { DefaultStrategy } from '../strategies';
  * @param options {CacheOptions}
  */
 export function Cacheable(options?: CacheOptions) {
-  return (target: Object, propertyKey: string, descriptor: PropertyDescriptor) => {
+  return (target: unknown, propertyKey: string, descriptor: PropertyDescriptor) => {
     const originalMethod = descriptor.value;
 
     return {
       ...descriptor,
-      value: async function (...args: any[]): Promise<any> {
+      value: function (...args: any[]): any {
         // Allow a client to be passed in directly for granularity, else use the connected
         // client from the main CacheManager singleton.
         const client = options && options.client ? options.client : cacheManager.client;
@@ -63,7 +63,7 @@ export function Cacheable(options?: CacheOptions) {
           contextToUse,
         );
 
-        return strategy.handle({
+        let result = strategy.handle({
           debug: cacheManager.options.debug,
           originalMethod,
           originalMethodScope: this,
@@ -73,6 +73,18 @@ export function Cacheable(options?: CacheOptions) {
           key: finalKey as string,
           ttl,
         });
+
+        //type TRet = ReturnType() 
+        let returnType = Reflect.getMetadata("design:returntype", target, propertyKey);
+        if(returnType.name == 'Observable') {
+          return from(result);
+        }
+        else if(returnType.name == 'Promise') {
+          return result;
+        }
+        else {
+          return result;
+        }       
       },
     };
   };
