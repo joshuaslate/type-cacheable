@@ -1,31 +1,27 @@
 import { CacheUpdate, Cacheable } from '../../lib/decorators';
-import cacheManager, {
-  CacheStrategy,
-  CacheStrategyContext,
+import {
   CacheClient,
   CacheUpdateStrategy,
   CacheUpdateStrategyContext,
 } from '../../lib';
-import { useMockAdapter } from '../test-utils';
+import { MockAdapter } from '@type-cacheable/core/test/test-utils';
 
 describe('CacheUpdate Decorator Tests', () => {
-  beforeEach(() => {
-    useMockAdapter();
-  });
-
   it('should not throw an error if the client fails', async () => {
+    const client = new MockAdapter();
+
     class TestClass {
-      @CacheUpdate()
+      @CacheUpdate({ client })
       public async hello(): Promise<any> {
         return 'world';
       }
     }
 
-    cacheManager.client!.get = async (cacheKey: string) => {
+    client.get = async (_cacheKey: string) => {
       throw new Error('client failure');
     };
 
-    cacheManager.client!.set = async (cacheKey: string, value: any) => {
+    client.set = async (_cacheKey: string, _value: any) => {
       throw new Error('client failure');
     };
 
@@ -41,20 +37,23 @@ describe('CacheUpdate Decorator Tests', () => {
   });
 
   it('should attempt to get and set the cache on an initial call to a decorated method, only get on subsequent calls', async () => {
+    const client = new MockAdapter();
+
     class TestClass {
       private values = [1, 2, 3, 4, 5];
 
-      @Cacheable({ cacheKey: 'values' })
+      @Cacheable({ client, cacheKey: 'values' })
       public getValues(): Promise<number[]> {
         return Promise.resolve(this.values);
       }
 
-      @Cacheable({ cacheKey: (args) => args[0] })
+      @Cacheable({ client, cacheKey: (args) => args[0] })
       public getValue(id: number): Promise<number | undefined> {
         return Promise.resolve(this.values.find((num) => num === id));
       }
 
       @CacheUpdate({
+        client,
         cacheKey: (args: any[]) => args[0],
         cacheKeysToClear: (args) => ['values', args[0]],
       })
@@ -74,8 +73,8 @@ describe('CacheUpdate Decorator Tests', () => {
       }
     }
 
-    const getSpy = jest.spyOn(cacheManager.client!, 'get');
-    const setSpy = jest.spyOn(cacheManager.client!, 'set');
+    const getSpy = jest.spyOn(client, 'get');
+    const setSpy = jest.spyOn(client, 'set');
     const testInstance = new TestClass();
     const freshArrayResult = await testInstance.getValues();
     expect(freshArrayResult).toEqual([1, 2, 3, 4, 5]);
@@ -103,24 +102,26 @@ describe('CacheUpdate Decorator Tests', () => {
   });
 
   it('should use the result to set the final cacheKey', async () => {
+    const client = new MockAdapter();
     const mockGetUser = jest.fn();
 
     class TestClass {
       private lastCreatedId = 0;
       private users = [];
 
-      @Cacheable({ cacheKey: 'users' })
+      @Cacheable({ client, cacheKey: 'users' })
       public getUsers(): Promise<any[]> {
         return Promise.resolve(this.users);
       }
 
-      @Cacheable({ cacheKey: (args) => args[0] })
+      @Cacheable({ client, cacheKey: (args) => args[0] })
       public getUser(id: number): Promise<any> {
         mockGetUser();
         return Promise.resolve(this.users.find((user: any) => user.id === id));
       }
 
       @CacheUpdate({
+        client,
         cacheKey: (_, __, result) => result.id,
         cacheKeysToClear: (args) => ['users', args[0]],
       })
@@ -141,6 +142,8 @@ describe('CacheUpdate Decorator Tests', () => {
   });
 
   it('should use the provided strategy', async () => {
+    const client = new MockAdapter();
+
     class CustomStrategy implements CacheUpdateStrategy {
       async handle(context: CacheUpdateStrategyContext): Promise<any> {
         return `hello ${context.result}`;
@@ -148,7 +151,7 @@ describe('CacheUpdate Decorator Tests', () => {
     }
 
     class TestClass {
-      @CacheUpdate({ strategy: new CustomStrategy() })
+      @CacheUpdate({ client, strategy: new CustomStrategy() })
       public async hello(): Promise<any> {
         return 'world';
       }

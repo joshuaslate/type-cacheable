@@ -28,63 +28,65 @@ describe('RedisAdapter Tests', () => {
   });
 
   describe('Setter tests', () => {
-    it('should set a string value on a standard key', async (done) => {
-      await redisAdapter.set(keyName, simpleValue);
-
-      client.get(keyName, (err, result) => {
-        expect(result).toBe(JSON.stringify(simpleValue));
-        done();
+    it('should set a string value on a standard key', (done) => {
+      redisAdapter.set(keyName, simpleValue).then(() => {
+        client.get(keyName, (err, result) => {
+          expect(result).toBe(JSON.stringify(simpleValue));
+          done();
+        });
       });
     });
 
-    it('should set an object value on a standard key', async (done) => {
+    it('should set an object value on a standard key', (done) => {
       const keyName = 'aSimpleKey';
 
-      await redisAdapter.set(keyName, objectValue);
-
-      client.get(keyName, (err, result) => {
-        expect(result).toBe(JSON.stringify(objectValue));
-        done();
+      redisAdapter.set(keyName, objectValue).then(() => {
+        client.get(keyName, (err, result) => {
+          expect(result).toBe(JSON.stringify(objectValue));
+          done();
+        });
       });
     });
 
-    it('should set an array value on a standard key', async (done) => {
-      await redisAdapter.set(keyName, arrayValue);
-
-      client.get(keyName, (err, result) => {
-        expect(result).toBe(JSON.stringify(arrayValue));
-        done();
+    it('should set an array value on a standard key', (done) => {
+      redisAdapter.set(keyName, arrayValue).then(() => {
+        client.get(keyName, (err, result) => {
+          expect(result).toBe(JSON.stringify(arrayValue));
+          done();
+        });
       });
     });
 
-    it('should set an object value on a compound (x:y) key', async (done) => {
-      await redisAdapter.set(compoundKey, objectValue);
+    it('should set an object value on a compound (x:y) key', (done) => {
+      redisAdapter.set(compoundKey, objectValue).then(() => {
+        client.hgetall(compoundKey, (err, result) => {
+          expect(result).toEqual(
+            Object.keys(objectValue).reduce((accum, curr) => {
+              accum[curr] = JSON.stringify((objectValue as any)[curr]);
 
-      client.hgetall(compoundKey, (err, result) => {
-        expect(result).toEqual(
-          Object.keys(objectValue).reduce((accum, curr) => {
-            accum[curr] = JSON.stringify((objectValue as any)[curr]);
-
-            return accum;
-          }, {} as any),
-        );
-        done();
+              return accum;
+            }, {} as any),
+          );
+          done();
+        });
       });
     });
 
-    it('should set an array value on a compound (x:y) key', async (done) => {
-      await redisAdapter.set(compoundKey, arrayValue);
-
-      client.hgetall(compoundKey, (err, result) => {
-        expect(result).toEqual({ ...result });
-        done();
+    it('should set an array value on a compound (x:y) key', (done) => {
+      redisAdapter.set(compoundKey, arrayValue).then(() => {
+        client.hgetall(compoundKey, (err, result) => {
+          expect(result).toEqual({ ...result });
+          done();
+        });
       });
     });
 
-    it('should set an expiresAt value on a compound (x:y) key when TTL is passed in', async () => {
+    it('should set an expiresAt value on a compound (x:y) key when TTL is passed in', (done) => {
       jest.spyOn(client, 'expire');
-      await redisAdapter.set(compoundKey, objectValue, 50000);
-      expect(client.expire).toHaveBeenCalled();
+      redisAdapter.set(compoundKey, objectValue, 50000).then(() => {
+        expect(client.expire).toHaveBeenCalled();
+        done();
+      });
     });
   });
 
@@ -166,7 +168,7 @@ describe('RedisAdapter Tests', () => {
   });
 
   describe('Delete tests', () => {
-    it('should delete a set value', async (done) => {
+    it('should delete a set value', (done) => {
       client.set(simpleKeyKeys, simpleValue, async () => {
         await redisAdapter.del(keyName);
         expect(await redisAdapter.get(keyName)).toBeFalsy();
@@ -176,7 +178,7 @@ describe('RedisAdapter Tests', () => {
   });
 
   describe('Delete full hash', () => {
-    it('should delete a full hash', async (done) => {
+    it('should delete a full hash', (done) => {
       const hashKey = compoundKey.split(':')[0];
       const args = RedisAdapter.buildSetArgumentsFromObject({ ...objectValue });
 

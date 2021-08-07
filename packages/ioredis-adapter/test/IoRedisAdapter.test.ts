@@ -142,9 +142,9 @@ describe('IoRedisAdapter Tests', () => {
       expect(result).toBeNull();
     });
 
-    it('should not throw error on an empty array of keys', async (done) => {
-      await ioRedisAdapter.del([]);
-      done();
+    it('should not throw error on an empty array of keys', async () => {
+      const result = await ioRedisAdapter.del([]);
+      return result;
     });
 
     it('should delete an array of keys', async () => {
@@ -166,7 +166,7 @@ describe('IoRedisAdapter Tests', () => {
   });
 
   describe('Delete full hash', () => {
-    it('should delete a full hash', async (done) => {
+    it('should delete a full hash', (done) => {
       const hashKey = compoundKey.split(':')[0];
 
       client.hmset(compoundKey, objectValue, async () => {

@@ -7,7 +7,6 @@ import {
   getCacheUpdateStrategy,
 } from '../util';
 import cacheManager from '../index';
-import { DefaultStrategy } from '../strategies';
 import { DefaultClearStrategy } from '../strategies/DefaultClearStrategy';
 import { DefaultUpdateStrategy } from '../strategies/DefaultUpdateStrategy';
 
@@ -17,8 +16,8 @@ import { DefaultUpdateStrategy } from '../strategies/DefaultUpdateStrategy';
  * @param options {CacheUpdateOptions}
  */
 export function CacheUpdate(options?: CacheUpdateOptions) {
-  return (target: Object, propertyKey: string, descriptor: PropertyDescriptor) => {
-    const originalMethod = descriptor.value;
+  return (target: Object, propertyKey: string, descriptor?: PropertyDescriptor) => {
+    const originalMethod = descriptor?.value;
 
     return {
       ...descriptor,
@@ -30,7 +29,7 @@ export function CacheUpdate(options?: CacheUpdateOptions) {
           options && options.fallbackClient ? options.fallbackClient : cacheManager.fallbackClient;
 
         if (options && options.noop && determineOp(options.noop, args, this)) {
-          return originalMethod!.apply(this, args);
+          return originalMethod?.apply(this, args);
         }
 
         // If there is no client, no-op is enabled (else we would have thrown before),
@@ -43,10 +42,10 @@ export function CacheUpdate(options?: CacheUpdateOptions) {
             );
           }
 
-          return originalMethod!.apply(this, args);
+          return originalMethod?.apply(this, args);
         }
 
-        const result = await originalMethod!.apply(this, args);
+        const result = await originalMethod?.apply(this, args);
         const contextToUse = !cacheManager.options.excludeContext ? this : undefined;
 
         const finalKey = getFinalKey(
