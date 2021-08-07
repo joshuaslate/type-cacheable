@@ -1,5 +1,5 @@
 services:
-  - redis-server
+  - redis
 language: node_js
 node:js:
   - stable
