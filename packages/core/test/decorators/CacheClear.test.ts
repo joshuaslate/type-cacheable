@@ -1,38 +1,35 @@
 import { Cacheable, CacheClear } from '../../lib/decorators';
-import cacheManager from '../../lib';
-import { useMockAdapter } from '../test-utils';
+import { MockAdapter } from '../test-utils';
 
 describe('CacheClear Decorator Tests', () => {
-  beforeEach(() => {
-    useMockAdapter();
-  });
-
   it('should not throw an error if the client fails', async () => {
+    const client = new MockAdapter();
+
     class TestClass {
       public aProp: string = 'aVal!';
 
       static setCacheKey = (args: any[]) => args[0];
 
-      @Cacheable({ cacheKey: TestClass.setCacheKey })
-      public async getProp(id: string): Promise<any> {
+      @Cacheable({ client, cacheKey: TestClass.setCacheKey })
+      public async getProp(_id: string): Promise<any> {
         return this.aProp;
       }
 
-      @CacheClear({ cacheKey: TestClass.setCacheKey })
+      @CacheClear({ client, cacheKey: TestClass.setCacheKey })
       public async setProp(id: string, value: string): Promise<void> {
         this.aProp = value;
       }
     }
 
-    cacheManager.client!.get = async (cacheKey: string) => {
+    client.get = async (_cacheKey: string) => {
       throw new Error('client failure');
     };
 
-    cacheManager.client!.set = async (cacheKey: string, value: any) => {
+    client.set = async (_cacheKey: string, _value: any) => {
       throw new Error('client failure');
     };
 
-    cacheManager.client!.del = async (cacheKey: string) => {
+    client.del = async (_cacheKey: string) => {
       throw new Error('client failure');
     };
 
@@ -49,23 +46,25 @@ describe('CacheClear Decorator Tests', () => {
   });
 
   it('should clear a cached key when a CacheClear-decorated method is called', async () => {
+    const client = new MockAdapter();
+
     class TestClass {
       public aProp: string = 'aVal!';
       static setCacheKey = (args: any[]) => args[0];
 
-      @Cacheable({ cacheKey: TestClass.setCacheKey })
-      public async getProp(id: string): Promise<any> {
+      @Cacheable({ client, cacheKey: TestClass.setCacheKey })
+      public async getProp(_id: string): Promise<any> {
         return this.aProp;
       }
 
-      @CacheClear({ cacheKey: TestClass.setCacheKey })
+      @CacheClear({ client, cacheKey: TestClass.setCacheKey })
       public async setProp(id: string, value: string): Promise<void> {
         this.aProp = value;
       }
     }
 
-    const getSpy = jest.spyOn(cacheManager.client!, 'get');
-    const delSpy = jest.spyOn(cacheManager.client!, 'del');
+    const getSpy = jest.spyOn(client, 'get');
+    const delSpy = jest.spyOn(client, 'del');
     const testInstance = new TestClass();
 
     await testInstance.getProp('1');
@@ -77,23 +76,25 @@ describe('CacheClear Decorator Tests', () => {
   });
 
   it('should not clear a cached key when a CacheClear-decorated method throws', async () => {
+    const client = new MockAdapter();
+
     class TestClass {
       public aProp: string = 'aVal!';
       static setCacheKey = (args: any[]) => args[0];
 
-      @Cacheable({ cacheKey: TestClass.setCacheKey })
-      public async getProp(id: string): Promise<any> {
+      @Cacheable({ client, cacheKey: TestClass.setCacheKey })
+      public async getProp(_id: string): Promise<any> {
         return this.aProp;
       }
 
-      @CacheClear({ cacheKey: TestClass.setCacheKey })
-      public async setProp(id: string, value: string): Promise<void> {
+      @CacheClear({ client, cacheKey: TestClass.setCacheKey })
+      public async setProp(_id: string, _value: string): Promise<void> {
         throw new Error();
       }
     }
 
-    const getSpy = jest.spyOn(cacheManager.client!, 'get');
-    const delSpy = jest.spyOn(cacheManager.client!, 'del');
+    const getSpy = jest.spyOn(client, 'get');
+    const delSpy = jest.spyOn(client, 'del');
     const testInstance = new TestClass();
 
     await testInstance.getProp('1');
@@ -105,6 +106,7 @@ describe('CacheClear Decorator Tests', () => {
   });
 
   it('should clear multiple cache keys', async () => {
+    const client = new MockAdapter();
     const mockGetTodos = jest.fn();
     const mockGetTodo = jest.fn();
 
@@ -115,26 +117,26 @@ describe('CacheClear Decorator Tests', () => {
       ];
       static setCacheKey = (args: any[]) => args[0];
 
-      @Cacheable({ cacheKey: 'todos' })
+      @Cacheable({ client, cacheKey: 'todos' })
       public async getTodos(): Promise<any> {
         mockGetTodos();
         return this.todos;
       }
 
-      @Cacheable({ cacheKey: TestClass.setCacheKey })
+      @Cacheable({ client, cacheKey: TestClass.setCacheKey })
       public async getTodo(id: string): Promise<any> {
         mockGetTodo();
         return this.todos.find((todo) => todo.id === id);
       }
 
-      @CacheClear({ cacheKey: (args: any[]) => ['todos', args[0]] })
+      @CacheClear({ client, cacheKey: (args: any[]) => ['todos', args[0]] })
       public async deleteTodo(id: string): Promise<any> {
         this.todos = this.todos.filter((todo) => todo.id !== id);
       }
     }
 
-    const getSpy = jest.spyOn(cacheManager.client!, 'get');
-    const delSpy = jest.spyOn(cacheManager.client!, 'del');
+    const getSpy = jest.spyOn(client, 'get');
+    const delSpy = jest.spyOn(client, 'del');
     const testInstance = new TestClass();
 
     await testInstance.getTodos();
@@ -153,6 +155,8 @@ describe('CacheClear Decorator Tests', () => {
   });
 
   it('should clear a full hash when a hashKey is provided, but no cacheKey is', async () => {
+    const client = new MockAdapter();
+
     class TestClass {
       public todos: any[] = [
         { id: '1', note: 'Todo' },
@@ -160,12 +164,12 @@ describe('CacheClear Decorator Tests', () => {
       ];
       static setCacheKey = (args: any[]) => args[0];
 
-      @Cacheable({ hashKey: 'todo', cacheKey: TestClass.setCacheKey })
+      @Cacheable({ client, hashKey: 'todo', cacheKey: TestClass.setCacheKey })
       public async getTodo(id: string): Promise<any> {
         return this.todos.find((todo) => todo.id === id);
       }
 
-      @CacheClear({ hashKey: 'todo' })
+      @CacheClear({ client, hashKey: 'todo' })
       public async deleteTodo(id: string): Promise<any> {
         this.todos = this.todos.filter((todo) => todo.id !== id);
       }
@@ -175,10 +179,10 @@ describe('CacheClear Decorator Tests', () => {
     await testInstance.getTodo('1');
     await testInstance.getTodo('2');
 
-    expect(await cacheManager.client?.keys('')).toHaveLength(2);
+    expect(await client.keys('')).toHaveLength(2);
 
     await testInstance.deleteTodo('1');
 
-    expect(await cacheManager.client?.keys('')).toHaveLength(0);
+    expect(await client.keys('')).toHaveLength(0);
   });
 });

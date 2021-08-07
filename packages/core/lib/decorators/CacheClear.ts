@@ -9,8 +9,8 @@ import { DefaultClearStrategy } from '../strategies/DefaultClearStrategy';
  * @param options {CacheOptions}
  */
 export function CacheClear(options?: CacheClearOptions) {
-  return (target: Object, propertyKey: string, descriptor: PropertyDescriptor) => {
-    const originalMethod = descriptor.value;
+  return (target: Object, propertyKey: string, descriptor?: PropertyDescriptor) => {
+    const originalMethod = descriptor?.value;
 
     return {
       ...descriptor,
@@ -24,7 +24,7 @@ export function CacheClear(options?: CacheClearOptions) {
             : cacheManager.fallbackClient;
 
         if (options && options.noop && determineOp(options.noop, args, this)) {
-          return originalMethod!.apply(this, args);
+          return originalMethod?.apply(this, args);
         }
 
         // If there is no client, no-op is enabled (else we would have thrown before),
@@ -37,11 +37,11 @@ export function CacheClear(options?: CacheClearOptions) {
             );
           }
 
-          return originalMethod!.apply(this, args);
+          return originalMethod?.apply(this, args);
         }
 
         // Run the decorated method
-        const result = await originalMethod!.apply(this, args);
+        const result = await originalMethod?.apply(this, args);
 
         try {
           const contextToUse = !cacheManager.options.excludeContext ? this : undefined;

@@ -1,4 +1,4 @@
-import cacheManager, { CacheClient } from '../lib';
+import { CacheClient } from '../lib';
 
 export class MockAdapter implements CacheClient {
   constructor() {
@@ -49,7 +49,3 @@ export class MockAdapter implements CacheClient {
     return;
   }
 }
-
-export const useMockAdapter = () => {
-  cacheManager.setClient(new MockAdapter());
-};

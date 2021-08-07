@@ -1,27 +1,25 @@
 import { Cacheable } from '../../lib/decorators';
-import cacheManager, { CacheStrategy, CacheStrategyContext, CacheClient } from '../../lib';
-import { useMockAdapter } from '../test-utils';
+import { CacheStrategy, CacheStrategyContext, CacheClient } from '../../lib';
+import { MockAdapter } from '../test-utils';
 
 describe('Cacheable Decorator Tests', () => {
-  beforeEach(() => {
-    useMockAdapter();
-  });
-
   it('should not throw an error if the client fails', async () => {
+    const client = new MockAdapter();
+
     class TestClass {
       public aProp: string = 'aVal!';
 
-      @Cacheable()
+      @Cacheable({ client })
       public async hello(): Promise<any> {
         return 'world';
       }
     }
 
-    cacheManager.client!.get = async (cacheKey: string) => {
+    client.get = async (_cacheKey: string) => {
       throw new Error('client failure');
     };
 
-    cacheManager.client!.set = async (cacheKey: string, value: any) => {
+    client.set = async (_cacheKey: string, _value: any) => {
       throw new Error('client failure');
     };
 
@@ -37,18 +35,22 @@ describe('Cacheable Decorator Tests', () => {
   });
 
   it('should attempt to get and set the cache on an initial call to a decorated method, only get on subsequent calls', async () => {
+    const client = new MockAdapter();
+
     class TestClass {
       public aProp: string = 'aVal!';
 
-      @Cacheable()
+      @Cacheable({ client })
       public async hello(): Promise<any> {
         return 'world';
       }
     }
 
-    const getSpy = jest.spyOn(cacheManager.client!, 'get');
-    const setSpy = jest.spyOn(cacheManager.client!, 'set');
+    const getSpy = jest.spyOn(client, 'get');
+    const setSpy = jest.spyOn(client, 'set');
+
     const testInstance = new TestClass();
+
     await testInstance.hello();
 
     // Because the cache hasn't been filled yet, a get and set should be called once each
@@ -63,6 +65,8 @@ describe('Cacheable Decorator Tests', () => {
   });
 
   it('should use the provided strategy', async () => {
+    const client = new MockAdapter();
+
     class CustomStrategy implements CacheStrategy {
       async handle(context: CacheStrategyContext): Promise<any> {
         const result = await context.originalMethod.apply(
@@ -76,7 +80,7 @@ describe('Cacheable Decorator Tests', () => {
     class TestClass {
       public aProp: string = 'aVal!';
 
-      @Cacheable({ strategy: new CustomStrategy() })
+      @Cacheable({ client, strategy: new CustomStrategy() })
       public async hello(): Promise<any> {
         return 'world';
       }
