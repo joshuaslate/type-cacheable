@@ -37,7 +37,7 @@
   "devDependencies": {
     "@type-cacheable/core": "^10.0.0",
     "@types/ioredis": "^4.26.7",
-    "@types/jest": "^26.0.24",
+    "@types/jest": "^27.0.0",
     "ioredis": "^4.27.7",
     "jest": "^27.0.6",
     "ts-jest": "^27.0.4",
