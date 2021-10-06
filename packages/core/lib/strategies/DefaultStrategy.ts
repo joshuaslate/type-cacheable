@@ -60,11 +60,16 @@ export class DefaultStrategy implements CacheStrategy {
     if (pendingMethodRun) {
       result = await pendingMethodRun;
     } else {
-      const methodPromise = new Promise(async (resolve) => {
-        const returnValue = await context.originalMethod!.apply(
-          context.originalMethodScope,
-          context.originalMethodArgs,
-        );
+      const methodPromise = new Promise(async (resolve, reject) => {
+        let returnValue;
+        try {
+          returnValue = await context.originalMethod!.apply(
+            context.originalMethodScope,
+            context.originalMethodArgs,
+          );
+        } catch (err) {
+          reject(err);
+        }
 
         try {
           await context.client.set(context.key, returnValue, context.ttl);
@@ -87,7 +92,7 @@ export class DefaultStrategy implements CacheStrategy {
 
       this.pendingMethodCallMap.set(context.key, methodPromise);
 
-      result = await methodPromise;
+      result = await methodPromise.catch(err => { throw err; });
 
       this.pendingMethodCallMap.delete(context.key);
     }
