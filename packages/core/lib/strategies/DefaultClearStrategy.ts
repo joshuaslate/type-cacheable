@@ -32,7 +32,11 @@ export class DefaultClearStrategy implements CacheClearStrategy {
         } catch (fallbackClientError) {
           if (context.debug) {
             console.warn(
-              `type-cacheable CacheClear failure on method ${context.originalMethod.name} due to client error: ${mainClientError.message} and fallback client failure: ${fallbackClientError.message}`,
+              `type-cacheable CacheClear failure on method ${
+                context.originalMethod.name
+              } due to client error: ${
+                (mainClientError as Error).message
+              } and fallback client failure: ${(fallbackClientError as Error).message}`,
             );
           }
         }
@@ -40,7 +44,9 @@ export class DefaultClearStrategy implements CacheClearStrategy {
       } else {
         if (context.debug) {
           console.warn(
-            `type-cacheable CacheClear failure on method ${context.originalMethod.name} due to client error: ${mainClientError.message}`,
+            `type-cacheable CacheClear failure on method ${
+              context.originalMethod.name
+            } due to client error: ${(mainClientError as Error).message}`,
           );
         }
       }

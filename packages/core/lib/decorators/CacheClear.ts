@@ -19,9 +19,7 @@ export function CacheClear(options?: CacheClearOptions) {
         // client from the main CacheManager singleton.
         const client = options && options.client ? options.client : cacheManager.client;
         const fallbackClient =
-          options && options.fallbackClient
-            ? options.fallbackClient
-            : cacheManager.fallbackClient;
+          options && options.fallbackClient ? options.fallbackClient : cacheManager.fallbackClient;
 
         if (options && options.noop && determineOp(options.noop, args, this)) {
           return originalMethod?.apply(this, args);
@@ -76,7 +74,9 @@ export function CacheClear(options?: CacheClearOptions) {
         } catch (err) {
           if (cacheManager.options.debug) {
             console.warn(
-              `type-cacheable CacheClear failed to clear cached on method ${propertyKey} value: ${err.message}`,
+              `type-cacheable CacheClear failed to clear cached on method ${propertyKey} value: ${
+                (err as Error).message
+              }`,
             );
           }
         }
