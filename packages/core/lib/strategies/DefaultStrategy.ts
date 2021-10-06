@@ -90,11 +90,14 @@ export class DefaultStrategy implements CacheStrategy {
         resolve(returnValue);
       });
 
-      this.pendingMethodCallMap.set(context.key, methodPromise);
-
-      result = await methodPromise.catch(err => { throw err; });
-
-      this.pendingMethodCallMap.delete(context.key);
+      try {
+        this.pendingMethodCallMap.set(context.key, methodPromise);
+        result = await methodPromise;
+      } catch (err) {
+        throw err;
+      } finally {
+        this.pendingMethodCallMap.delete(context.key);
+      }
     }
 
     return result;
