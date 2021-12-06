@@ -23,6 +23,6 @@
   },
   "dependencies": {
     "jest": "^27.0.6",
-    "ts-jest": "^27.0.4"
+    "ts-jest": "^27.1.0"
   }
 }
