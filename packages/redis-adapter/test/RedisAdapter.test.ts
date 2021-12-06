@@ -22,159 +22,134 @@ describe('RedisAdapter Tests', () => {
   });
 
   describe('Setter tests', () => {
-    it('should set a string value on a standard key', (done) => {
-      redisAdapter.set(keyName, simpleValue).then(async () => {
-        const result = await client.get(keyName);
-        expect(result).toBe(JSON.stringify(simpleValue));
-        done();
-      });
+    it('should set a string value on a standard key', async () => {
+      await redisAdapter.set(keyName, simpleValue);
+      const result = await client.get(keyName);
+      expect(result).toBe(JSON.stringify(simpleValue));
     });
   });
 
-  it('should set an object value on a standard key', (done) => {
+  it('should set an object value on a standard key', async () => {
     const keyName = 'aSimpleKey';
+    await redisAdapter.set(keyName, objectValue);
+    const result = await client.get(keyName);
 
-    redisAdapter.set(keyName, objectValue).then(async () => {
-      const result = await client.get(keyName);
-
-      expect(result).toBe(JSON.stringify(objectValue));
-      done();
-    });
+    expect(result).toBe(JSON.stringify(objectValue));
   });
 
-  it('should set an array value on a standard key', (done) => {
-    redisAdapter.set(keyName, arrayValue).then(async () => {
-      const result = await client.get(keyName);
-      expect(result).toBe(JSON.stringify(arrayValue));
-      done();
-    });
+  it('should set an array value on a standard key', async () => {
+    await redisAdapter.set(keyName, arrayValue);
+    const result = await client.get(keyName);
+
+    expect(result).toBe(JSON.stringify(arrayValue));
   });
 
-  it('should set an object value on a compound (x:y) key', (done) => {
-    redisAdapter.set(compoundKey, objectValue).then(async () => {
-      const result = await client.hGetAll(compoundKey);
-      expect(result).toEqual(
-          Object.keys(objectValue).reduce((accum, curr) => {
-            accum[curr] = JSON.stringify((objectValue as any)[curr]);
+  it('should set an object value on a compound (x:y) key', async () => {
+    await redisAdapter.set(compoundKey, objectValue);
+    const result = await client.hGetAll(compoundKey);
 
-            return accum;
-          }, {} as any),
-      );
+    expect(result).toEqual(
+        Object.keys(objectValue).reduce((accum, curr) => {
+          accum[curr] = JSON.stringify((objectValue as any)[curr]);
 
-      done();
-    });
+          return accum;
+        }, {} as any),
+    );
   });
 
-  it('should set an array value on a compound (x:y) key', (done) => {
-    redisAdapter.set(compoundKey, arrayValue).then(async () => {
-      const result = await client.hGetAll(compoundKey);
-      expect(result).toEqual({ ...result });
+  it('should set an array value on a compound (x:y) key', async () => {
+    await redisAdapter.set(compoundKey, arrayValue);
+    const result = await client.hGetAll(compoundKey);
 
-      done();
-    });
+    expect(result).toEqual({ ...result });
   });
 
-  it('should set an expiresAt value on a compound (x:y) key when TTL is passed in', (done) => {
+  it('should set an expiresAt value on a compound (x:y) key when TTL is passed in', async () => {
     // @ts-ignore
     jest.spyOn(client, 'expire');
-    redisAdapter.set(compoundKey, objectValue, 50000).then(() => {
-      expect(client.expire).toHaveBeenCalled();
-      done();
-    });
+    await redisAdapter.set(compoundKey, objectValue, 50000);
+
+    expect(client.expire).toHaveBeenCalled();
   });
 });
 
 describe('Getter tests', () => {
-  it('should get a string set on a simple key', async (done) => {
+  it('should get a string set on a simple key', async () => {
     await client.set(keyName, simpleValue)
     const result = await redisAdapter.get(keyName);
-    expect(result).toBe(simpleValue);
 
-    done();
+    expect(result).toBe(simpleValue);
   });
 
-  it('should get an object set on a simple key', async (done) => {
+  it('should get an object set on a simple key', async () => {
     await client.set(keyName, JSON.stringify(objectValue));
     const result = await redisAdapter.get(keyName);
-    expect(result).toEqual(objectValue);
 
-    done();
+    expect(result).toEqual(objectValue);
   });
 
-  it('should get an array set on a simple key', async (done) => {
+  it('should get an array set on a simple key', async () => {
     await client.set(keyName, JSON.stringify(arrayValue));
     const result = await redisAdapter.get(keyName);
-    expect(result).toEqual(arrayValue);
 
-    done();
+    expect(result).toEqual(arrayValue);
   });
 
-  it('should get an object set on a compound (x:y) key', async (done) => {
+  it('should get an object set on a compound (x:y) key', async () => {
     const args = RedisAdapter.buildSetArgumentsFromObject(objectValue);
     await client.hSet(compoundKey, args);
     const result = await redisAdapter.get(compoundKey);
-    expect(result).toEqual(objectValue);
 
-    done();
+    expect(result).toEqual(objectValue);
   });
 
-  it('should get an array set on a compound (x:y) key', async (done) => {
+  it('should get an array set on a compound (x:y) key', async () => {
     const args = RedisAdapter.buildSetArgumentsFromObject({ ...arrayValue });
     await client.hSet(compoundKey, args);
     const result = await redisAdapter.get(compoundKey);
     expect(result).toEqual(arrayValue);
-
-    done();
   });
 });
 
 describe('Keys tests', () => {
-  it('should get keys by pattern on a compound (x:y) key', async (done) => {
+  it('should get keys by pattern on a compound (x:y) key', async () => {
     await client.set(compoundKeyKeys, simpleValue);
     const result = await redisAdapter.keys(`*${compoundKeyKeys}*`);
 
     expect(result).toHaveLength(1);
     expect(result).toContain(compoundKeyKeys);
-
-    done();
   });
 
-  it('should not find keys for a non-existent simple key', async (done) => {
+  it('should not find keys for a non-existent simple key', async () => {
     await client.set(simpleKeyKeys, simpleValue);
     const result = await redisAdapter.keys(`*${simpleValue}*`);
 
     expect(result).toHaveLength(0);
     expect(result).toBeInstanceOf(Array);
-
-    done();
   });
 
-  it('should return multiple pages worth of keys when more than the max page size exist', async (done) => {
+  it('should return multiple pages worth of keys when more than the max page size exist', async () => {
     const values = new Array(5000)
         .fill(undefined)
         .reduce((accum, _, i) => [...accum, `key-${i}`, `val-${i}`], []);
     await client.mSet(...values);
-
     const result = await redisAdapter.keys('*key-*');
-    expect(result).toHaveLength(5000);
 
-    done();
+    expect(result).toHaveLength(5000);
   });
 });
 
 describe('Delete tests', () => {
-  it('should delete a set value', async (done) => {
+  it('should delete a set value', async () => {
     await client.set(simpleKeyKeys, simpleValue);
     await redisAdapter.del(keyName);
 
     expect(await redisAdapter.get(keyName)).toBeFalsy();
-
-    done();
   });
 });
 
 describe('Delete full hash', () => {
-  it('should delete a full hash', async (done) => {
+  it('should delete a full hash', async () => {
     const hashKey = compoundKey.split(':')[0];
     const args = RedisAdapter.buildSetArgumentsFromObject({ ...objectValue });
 
@@ -189,8 +164,6 @@ describe('Delete full hash', () => {
     const keysPostDelete = await redisAdapter.keys(`*${hashKey}:*`);
 
     expect(keysPostDelete).toHaveLength(0);
-
-    done();
   });
 });
 
