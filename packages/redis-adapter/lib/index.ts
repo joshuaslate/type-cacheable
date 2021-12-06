@@ -48,6 +48,41 @@ export class RedisAdapter implements CacheClient {
 
   // The node_redis client
   private redisClient: RedisClientType;
+  private connectPromise: Promise<any> | null = null;
+  private hasConnected: boolean = false;
+
+  private async ensureConnection() {
+    if (this.hasConnected) {
+      return;
+    }
+
+    try {
+      const ping = await this.redisClient.ping();
+
+      if (ping.toLowerCase() !== 'pong') {
+        throw new Error('Ping failure');
+      }
+    } catch {
+      if (this.connectPromise) {
+        return this.connectPromise;
+      }
+
+      this.connectPromise = new Promise(async (resolve, reject) => {
+        try {
+          const result = await this.redisClient.connect();
+          this.hasConnected = true;
+          resolve(result);
+        } catch (err) {
+          this.hasConnected = false;
+          reject(err);
+        } finally {
+          this.connectPromise = null;
+        }
+      })
+
+      return this.connectPromise;
+    }
+  }
 
   constructor(redisClient: RedisClientType) {
     this.redisClient = redisClient;
@@ -58,6 +93,9 @@ export class RedisAdapter implements CacheClient {
     this.getClientTTL = this.getClientTTL.bind(this);
     this.keys = this.keys.bind(this);
     this.set = this.set.bind(this);
+    this.ensureConnection = this.ensureConnection.bind(this);
+
+    this.ensureConnection();
   }
 
   // Redis doesn't have a standard TTL, it's at a per-key basis
@@ -66,11 +104,7 @@ export class RedisAdapter implements CacheClient {
   }
 
   public async get(cacheKey: string): Promise<any> {
-    try {
-      await this.redisClient.connect();
-    } catch (err) {
-      throw new Error(`Redis client is not accepting connections: ${err}`);
-    }
+    await this.ensureConnection();
 
     let result: any;
     if (cacheKey.includes(':')) {
@@ -101,11 +135,7 @@ export class RedisAdapter implements CacheClient {
    * @returns {Promise}
    */
   public async set(cacheKey: string, value: any, ttl?: number): Promise<any> {
-    try {
-      await this.redisClient.connect();
-    } catch (err) {
-      throw new Error(`Redis client is not accepting connections: ${err}`);
-    }
+    await this.ensureConnection();
 
     if (cacheKey.includes(':')) {
       if (typeof value === 'object') {
@@ -142,11 +172,7 @@ export class RedisAdapter implements CacheClient {
   }
 
   public async del(keyOrKeys: string | string[]): Promise<any> {
-    try {
-      await this.redisClient.connect();
-    } catch (err) {
-      throw new Error(`Redis client is not accepting connections: ${err}`);
-    }
+    await this.ensureConnection();
 
     const info = await this.redisClient.info()
     console.log({ info })
@@ -166,11 +192,7 @@ export class RedisAdapter implements CacheClient {
   }
 
   public async keys(pattern: string): Promise<string[]> {
-    try {
-      await this.redisClient.connect();
-    } catch (err) {
-      throw new Error(`Redis client is not accepting connections: ${err}`);
-    }
+    await this.ensureConnection();
 
     let keys: Array<string> = [];
     let cursor: number | null = 0;
@@ -197,12 +219,7 @@ export class RedisAdapter implements CacheClient {
 
   public async delHash(hashKeyOrKeys: string | string[]): Promise<any> {
     const finalDeleteKeys = Array.isArray(hashKeyOrKeys) ? hashKeyOrKeys : [hashKeyOrKeys];
-
-    try {
-      await this.redisClient.connect();
-    } catch (err) {
-      throw new Error(`Redis client is not accepting connections: ${err}`);
-    }
+    await this.ensureConnection();
 
     const deletePromises = finalDeleteKeys.map((key) => this.keys(`*${key}*`).then(this.del));
     await Promise.all(deletePromises);
