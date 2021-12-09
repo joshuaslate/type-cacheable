@@ -39,13 +39,13 @@
     "@types/jest": "^27.0.0",
     "@types/redis": "^2.8.31",
     "jest": "^27.0.6",
-    "redis": "^3.0.2",
+    "redis": "^4.0.0",
     "ts-jest": "^27.1.0",
     "typescript": "^4.4.3"
   },
   "peerDependencies": {
     "@type-cacheable/core": "^10.0.0",
-    "redis": "^3.0.2"
+    "redis": "^4.0.0"
   },
   "dependencies": {
     "compare-versions": "^4.0.0"
