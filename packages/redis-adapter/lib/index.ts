@@ -1,12 +1,14 @@
 import { RedisClientType } from '@node-redis/client/dist/lib/client';
-// import * as compareVersions from 'compare-versions';
+import * as compareVersions from 'compare-versions';
 import cacheManager, { CacheClient, parseIfRequired } from '@type-cacheable/core';
 
 // In order to support scalars in hsets (likely not the intended use, but support has been requested),
 // we need at least one key.
 const SCALAR_KEY = '@TYPE-CACHEABLE-REDIS';
 
-// const REDIS_VERSION_UNLINK_INTRODUCED = '4.0.0';
+const REDIS_VERSION_UNLINK_INTRODUCED = '4.0.0';
+const REDIS_VERSION_FRAGMENT_IDENTIFIER = 'redis_version:';
+const REDIS_SCAN_COUNT = 1000;
 
 export class RedisAdapter implements CacheClient {
   static buildSetArgumentsFromObject = (objectValue: any): string[] =>
@@ -50,6 +52,7 @@ export class RedisAdapter implements CacheClient {
   private redisClient: RedisClientType;
   private connectPromise: Promise<any> | null = null;
   private hasConnected: boolean = false;
+  private redisVersion: string | undefined;
 
   private async ensureConnection() {
     if (this.hasConnected) {
@@ -95,9 +98,15 @@ export class RedisAdapter implements CacheClient {
     this.set = this.set.bind(this);
     this.ensureConnection = this.ensureConnection.bind(this);
 
-    this.ensureConnection();
+    this.ensureConnection().then(async () => {
+      const infoString = await this.redisClient.info().catch();
+      const versionFragment = infoString
+          .split('\n')
+          .find((info) => info.includes(REDIS_VERSION_FRAGMENT_IDENTIFIER));
+      this.redisVersion =
+          versionFragment?.replace('\r', '').split(REDIS_VERSION_FRAGMENT_IDENTIFIER)[1] || '0';
+    }).catch();
   }
-
   // Redis doesn't have a standard TTL, it's at a per-key basis
   public getClientTTL(): number {
     return 0;
@@ -174,21 +183,19 @@ export class RedisAdapter implements CacheClient {
   public async del(keyOrKeys: string | string[]): Promise<any> {
     await this.ensureConnection();
 
-    const info = await this.redisClient.info()
-    console.log({ info })
-
-    // if (
-    //     compareVersions(
-    //         this.redisClient.server_info.redis_version,
-    //         REDIS_VERSION_UNLINK_INTRODUCED,
-    //     ) >= 0
-    // ) {
+    if (
+        this.redisVersion &&
+        compareVersions(
+            this.redisVersion,
+            REDIS_VERSION_UNLINK_INTRODUCED,
+        ) >= 0
+    ) {
       const result = await this.redisClient.unlink(keyOrKeys);
-
-    return RedisAdapter.processResponse(result);
-    // } else {
-    //   this.redisClient.del(keyOrKeys, RedisAdapter.responseCallback(resolve, reject));
-    // }
+      return RedisAdapter.processResponse(result);
+    } else {
+      const result = await this.redisClient.del(keyOrKeys);
+      return RedisAdapter.processResponse(result);
+    }
   }
 
   public async keys(pattern: string): Promise<string[]> {
@@ -202,12 +209,12 @@ export class RedisAdapter implements CacheClient {
           cursor,
           {
             MATCH: pattern,
-            COUNT: 1000,
+            COUNT: REDIS_SCAN_COUNT,
           },
       );
 
       if (result.keys.length) {
-        cursor = result.cursor;
+        cursor = result.keys.length >= REDIS_SCAN_COUNT ? result.cursor : null;
         keys = [...keys, ...result.keys];
       } else {
         cursor = null;
