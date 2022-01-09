@@ -12,6 +12,8 @@ TypeScript-based caching decorators to assist with caching (and clearing cache f
 npm install --save @type-cacheable/core @type-cacheable/redis-adapter
 ```
 
+Note: If you are using `redis` v3.x.x, use `@type-cacheable/redis-adapter` v10.x.x. If you are using `redis` v4.x.x, use `@type-cacheable/redis-adapter` v11.x.x+.
+
 or
 
 ```bash
