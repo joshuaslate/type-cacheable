@@ -11,7 +11,7 @@
   "scripts": {
     "clean": "lerna run clean --concurrency 20 --stream",
     "build": "lerna run build --concurrency 20 --stream",
-    "test": "jest --coverage --runInBand",
+    "test": "jest --coverage --runInBand --maxConcurrency=1",
     "watch": "jest --watch --runInBand",
     "pub": "lerna publish",
     "link": "lerna exec -- yarn link",
@@ -22,7 +22,7 @@
     "typescript": "^4.4.3"
   },
   "dependencies": {
-    "jest": "^27.0.6",
+    "jest": "^27.4.7",
     "ts-jest": "^27.1.0"
   }
 }
