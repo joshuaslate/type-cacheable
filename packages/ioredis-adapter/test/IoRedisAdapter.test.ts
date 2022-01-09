@@ -14,7 +14,7 @@ const arrayValue = ['element1IoRedis', 2, { complex: 'elementIoRedis' }];
 
 describe('IoRedisAdapter Tests', () => {
   beforeAll(async () => {
-    client = new IoRedis({ host: process.env.REDIS_HOST, port: Number(process.env.REDIS_PORT) });
+    client = new IoRedis(process.env.REDIS_HOST || process.env.REDIS_PORT ? { host: process.env.REDIS_HOST, port: Number(process.env.REDIS_PORT) } : undefined);
     ioRedisAdapter = useAdapter(client);
   });
 

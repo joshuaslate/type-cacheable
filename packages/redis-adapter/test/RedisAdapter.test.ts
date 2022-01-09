@@ -1,5 +1,4 @@
-import { createClient } from 'redis';
-import { RedisClientType } from '@node-redis/client/dist/lib/client';
+import { createClient, RedisClientType } from 'redis';
 import { Cacheable, CacheClear } from '@type-cacheable/core';
 import { RedisAdapter, useAdapter } from '../lib';
 
@@ -16,7 +15,11 @@ describe('RedisAdapter Tests', () => {
   let redisAdapter: RedisAdapter;
 
   beforeAll(async () => {
-    client = createClient({ url: `redis://${process.env.REDIS_HOST}:${process.env.REDIS_PORT}` });
+    client = createClient(
+    process.env.REDIS_HOST && process.env.REDIS_PORT ?
+        { url: `redis://${process.env.REDIS_HOST}:${process.env.REDIS_PORT}` }
+        : undefined,
+    );
     redisAdapter = useAdapter(client);
   });
 
