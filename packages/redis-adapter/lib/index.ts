@@ -8,6 +8,7 @@ const SCALAR_KEY = '@TYPE-CACHEABLE-REDIS';
 
 const REDIS_VERSION_UNLINK_INTRODUCED = '4.0.0';
 const REDIS_VERSION_FRAGMENT_IDENTIFIER = 'redis_version:';
+const REDIS_SCAN_PAGE_LIMIT = 1000;
 
 export class RedisAdapter implements CacheClient {
   static buildSetArgumentsFromObject = (objectValue: any): string[] =>
@@ -203,7 +204,19 @@ export class RedisAdapter implements CacheClient {
 
   public async keys(pattern: string): Promise<string[]> {
     await this.ensureConnection();
-    const keys: Array<string> = await this.redisClient.keys(pattern);
+
+    const keys: string[] = [];
+    let cursor: number | null = 0;
+
+    while (cursor !== null) {
+      const { cursor: responseCursor, keys: responseKeys = [] }: { cursor: number, keys: string[] } = await this.redisClient.scan(cursor, {
+        MATCH: pattern,
+        COUNT: REDIS_SCAN_PAGE_LIMIT,
+      });
+
+      cursor = responseCursor || null;
+      keys.push(...responseKeys);
+    }
 
     return keys;
   }

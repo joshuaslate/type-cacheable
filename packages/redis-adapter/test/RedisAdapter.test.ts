@@ -114,7 +114,7 @@ describe('RedisAdapter Tests', () => {
 
   describe('Keys tests', () => {
     jest.setTimeout(15000);
-    
+
     it('should get keys by pattern on a compound (x:y) key', async () => {
       await client.set(compoundKeyKeys, simpleValue);
       const result = await redisAdapter.keys(`*${compoundKeyKeys}*`);
