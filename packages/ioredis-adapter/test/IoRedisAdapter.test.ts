@@ -14,7 +14,7 @@ const arrayValue = ['element1IoRedis', 2, { complex: 'elementIoRedis' }];
 
 describe('IoRedisAdapter Tests', () => {
   beforeAll(async () => {
-    client = new IoRedis();
+    client = new IoRedis({ host: process.env.REDIS_HOST, port: Number(process.env.REDIS_PORT) });
     ioRedisAdapter = useAdapter(client);
   });
 
@@ -143,8 +143,15 @@ describe('IoRedisAdapter Tests', () => {
     });
 
     it('should not throw error on an empty array of keys', async () => {
-      const result = await ioRedisAdapter.del([]);
-      return result;
+      let foundErr;
+
+      try {
+        await ioRedisAdapter.del([])
+      } catch (err) {
+        foundErr = err;
+      }
+
+      expect(foundErr).toBeFalsy();
     });
 
     it('should delete an array of keys', async () => {

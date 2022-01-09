@@ -16,7 +16,7 @@ describe('RedisAdapter Tests', () => {
   let redisAdapter: RedisAdapter;
 
   beforeAll(async () => {
-    client = createClient();
+    client = createClient({ url: `redis://${process.env.REDIS_HOST}:${process.env.REDIS_PORT}` });
     redisAdapter = useAdapter(client);
   });
 
@@ -367,13 +367,13 @@ describe('RedisAdapter Tests', () => {
         expect(todoCacheResultPostClear).toEqual(null);
       });
     });
+  });
 
-    afterEach(async () => {
-      await client.flushAll();
-    });
+  afterEach(async () => {
+    await client.flushAll();
+  });
 
-    afterAll(async () => {
-      await client.disconnect()
-    })
+  afterAll(async () => {
+    await client.disconnect()
   });
 });
