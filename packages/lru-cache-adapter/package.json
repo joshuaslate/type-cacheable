@@ -38,12 +38,12 @@
     "@type-cacheable/core": "^10.0.3",
     "@types/jest": "^27.0.0",
     "@types/lru-cache": "^5.1.1",
-    "lru-cache": "^6.0.0",
+    "lru-cache": "^7.0.1",
     "typescript": "^4.4.3"
   },
   "peerDependencies": {
     "@type-cacheable/core": "^10.0.0",
-    "lru-cache": "^6.0.0"
+    "lru-cache": "^7.0.1"
   },
   "gitHead": "fc819565536432e484c60432a6c184ba700b3c92"
 }
