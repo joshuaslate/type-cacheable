@@ -4621,9 +4621,9 @@ lru-cache@^6.0.0:
     yallist "^4.0.0"
 
 lru-cache@^7.3.0:
-  version "7.3.0"
-  resolved "https://registry.yarnpkg.com/lru-cache/-/lru-cache-7.3.0.tgz#475ed4a39610204d8d23b243e902ed074dd8052d"
-  integrity sha512-itGqsGM9i3Jt0ZbEkYRKQ3K/Q61vOLNuUkmK0jyjt1VH76gfcvjHmPC6e9uvjSrKOP2aN3T9L1vN0nxQSkrAjA==
+  version "7.3.1"
+  resolved "https://registry.yarnpkg.com/lru-cache/-/lru-cache-7.3.1.tgz#7702e80694ec2bf19865567a469f2b081fcf53f5"
+  integrity sha512-nX1x4qUrKqwbIAhv4s9et4FIUVzNOpeY07bsjGUy8gwJrXH/wScImSQqXErmo/b2jZY2r0mohbLA9zVj7u1cNw==
 
 make-dir@^2.1.0:
   version "2.1.0"
