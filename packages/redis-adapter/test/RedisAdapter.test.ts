@@ -8,6 +8,7 @@ const compoundKey = 'aCompound:keyForRedis';
 const compoundKeyKeys = 'aCompound:keysForRedis';
 const simpleValue = 'aSimpleValueForRedis';
 const objectValue = { myKeyOne: 'myValOneForRedis' };
+const dateObjectValue = { myDateKey: new Date() };
 const arrayValue = ['element1', 2, { complex: 'elementForRedis' }];
 
 describe('RedisAdapter Tests', () => {
@@ -36,6 +37,14 @@ describe('RedisAdapter Tests', () => {
       const result = await client.get(keyName);
 
       expect(result).toBe(JSON.stringify(objectValue));
+    });
+
+    it('should set an date object value on a standard key', async () => {
+      const keyName = 'aSimpleKey';
+      await redisAdapter.set(keyName, dateObjectValue);
+      const result = await client.get(keyName);
+
+      expect(result).toBe(JSON.stringify(dateObjectValue));
     });
 
     it('should set an array value on a standard key', async () => {
@@ -233,7 +242,7 @@ describe('RedisAdapter Tests', () => {
           async getObjectValue(value: string): Promise<any> {
             mockGetObjectValueImplementation();
 
-            return { hello: 'world', 1: 2, '2': 1, true: false, false: 'true' };
+            return { hello: 'world', 1: 2, '2': 1, true: false, false: 'true', date: new Date('2022-01-02') };
           }
         }
 
@@ -307,6 +316,7 @@ describe('RedisAdapter Tests', () => {
           '2': 1,
           true: false,
           false: 'true',
+          date: new Date('2022-01-02')
         });
         mockGetObjectValueImplementation.mockClear();
 
