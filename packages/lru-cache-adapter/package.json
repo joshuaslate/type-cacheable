@@ -37,7 +37,7 @@
   "devDependencies": {
     "@type-cacheable/core": "^10.0.3",
     "@types/jest": "^27.0.0",
-    "@types/lru-cache": "^5.1.1",
+    "@types/lru-cache": "^7.4.0",
     "lru-cache": "^7.3.0",
     "typescript": "^4.4.3"
   },
