@@ -12,8 +12,8 @@ const objectValue = { myKeyOneLRUCache: 'myValOneLRUCache' };
 const arrayValue = ['element1LRUCache', 2, { complex: 'elementLRUCache' }];
 
 describe('LRUCacheAdapter Tests', () => {
-  beforeAll(async () => {
-    client = new LRUCache();
+  beforeEach(async () => {
+    client = new LRUCache({ max: 10000 });
     lruCacheAdapter = useAdapter(client);
   });
 
@@ -261,6 +261,6 @@ describe('LRUCacheAdapter Tests', () => {
   });
 
   afterEach(async () => {
-    client.reset();
+    client.clear();
   });
 });

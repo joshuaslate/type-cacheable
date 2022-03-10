@@ -22,13 +22,15 @@ export class LRUCacheAdapter<T> implements CacheClient {
   public async set(cacheKey: string, value: any, ttl?: number): Promise<any> {
     // the lru-cache takes ttl in ms instead of seconds, so convert seconds to ms
     return Promise.resolve(
-      this.lruClient.set(cacheKey, value as T, ttl ? ttl * 1000 : undefined)
+      this.lruClient.set(cacheKey, value as T, ttl ? {
+        ttl: ttl * 1000,
+      } : undefined)
     );
   }
 
   public getClientTTL(): number {
     try {
-      return this.lruClient.maxAge / 1000;
+      return this.lruClient.ttl / 1000;
     } catch {
       return 0;
     }
@@ -37,13 +39,13 @@ export class LRUCacheAdapter<T> implements CacheClient {
   public async del(keyOrKeys: string | string[]): Promise<any> {
     if (Array.isArray(keyOrKeys)) {
       keyOrKeys.forEach((key) => {
-        this.lruClient.del(key);
+        this.lruClient.delete(key);
       });
 
       return keyOrKeys.length;
     }
 
-    this.lruClient.del(keyOrKeys);
+    this.lruClient.delete(keyOrKeys);
     return 1;
   }
 
