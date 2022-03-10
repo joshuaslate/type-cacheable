@@ -1,6 +1,6 @@
 {
   "name": "@type-cacheable/lru-cache-adapter",
-  "version": "10.0.3",
+  "version": "11.0.0",
   "description": "Adapter for using lru-cache with type-cacheable",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
