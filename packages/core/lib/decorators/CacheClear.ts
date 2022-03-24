@@ -61,6 +61,7 @@ export function CacheClear(options?: CacheClearOptions) {
           await strategy.handle({
             debug: cacheManager.options.debug,
             originalMethod,
+            originalPropertyKey: propertyKey,
             originalMethodScope: this,
             originalMethodArgs: args,
             client,
