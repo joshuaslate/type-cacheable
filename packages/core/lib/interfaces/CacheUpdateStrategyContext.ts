@@ -5,6 +5,7 @@ export interface CacheUpdateStrategyContext {
   originalMethod: Function;
   originalMethodScope: any;
   originalMethodArgs: any[];
+  originalPropertyKey: string;
   client: CacheClient;
   fallbackClient: CacheClient | null;
   key: string;
