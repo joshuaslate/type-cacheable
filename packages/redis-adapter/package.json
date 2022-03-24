@@ -1,6 +1,6 @@
 {
   "name": "@type-cacheable/redis-adapter",
-  "version": "12.0.0",
+  "version": "12.0.1",
   "description": "Adapter for using redis with type-cacheable",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -35,7 +35,7 @@
   },
   "homepage": "https://github.com/joshuaslate/type-cacheable#readme",
   "devDependencies": {
-    "@type-cacheable/core": "^10.0.3",
+    "@type-cacheable/core": "^10.1.0",
     "@types/jest": "^27.0.0",
     "@types/redis": "^4.0.11",
     "jest": "^27.4.7",
