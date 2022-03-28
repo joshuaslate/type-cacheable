@@ -1878,9 +1878,9 @@
     pretty-format "^27.0.0"
 
 "@types/lru-cache@^7.4.0":
-  version "7.5.0"
-  resolved "https://registry.yarnpkg.com/@types/lru-cache/-/lru-cache-7.5.0.tgz#4b7dfa2583d82c9377feddb04c386bed88e6b274"
-  integrity sha512-uZGjbDsQpBxLR0znOeyAneSfMfEDDhi6FFKBY0sDI3EQMwcWCZfUZsOg3WhMTF0arvkvFquLMdrxAhCNgqpoww==
+  version "7.6.0"
+  resolved "https://registry.yarnpkg.com/@types/lru-cache/-/lru-cache-7.6.0.tgz#196bca20d3639712026ced9eee420eb045311462"
+  integrity sha512-9q2Ft/nq7a8XjNxFLz/+LxVdMd1P6dcf2ulLY1+zbURtdFG1nuVpQtEHkvd6rtpLFowYKwf5PXX3V52LYzHuEw==
 
 "@types/minimatch@^3.0.3":
   version "3.0.3"
