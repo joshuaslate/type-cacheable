@@ -44,8 +44,8 @@
     "typescript": "^4.7.2"
   },
   "peerDependencies": {
-    "@type-cacheable/core": "^10.0.0",
-    "redis": "^4.1.0"
+    "@redis/client": "^1.1.0",
+    "@type-cacheable/core": "^10.0.0"
   },
   "dependencies": {
     "compare-versions": "^4.0.0"
