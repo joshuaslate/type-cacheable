@@ -36,16 +36,13 @@
   "homepage": "https://github.com/joshuaslate/type-cacheable#readme",
   "devDependencies": {
     "@type-cacheable/core": "^10.1.1",
-    "@types/jest": "^27.5.2",
     "@types/redis": "^4.0.11",
-    "jest": "^27.4.7",
     "redis": "^4.1.0",
-    "ts-jest": "^27.1.0",
     "typescript": "^4.7.2"
   },
   "peerDependencies": {
-    "@type-cacheable/core": "^10.0.0",
-    "redis": "^4.1.0"
+    "@redis/client": "^1.1.0",
+    "@type-cacheable/core": "^10.0.0"
   },
   "dependencies": {
     "compare-versions": "^4.0.0"
