@@ -1,4 +1,4 @@
-import { RedisClientType } from '@node-redis/client/dist/lib/client';
+import { RedisClientType } from '@redis/client/dist/lib/client';
 import * as compareVersions from 'compare-versions';
 import cacheManager, { CacheClient, parseIfRequired } from '@type-cacheable/core';
 

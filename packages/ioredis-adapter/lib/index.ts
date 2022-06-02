@@ -44,8 +44,11 @@ export class IoRedisAdapter implements CacheClient {
 
   public async set(cacheKey: string, value: any, ttl?: number): Promise<any> {
     const usableValue = JSON.stringify(value);
-    const ex = ttl ? ['EX', ttl] : [];
-    await this.redisClient.set(cacheKey, usableValue, ex);
+    await this.redisClient.set(cacheKey, usableValue);
+
+    if (ttl) {
+      await this.redisClient.expire(cacheKey, ttl);
+    }
   }
 
   public getClientTTL(): number {
