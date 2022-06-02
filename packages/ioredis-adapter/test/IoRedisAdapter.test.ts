@@ -1,8 +1,8 @@
-import * as IoRedis from 'ioredis';
+import IoRedis from 'ioredis';
 import { Cacheable, CacheClear } from '@type-cacheable/core';
 import { IoRedisAdapter, useAdapter } from '../lib';
 
-let client: IoRedis.Redis;
+let client: IoRedis;
 let ioRedisAdapter: IoRedisAdapter;
 
 const keyName = 'aSimpleIoRedisKey';
@@ -14,7 +14,7 @@ const arrayValue = ['element1IoRedis', 2, { complex: 'elementIoRedis' }];
 
 describe('IoRedisAdapter Tests', () => {
   beforeAll(async () => {
-    client = new IoRedis(process.env.REDIS_HOST || process.env.REDIS_PORT ? { host: process.env.REDIS_HOST, port: Number(process.env.REDIS_PORT) } : undefined);
+    client = new IoRedis({ host: process.env.REDIS_HOST, port: Number(process.env.REDIS_PORT) });
     ioRedisAdapter = useAdapter(client);
   });
 
@@ -59,10 +59,7 @@ describe('IoRedisAdapter Tests', () => {
       const ttl = 50000;
       await ioRedisAdapter.set(compoundKey, objectValue, ttl);
 
-      expect(client.set).toHaveBeenCalledWith(compoundKey, JSON.stringify(objectValue), [
-        'EX',
-        ttl,
-      ]);
+      expect(client.set).toHaveBeenCalledWith(compoundKey, JSON.stringify(objectValue));
     });
   });
 
