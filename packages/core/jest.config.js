@@ -5,7 +5,6 @@ const packageName = require('./package.json')
 
 module.exports = {
   ...baseConfig,
-  name: packageName,
   displayName: packageName,
   rootDir: '../../',
   roots: [`<rootDir>/packages/${packageName}`],
