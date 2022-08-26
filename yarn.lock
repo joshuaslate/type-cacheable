@@ -2686,10 +2686,10 @@ compare-func@^2.0.0:
     array-ify "^1.0.0"
     dot-prop "^5.1.0"
 
-compare-versions@^4.0.0:
-  version "4.1.4"
-  resolved "https://registry.yarnpkg.com/compare-versions/-/compare-versions-4.1.4.tgz#3571f4d610924d4414846a4183d386c8f3d51112"
-  integrity sha512-FemMreK9xNyL8gQevsdRMrvO4lFCkQP7qbuktn1q8ndcNk1+0mz7lgE7b/sNvbhVgY4w6tMN1FDp6aADjqw2rw==
+compare-versions@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/compare-versions/-/compare-versions-5.0.0.tgz#5c5b69cff4d37c5f452874ec47ff48a66b89f5bb"
+  integrity sha512-ei+3+vZQfunm1CeyipFXEZ5oBk3/cVo7rdSX635Ph0yn/4XFLabcQyOp+YucEj46raOD7/crw7gIQ8twxQTuhQ==
 
 concat-map@0.0.1:
   version "0.0.1"
