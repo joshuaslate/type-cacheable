@@ -1,5 +1,5 @@
 import { RedisClientType } from '@redis/client/dist/lib/client';
-import * as compareVersions from 'compare-versions';
+import { compareVersions } from 'compare-versions';
 import cacheManager, { CacheClient, parseIfRequired } from '@type-cacheable/core';
 
 // In order to support scalars in hsets (likely not the intended use, but support has been requested),

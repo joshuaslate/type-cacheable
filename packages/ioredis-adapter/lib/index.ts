@@ -1,5 +1,5 @@
 import { Redis } from 'ioredis';
-import * as compareVersions from 'compare-versions';
+import { compareVersions } from 'compare-versions';
 import cacheManager, { CacheClient, parseIfRequired } from '@type-cacheable/core';
 
 const REDIS_VERSION_UNLINK_INTRODUCED = '4.0.0';

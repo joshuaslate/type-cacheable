@@ -45,7 +45,7 @@
     "@type-cacheable/core": "^10.0.0"
   },
   "dependencies": {
-    "compare-versions": "^4.0.0"
+    "compare-versions": "^5.0.1"
   },
   "gitHead": "fc819565536432e484c60432a6c184ba700b3c92"
 }
