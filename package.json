@@ -24,6 +24,6 @@
   },
   "dependencies": {
     "jest": "^29.0.1",
-    "ts-jest": "^28.0.3"
+    "ts-jest": "^29.0.1"
   }
 }
