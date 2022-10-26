@@ -36,7 +36,6 @@
   "homepage": "https://github.com/joshuaslate/type-cacheable#readme",
   "devDependencies": {
     "@type-cacheable/core": "^10.1.2",
-    "@types/redis": "^4.0.11",
     "redis": "^4.1.0",
     "typescript": "^4.7.2"
   },
