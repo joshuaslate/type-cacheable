@@ -18,6 +18,15 @@ const fixDates = (key: string, value: any) => {
   return value
 }
 
+
+export interface RedisAdapterOptions {
+  ignoreConnectionErrors?: boolean;
+}
+
+const defaultOptions: RedisAdapterOptions = {
+  ignoreConnectionErrors: false,
+}
+
 export class RedisAdapter implements CacheClient {
   static buildSetArgumentsFromObject = (objectValue: any): string[] =>
     Object.keys(objectValue).reduce((accum: any, objectKey: any) => {
@@ -58,6 +67,7 @@ export class RedisAdapter implements CacheClient {
 
   // The node_redis client
   private redisClient: RedisClientType;
+  private options: RedisAdapterOptions;
   private connectPromise: Promise<any> | null = null;
   private hasConnected: boolean = false;
   private redisVersion: string | undefined;
@@ -95,8 +105,9 @@ export class RedisAdapter implements CacheClient {
     }
   }
 
-  constructor(redisClient: RedisClientType) {
+  constructor(redisClient: RedisClientType, options: RedisAdapterOptions = defaultOptions) {
     this.redisClient = redisClient;
+    this.options = options;
 
     this.get = this.get.bind(this);
     this.del = this.del.bind(this);
@@ -106,13 +117,14 @@ export class RedisAdapter implements CacheClient {
     this.set = this.set.bind(this);
     this.ensureConnection = this.ensureConnection.bind(this);
 
-    this.ensureConnection().then(async () => {
-      const infoString = await this.redisClient.info().catch();
-      const versionFragment = infoString
+    this.ensureConnection().then(() => {
+      this.redisClient.info().then(infoString => {
+        const versionFragment = infoString
           .split('\n')
           .find((info) => info.includes(REDIS_VERSION_FRAGMENT_IDENTIFIER));
-      this.redisVersion =
+        this.redisVersion =
           versionFragment?.replace('\r', '').split(REDIS_VERSION_FRAGMENT_IDENTIFIER)[1] || '0';
+      }).catch();
     }).catch();
   }
   // Redis doesn't have a standard TTL, it's at a per-key basis
@@ -121,7 +133,16 @@ export class RedisAdapter implements CacheClient {
   }
 
   public async get(cacheKey: string): Promise<any> {
-    await this.ensureConnection();
+    try {
+      await this.ensureConnection();
+    } catch (err) {
+      if (this.options.ignoreConnectionErrors) {
+        return;
+      }
+
+      // If there was a connection error, and they're not being ignored, re-throw
+      throw err;
+    }
 
     let result: any;
     if (cacheKey.includes(':')) {
@@ -156,7 +177,16 @@ export class RedisAdapter implements CacheClient {
    * @returns {Promise}
    */
   public async set(cacheKey: string, value: any, ttl?: number): Promise<any> {
-    await this.ensureConnection();
+    try {
+      await this.ensureConnection();
+    } catch (err) {
+      if (this.options.ignoreConnectionErrors) {
+        return;
+      }
+
+      // If there was a connection error, and they're not being ignored, re-throw
+      throw err;
+    }
 
     if (cacheKey.includes(':')) {
       if (typeof value === 'object') {
@@ -193,7 +223,16 @@ export class RedisAdapter implements CacheClient {
   }
 
   public async del(keyOrKeys: string | string[]): Promise<any> {
-    await this.ensureConnection();
+    try {
+      await this.ensureConnection();
+    } catch (err) {
+      if (this.options.ignoreConnectionErrors) {
+        return;
+      }
+
+      // If there was a connection error, and they're not being ignored, re-throw
+      throw err;
+    }
 
     if (
         this.redisVersion &&
@@ -211,7 +250,16 @@ export class RedisAdapter implements CacheClient {
   }
 
   public async keys(pattern: string): Promise<string[]> {
-    await this.ensureConnection();
+    try {
+      await this.ensureConnection();
+    } catch (err) {
+      if (this.options.ignoreConnectionErrors) {
+        return [];
+      }
+
+      // If there was a connection error, and they're not being ignored, re-throw
+      throw err;
+    }
 
     const keys: string[] = [];
     let cursor: number | null = 0;
@@ -231,15 +279,25 @@ export class RedisAdapter implements CacheClient {
 
   public async delHash(hashKeyOrKeys: string | string[]): Promise<any> {
     const finalDeleteKeys = Array.isArray(hashKeyOrKeys) ? hashKeyOrKeys : [hashKeyOrKeys];
-    await this.ensureConnection();
+
+    try {
+      await this.ensureConnection();
+    } catch (err) {
+      if (this.options.ignoreConnectionErrors) {
+        return;
+      }
+
+      // If there was a connection error, and they're not being ignored, re-throw
+      throw err;
+    }
 
     const deletePromises = finalDeleteKeys.map((key) => this.keys(`*${key}*`).then(this.del));
     await Promise.all(deletePromises);
   }
 }
 
-export const useAdapter = (client: RedisClientType, asFallback?: boolean): RedisAdapter => {
-  const redisAdapter = new RedisAdapter(client);
+export const useAdapter = (client: RedisClientType, asFallback?: boolean, options?: RedisAdapterOptions): RedisAdapter => {
+  const redisAdapter = new RedisAdapter(client, options);
 
   if (asFallback) {
     cacheManager.setFallbackClient(redisAdapter);

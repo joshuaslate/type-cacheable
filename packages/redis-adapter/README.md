@@ -27,7 +27,7 @@ import * as Redis from 'redis';
 import { useAdapter } from '@type-cacheable/redis-adapter';
 
 const client = Redis.createClient();
-const clientAdapter = useAdapter(client);
+const clientAdapter = useAdapter(client, false, { ignoreConnectionErrors: true });
 ```
 
 Then you can rely on the `@Cacheable`, `@CacheUpdate`, and `@CacheClear` decorators from `@type-cacheable/core`. [See core documentation](https://github.com/joshuaslate/type-cacheable/tree/main/packages/core)
