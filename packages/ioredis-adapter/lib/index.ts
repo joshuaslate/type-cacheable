@@ -70,17 +70,16 @@ export class IoRedisAdapter implements CacheClient {
   }
 
   public async keys(pattern: string): Promise<string[]> {
-    let cursor: number | null = 0;
-
     if(this.redisClient instanceof Cluster) {
       const cluster = this.redisClient as Cluster;
-      const keys = cluster.nodes('master').map((node) => this.scanKeys(node, cursor, pattern));
+      const keys = cluster.nodes('master').map((node) => this.scanKeys(node, pattern));
       return (await Promise.all(keys)).flat();
     }
-    return  this.scanKeys(this.redisClient, cursor, pattern);
+    return  this.scanKeys(this.redisClient, pattern);
   }
 
-  private async scanKeys(client: Redis | Cluster, cursor: number | null, pattern: string): Promise<string[]> {
+  private async scanKeys(client: Redis | Cluster, pattern: string): Promise<string[]> {
+    let cursor: number | null = 0;
     let keys: string[] = [];
     while (cursor !== null) {
       const result = (await client.scan(cursor, 'MATCH', pattern, 'COUNT', 1000)) as
