@@ -2,9 +2,6 @@ import IoRedis from 'ioredis';
 import { Cacheable, CacheClear } from '@type-cacheable/core';
 import { IoRedisAdapter, useAdapter } from '../lib';
 
-let client: IoRedis;
-let ioRedisAdapter: IoRedisAdapter;
-
 const keyName = 'aSimpleIoRedisKey';
 const keyName_2 = 'aSimpleIoRedisKey2';
 const compoundKey = 'aCompoundIoRedis:key';
@@ -13,6 +10,9 @@ const objectValue = { myKeyOneIoRedis: 'myValOneIoRedis' };
 const arrayValue = ['element1IoRedis', 2, { complex: 'elementIoRedis' }];
 
 describe('IoRedisAdapter Tests', () => {
+  let client: IoRedis;
+  let ioRedisAdapter: IoRedisAdapter;
+
   beforeAll(async () => {
     client = new IoRedis({ host: process.env.REDIS_HOST, port: Number(process.env.REDIS_PORT) });
     ioRedisAdapter = useAdapter(client);
@@ -397,3 +397,49 @@ describe('IoRedisAdapter Tests', () => {
     await client.quit();
   });
 });
+
+describe('IoRedisAdapter Disconnect Handling', () => {
+  let client: IoRedis;
+  let ioRedisAdapter: IoRedisAdapter;
+
+  it('should ignore connection errors', async () => {
+    client = new IoRedis({ host: process.env.REDIS_HOST, port: Number(process.env.REDIS_PORT) });
+    try {
+      await client.connect();
+    } catch {}
+    ioRedisAdapter = useAdapter(client);
+    const mockGet = jest.fn();
+
+    class TestClass {
+      @Cacheable({
+        client: ioRedisAdapter,
+        cacheKey: (x: any) => x[0],
+      })
+      async getId(id: string): Promise<string> {
+        mockGet();
+        return id;
+      }
+    }
+
+    const testInstance = new TestClass();
+    await testInstance.getId('1');
+    expect(mockGet).toHaveBeenCalledTimes(1);
+
+    // Decorated method should not be called a second time
+    await testInstance.getId('1');
+    expect(mockGet).toHaveBeenCalledTimes(1);
+
+    // After the client disconnects, the decorated method should be called again
+    await client.disconnect(false);
+
+    await testInstance.getId('1');
+
+    expect(mockGet).toHaveBeenCalledTimes(2);
+    await testInstance.getId('1');
+    await testInstance.getId('1');
+    await testInstance.getId('1');
+    await testInstance.getId('1');
+    await testInstance.getId('2');
+    expect(false).toBe(false);
+  });
+})

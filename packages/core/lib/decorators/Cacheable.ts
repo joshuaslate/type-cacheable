@@ -13,6 +13,7 @@ import { DefaultStrategy } from '../strategies';
 export function Cacheable(options?: CacheOptions) {
   return (target: Object, propertyKey: string, descriptor?: PropertyDescriptor) => {
     const originalMethod = descriptor?.value;
+    const defaultStrategy = new DefaultStrategy();
 
     return {
       ...descriptor,
@@ -58,7 +59,7 @@ export function Cacheable(options?: CacheOptions) {
             : cacheManager.options.ttlSeconds || undefined;
 
         const strategy = getCacheStrategy(
-          options?.strategy || cacheManager.options.strategy || new DefaultStrategy(),
+          options?.strategy || cacheManager.options.strategy || defaultStrategy,
           args,
           contextToUse,
         );

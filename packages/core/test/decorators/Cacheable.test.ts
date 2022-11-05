@@ -24,13 +24,15 @@ describe('Cacheable Decorator Tests', () => {
     };
 
     const testInstance = new TestClass();
+    let result;
     let err;
     try {
-      await testInstance.hello();
+      result = await testInstance.hello();
     } catch (error) {
       err = error;
     }
 
+    expect(result).toBe('world');
     expect(err).toBeFalsy();
   });
 
@@ -151,10 +153,13 @@ describe('Cacheable Decorator Tests', () => {
       }
     }
 
+    const failingPrimaryClient = new FailingPrimaryClient();
+    const inMemClient = new InMemClient();
+
     class TestClass {
       public aProp: string = 'aVal!';
 
-      @Cacheable({ client: new FailingPrimaryClient(), fallbackClient: new InMemClient() })
+      @Cacheable({ client: failingPrimaryClient, fallbackClient: inMemClient })
       public async hello(): Promise<any> {
         return 'world';
       }

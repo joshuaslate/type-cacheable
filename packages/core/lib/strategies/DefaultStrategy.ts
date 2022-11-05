@@ -6,21 +6,19 @@ export class DefaultStrategy implements CacheStrategy {
 
   private findCachedValue = async (client: CacheClient, key: string) => {
     let cachedValue: any;
-    const pendingCachePromise = this.pendingCacheRequestMap.get(key);
 
-    if (pendingCachePromise) {
-      cachedValue = await pendingCachePromise;
-    } else {
-      const cachePromise = client.get(key);
-      this.pendingCacheRequestMap.set(key, cachePromise);
-
-      try {
+    try {
+      if (this.pendingCacheRequestMap.has(key)) {
+        cachedValue = await this.pendingCacheRequestMap.get(key);
+      } else {
+        const cachePromise = client.get(key);
+        this.pendingCacheRequestMap.set(key, cachePromise);
         cachedValue = await cachePromise;
-      } catch (e) {
-        throw e;
-      } finally {
-        this.pendingCacheRequestMap.delete(key);
       }
+    } catch (err) {
+      throw err;
+    } finally {
+      this.pendingCacheRequestMap.delete(key);
     }
 
     return cachedValue;
@@ -43,7 +41,7 @@ export class DefaultStrategy implements CacheStrategy {
           if (cachedValue !== undefined && cachedValue !== null) {
             return cachedValue;
           }
-        } catch (err) {}
+        } catch (fallbackErr) {}
       }
 
       if (context.debug) {
