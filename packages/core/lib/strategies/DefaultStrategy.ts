@@ -11,10 +11,10 @@ export class DefaultStrategy implements CacheStrategy {
     if (pendingCachePromise) {
       cachedValue = await pendingCachePromise;
     } else {
-      const cachePromise = client.get(key);
-      this.pendingCacheRequestMap.set(key, cachePromise);
-
       try {
+        const cachePromise = client.get(key);
+        this.pendingCacheRequestMap.set(key, cachePromise);
+
         cachedValue = await cachePromise;
       } catch (e) {
         throw e;
