@@ -5,13 +5,11 @@ const packageName = require('./package.json')
 
 module.exports = {
   ...baseConfig,
+  transform: {
+    '^.+\\.ts?$': ['ts-jest', { tsconfig: `<rootDir>/packages/${packageName}/tsconfig.json` }],
+  },
   displayName: packageName,
   rootDir: '../../',
   roots: [`<rootDir>/packages/${packageName}`],
   testRegex: `(packages/${packageName}/.*/__tests__/.*|\\.(test|spec))\\.(js?|ts?)$`,
-  globals: {
-    'ts-jest': {
-      tsconfig: `<rootDir>/packages/${packageName}/tsconfig.json`,
-    },
-  },
 };
