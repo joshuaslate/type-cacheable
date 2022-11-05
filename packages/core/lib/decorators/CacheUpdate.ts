@@ -18,6 +18,8 @@ import { DefaultUpdateStrategy } from '../strategies/DefaultUpdateStrategy';
 export function CacheUpdate(options?: CacheUpdateOptions) {
   return (target: Object, propertyKey: string, descriptor?: PropertyDescriptor) => {
     const originalMethod = descriptor?.value;
+    const defaultUpdateStrategy = new DefaultUpdateStrategy();
+    const defaultClearStrategy = new DefaultClearStrategy();
 
     return {
       ...descriptor,
@@ -65,7 +67,7 @@ export function CacheUpdate(options?: CacheUpdateOptions) {
             : cacheManager.options.ttlSeconds || undefined;
 
         const strategy = getCacheUpdateStrategy(
-          options?.strategy || cacheManager.options.updateStrategy || new DefaultUpdateStrategy(),
+          options?.strategy || cacheManager.options.updateStrategy || defaultUpdateStrategy,
           args,
           contextToUse,
           result,
@@ -82,7 +84,7 @@ export function CacheUpdate(options?: CacheUpdateOptions) {
         const clearStrategy = getCacheClearStrategy(
           options?.clearStrategy ||
             cacheManager.options.clearStrategy ||
-            new DefaultClearStrategy(),
+            defaultClearStrategy,
           args,
           contextToUse,
         );

@@ -115,6 +115,7 @@ export class RedisAdapter implements CacheClient {
           versionFragment?.replace('\r', '').split(REDIS_VERSION_FRAGMENT_IDENTIFIER)[1] || '0';
     }).catch();
   }
+
   // Redis doesn't have a standard TTL, it's at a per-key basis
   public getClientTTL(): number {
     return 0;

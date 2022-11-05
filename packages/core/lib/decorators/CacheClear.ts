@@ -11,6 +11,7 @@ import { DefaultClearStrategy } from '../strategies/DefaultClearStrategy';
 export function CacheClear(options?: CacheClearOptions) {
   return (target: Object, propertyKey: string, descriptor?: PropertyDescriptor) => {
     const originalMethod = descriptor?.value;
+    const defaultStrategy = new DefaultClearStrategy();
 
     return {
       ...descriptor,
@@ -53,7 +54,7 @@ export function CacheClear(options?: CacheClearOptions) {
           const clearHash = options?.hashKey && !options?.cacheKey;
 
           const strategy = getCacheClearStrategy(
-            options?.strategy || cacheManager.options.clearStrategy || new DefaultClearStrategy(),
+            options?.strategy || cacheManager.options.clearStrategy || defaultStrategy,
             args,
             contextToUse,
           );
