@@ -11,7 +11,7 @@ import { CacheUpdateStrategyBuilder } from './CacheUpdateStrategyBuilder';
 
 export interface CacheUpdateOptions {
   cacheKey?: string | CacheKeyBuilder | PostRunKeyBuilder;
-  cacheKeysToClear?: string | string[] | CacheKeyDeleteBuilder;
+  cacheKeysToClear?: string | string[] | CacheKeyDeleteBuilder | null;
   hashKey?: string | CacheKeyBuilder | PostRunKeyBuilder;
   client?: CacheClient;
   fallbackClient?: CacheClient;

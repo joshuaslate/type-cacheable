@@ -169,13 +169,13 @@ interface CacheClearOptions {
 
 #### `@CacheUpdate`
 
-The `@CacheUpdate` decorator first runs the decorated method. If that method does not throw, `@CacheUpdate` will set the given key(s) in the cache, then clear any keys listed under `cacheKeysToClear`. It takes `CacheUpdateOptions` for an argument. The available options are:
+The `@CacheUpdate` decorator first runs the decorated method. If that method does not throw, `@CacheUpdate` will set the given key(s) in the cache, then clear any keys listed under `cacheKeysToClear`. Important note: by default (if `cacheKeysToClear` is left undefined), `CacheUpdate` will build a cache clear key based on the context of the called method. To avoid this behavior and clear nothing instead, pass `null`. It takes `CacheUpdateOptions` for an argument. The available options are:
 
 ```ts
 interface CacheUpdateOptions {
   cacheKey?: string | CacheKeyBuilder | PostRunKeyBuilder; // Individual key the result of the decorated method should be stored on
   hashKey?: string | CacheKeyBuilder | PostRunKeyBuilder; // Set name the result of the decorated method should be stored on (for hashes)
-  cacheKeysToClear?: string | string[] | CacheKeyDeleteBuilder; // Keys to be cleared from cache after a successful method call
+  cacheKeysToClear?: string | string[] | CacheKeyDeleteBuilder | null; // Keys to be cleared from cache after a successful method call. null will prevent deletion.
   client?: CacheClient; // If you would prefer use a different cache client than passed into the adapter, set that here
   fallbackClient?: CacheClient; // If you would prefer use a different cache client than passed into the adapter as a fallback, set that here
   noop?: boolean; // Allows for consuming libraries to conditionally disable caching. Set this to true to disable caching for some reason.

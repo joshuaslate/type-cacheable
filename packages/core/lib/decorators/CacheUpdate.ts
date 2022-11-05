@@ -71,7 +71,7 @@ export function CacheUpdate(options?: CacheUpdateOptions) {
           result,
         );
 
-        const finalClearKey = getFinalKey(
+        const finalClearKey = options?.cacheKeysToClear === null ? undefined : getFinalKey(
           options && options.cacheKeysToClear,
           options && options.hashKey,
           propertyKey,
@@ -100,7 +100,7 @@ export function CacheUpdate(options?: CacheUpdateOptions) {
           result,
         };
 
-        const clearParams = {
+        const clearParams = finalClearKey?.length ? {
           debug: cacheManager.options.debug,
           originalMethod,
           originalMethodScope: this,
@@ -109,12 +109,12 @@ export function CacheUpdate(options?: CacheUpdateOptions) {
           client,
           fallbackClient,
           key: finalClearKey,
-        };
+        } : undefined;
 
         if (options?.clearAndUpdateInParallel) {
           const promises = [strategy.handle(cacheParams)];
 
-          if (finalClearKey.length) {
+          if (clearParams) {
             promises.push(clearStrategy.handle(clearParams));
           }
 
@@ -125,7 +125,7 @@ export function CacheUpdate(options?: CacheUpdateOptions) {
 
         const strategyResult = await strategy.handle(cacheParams);
 
-        if (finalClearKey.length) {
+        if (clearParams) {
           await clearStrategy.handle(clearParams);
         }
 
