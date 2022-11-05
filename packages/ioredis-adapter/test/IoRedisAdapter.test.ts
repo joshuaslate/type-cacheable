@@ -435,11 +435,5 @@ describe('IoRedisAdapter Disconnect Handling', () => {
     await testInstance.getId('1');
 
     expect(mockGet).toHaveBeenCalledTimes(2);
-    await testInstance.getId('1');
-    await testInstance.getId('1');
-    await testInstance.getId('1');
-    await testInstance.getId('1');
-    await testInstance.getId('2');
-    expect(false).toBe(false);
   });
 })
