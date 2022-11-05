@@ -44,5 +44,5 @@
     "@type-cacheable/core": "^10.0.0",
     "lru-cache": "^7.3.0"
   },
-  "gitHead": "fc819565536432e484c60432a6c184ba700b3c92"
+  "gitHead": "ba374530da264bef419e893c8fa44ee2479c7782"
 }
