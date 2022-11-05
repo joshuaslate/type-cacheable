@@ -1,4 +1,4 @@
-import { Redis } from 'ioredis';
+import { Cluster, Redis } from 'ioredis';
 import { compareVersions } from 'compare-versions';
 import cacheManager, { CacheClient, parseIfRequired } from '@type-cacheable/core';
 
@@ -6,7 +6,7 @@ const REDIS_VERSION_UNLINK_INTRODUCED = '4.0.0';
 const REDIS_VERSION_FRAGMENT_IDENTIFIER = 'redis_version:';
 
 export class IoRedisAdapter implements CacheClient {
-  constructor(redisClient: Redis) {
+  constructor(redisClient: Redis | Cluster) {
     this.redisClient = redisClient;
     this.redisVersion = '0';
 
@@ -24,13 +24,13 @@ export class IoRedisAdapter implements CacheClient {
     const infoString = await this.redisClient.info();
     const versionFragment = infoString
       .split('\n')
-      .find((info) => info.includes(REDIS_VERSION_FRAGMENT_IDENTIFIER));
+      .find((info: string) => info.includes(REDIS_VERSION_FRAGMENT_IDENTIFIER));
     this.redisVersion =
       versionFragment?.replace('\r', '').split(REDIS_VERSION_FRAGMENT_IDENTIFIER)[1] || '0';
   }
 
   private redisVersion: string = '';
-  private redisClient: Redis;
+  private readonly redisClient: Redis | Cluster;
 
   public async get(cacheKey: string): Promise<any> {
     const result = await this.redisClient.get(cacheKey);
@@ -70,13 +70,21 @@ export class IoRedisAdapter implements CacheClient {
   }
 
   public async keys(pattern: string): Promise<string[]> {
-    let keys: string[] = [];
-    let cursor: number | null = 0;
+    if(this.redisClient instanceof Cluster) {
+      const cluster = this.redisClient as Cluster;
+      const keys = cluster.nodes('master').map((node) => this.scanKeys(node, pattern));
+      return (await Promise.all(keys)).flat();
+    }
+    return  this.scanKeys(this.redisClient, pattern);
+  }
 
+  private async scanKeys(client: Redis | Cluster, pattern: string): Promise<string[]> {
+    let cursor: number | null = 0;
+    let keys: string[] = [];
     while (cursor !== null) {
-      const result = (await this.redisClient.scan(cursor, 'MATCH', pattern, 'COUNT', 1000)) as
-        | [string, string[]]
-        | undefined;
+      const result = (await client.scan(cursor, 'MATCH', pattern, 'COUNT', 1000)) as
+          | [string, string[]]
+          | undefined;
 
       if (result) {
         // array exists at index 1 from SCAN command, cursor is at 0
@@ -86,7 +94,6 @@ export class IoRedisAdapter implements CacheClient {
         cursor = null;
       }
     }
-
     return keys;
   }
 
