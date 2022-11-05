@@ -18,7 +18,7 @@ export default class CacheManager {
   public setClient(client: CacheClient): void {
     this.client = client;
 
-    if (this.options && !this.options.ttlSeconds) {
+    if (this.client && this.options && !this.options.ttlSeconds) {
       this.options.ttlSeconds = this.client.getClientTTL();
     }
   }
