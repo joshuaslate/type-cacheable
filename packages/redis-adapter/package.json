@@ -37,7 +37,7 @@
   "devDependencies": {
     "@type-cacheable/core": "^11.0.0",
     "@types/redis": "^4.0.11",
-    "redis": "^4.1.0",
+    "redis": "^4.5.0",
     "typescript": "^4.7.2"
   },
   "peerDependencies": {
