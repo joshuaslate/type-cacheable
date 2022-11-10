@@ -1,6 +1,6 @@
 {
   "name": "@type-cacheable/redis-adapter",
-  "version": "14.0.0",
+  "version": "14.0.1",
   "description": "Adapter for using redis with type-cacheable",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -42,7 +42,7 @@
   },
   "peerDependencies": {
     "@redis/client": "^1.1.0",
-    "@type-cacheable/core": "^10.0.0"
+    "@type-cacheable/core": "^11.0.0"
   },
   "dependencies": {
     "compare-versions": "^5.0.1"
