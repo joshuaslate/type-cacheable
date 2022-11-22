@@ -9,6 +9,9 @@ export class IoRedisAdapter implements CacheClient {
   constructor(redisClient: Redis | Cluster) {
     this.redisClient = redisClient;
     this.redisVersion = '0';
+    if (this.redisClient.options.keyPrefix) {
+      this.keyPrefixRe = new RegExp(`^${this.redisClient.options.keyPrefix}`);
+    }
 
     this.get = this.get.bind(this);
     this.del = this.del.bind(this);
@@ -29,6 +32,7 @@ export class IoRedisAdapter implements CacheClient {
       versionFragment?.replace('\r', '').split(REDIS_VERSION_FRAGMENT_IDENTIFIER)[1] || '0';
   }
 
+  private keyPrefixRe?: RegExp;
   private redisVersion: string = '';
   private readonly redisClient: Redis | Cluster;
 
@@ -94,7 +98,7 @@ export class IoRedisAdapter implements CacheClient {
         cursor = null;
       }
     }
-    return keys;
+    return this.keyPrefixRe ? keys.map(key => key.replace(this.keyPrefixRe!, '')) : keys;
   }
 
   public async delHash(hashKeyOrKeys: string | string[]): Promise<any> {
