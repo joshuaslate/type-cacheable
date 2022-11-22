@@ -14,7 +14,11 @@ describe('IoRedisAdapter Tests', () => {
   let ioRedisAdapter: IoRedisAdapter;
 
   beforeAll(async () => {
-    client = new IoRedis({ host: process.env.REDIS_HOST, port: Number(process.env.REDIS_PORT) });
+    client = new IoRedis({
+      host: process.env.REDIS_HOST,
+      port: Number(process.env.REDIS_PORT),
+      keyPrefix: process.env.REDIS_KEY_PREFIX,
+    });
     ioRedisAdapter = useAdapter(client);
   });
 
