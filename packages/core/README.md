@@ -1,5 +1,7 @@
 # @type-cacheable/core
 
+![npm downloads](https://img.shields.io/npm/dm/@type-cacheable/core)
+
 TypeScript-based caching decorators to assist with caching (and clearing cache for) async methods. Currently supports Redis (`redis`, `ioredis`), `lru-cache`, and `node-cache`. If you would like to see more adapters added, please open an issue or, better yet, a pull request with an implementation.
 
 To learn how to set up an adapter for your cache of choice, [view the full documentation](https://github.com/joshuaslate/type-cacheable).

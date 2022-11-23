@@ -1,5 +1,7 @@
 # @type-cacheable/ioredis-adapter
 
+![npm downloads](https://img.shields.io/npm/dm/@type-cacheable/ioredis-adapter)
+
 TypeScript-based caching decorators to assist with caching (and clearing cache for) async methods. This package supports the `ioredis` client.
 
 [View full documentation](https://github.com/joshuaslate/type-cacheable)

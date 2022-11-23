@@ -1,5 +1,7 @@
 # @type-cacheable/node-cache-adapter
 
+![npm downloads](https://img.shields.io/npm/dm/@type-cacheable/node-cache-adapter)
+
 TypeScript-based caching decorators to assist with caching (and clearing cache for) async methods. This package supports the `node-cache` client.
 
 [View full documentation](https://github.com/joshuaslate/type-cacheable)
