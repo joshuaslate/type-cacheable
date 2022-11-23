@@ -1,6 +1,6 @@
 # @type-cacheable/redis-adapter
 
-![npm downloads](https://img.shields.io/npm/dm/@type-cacheable/redis-adapter)
+[![npm downloads](https://img.shields.io/npm/dm/@type-cacheable/redis-adapter)](https://www.npmjs.com/package/@type-cacheable/redis-adapter)
 
 TypeScript-based caching decorators to assist with caching (and clearing cache for) async methods. This package supports the `redis` client.
 

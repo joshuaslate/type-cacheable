@@ -1,6 +1,6 @@
 # @type-cacheable/lru-cache-adapter
 
-![npm downloads](https://img.shields.io/npm/dm/@type-cacheable/lru-cache-adapter)
+[![npm downloads](https://img.shields.io/npm/dm/@type-cacheable/lru-cache-adapter)](https://www.npmjs.com/package/@type-cacheable/lru-cache-adapter)
 
 TypeScript-based caching decorators to assist with caching (and clearing cache for) async methods. This package supports the `lru-cache` client.
 
