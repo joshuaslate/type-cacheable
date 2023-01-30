@@ -1881,10 +1881,10 @@
   resolved "https://registry.yarnpkg.com/@redis/bloom/-/bloom-1.2.0.tgz#d3fd6d3c0af3ef92f26767b56414a370c7b63b71"
   integrity sha512-HG2DFjYKbpNmVXsa0keLHp/3leGJz1mjh09f2RLGGLQZzSHpkmZWuwJbAvo3QcRY8p80m5+ZdXZdYOSBLlp7Cg==
 
-"@redis/client@1.5.2":
-  version "1.5.2"
-  resolved "https://registry.yarnpkg.com/@redis/client/-/client-1.5.2.tgz#ad60561cfcfe6938f64327b913a425739645a661"
-  integrity sha512-NHkrqvyreowlqxZvt9ufA//nEv0/voHohMAybn50S3e/+9Xbc47bXX4djb7QOX6Kupp16NdfG7St8CzhyYA3cg==
+"@redis/client@1.5.4":
+  version "1.5.4"
+  resolved "https://registry.yarnpkg.com/@redis/client/-/client-1.5.4.tgz#7ff66602168e0a2d51813189e0411f719818ad04"
+  integrity sha512-inTBWktJX6rRUCmhpVCnSb7pHOOiGCFIiy5IuEa0GgjcOJsKvw4zHkT9dfYm5UGoUi0I1c4i/f3ScMW5gkNpmQ==
   dependencies:
     cluster-key-slot "1.1.2"
     generic-pool "3.9.0"
@@ -5855,12 +5855,12 @@ redis-parser@^3.0.0:
     redis-errors "^1.0.0"
 
 redis@*, redis@^4.5.0:
-  version "4.6.1"
-  resolved "https://registry.yarnpkg.com/redis/-/redis-4.6.1.tgz#7778d888d5fe150a7c453b27a47b0e359fff8252"
-  integrity sha512-cmmO3uqHHRWrvpsT0JrrYl/uqyz6/GNnXZnPbwzp5Hy0Y7z8WBTZnF6TQ8v/ryIverGm9azq5oqzNzpWh8Ab+w==
+  version "4.6.3"
+  resolved "https://registry.yarnpkg.com/redis/-/redis-4.6.3.tgz#fef5c02edf44a93880149321a41c9ddb5afd46e6"
+  integrity sha512-2UBX8APh9xIXotVwbt3/jUSeu9kwoke9fNzCMQppuQhmOUmEBkM73sdUifXiabjH7YUN0VireJcgw7ky4DnC+A==
   dependencies:
     "@redis/bloom" "1.2.0"
-    "@redis/client" "1.5.2"
+    "@redis/client" "1.5.4"
     "@redis/graph" "1.1.0"
     "@redis/json" "1.0.4"
     "@redis/search" "1.1.1"
