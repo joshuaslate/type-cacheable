@@ -4679,10 +4679,10 @@ log-symbols@^4.1.0:
     chalk "^4.1.0"
     is-unicode-supported "^0.1.0"
 
-lru-cache@*, lru-cache@^7.3.0, lru-cache@^7.4.4, lru-cache@^7.5.1, lru-cache@^7.7.1:
-  version "7.16.0"
-  resolved "https://registry.yarnpkg.com/lru-cache/-/lru-cache-7.16.0.tgz#b1b946cff368d3f3c569cc3d6a5ba8f90435160f"
-  integrity sha512-VJBdeMa9Bz27NNlx+DI/YXGQtXdjUU+9gdfN1rYfra7vtTjhodl5tVNmR42bo+ORHuDqDT+lGAUAb+lzvY42Bw==
+lru-cache@*, lru-cache@^8.0.3:
+  version "8.0.3"
+  resolved "https://registry.yarnpkg.com/lru-cache/-/lru-cache-8.0.3.tgz#42a2c84ec91426d165b0887783f6a0fed367402f"
+  integrity sha512-hDYyWLYUrrTuQQlZWe6U56i+t6UU7LnimwV9Tvvw0HadkTnD7VbErepoJVeNEfC4exBIcGwO8M7TQyF6HO5tQA==
 
 lru-cache@^6.0.0:
   version "6.0.0"
@@ -4690,6 +4690,11 @@ lru-cache@^6.0.0:
   integrity sha512-Jo6dJ04CmSjuznwJSS3pUeWmd/H0ffTlkXXgwZi+eq1UCmqQwCh+eLsYOYCwY991i2Fah4h1BEMCx4qThGbsiA==
   dependencies:
     yallist "^4.0.0"
+
+lru-cache@^7.4.4, lru-cache@^7.5.1, lru-cache@^7.7.1:
+  version "7.16.0"
+  resolved "https://registry.yarnpkg.com/lru-cache/-/lru-cache-7.16.0.tgz#b1b946cff368d3f3c569cc3d6a5ba8f90435160f"
+  integrity sha512-VJBdeMa9Bz27NNlx+DI/YXGQtXdjUU+9gdfN1rYfra7vtTjhodl5tVNmR42bo+ORHuDqDT+lGAUAb+lzvY42Bw==
 
 make-dir@^2.1.0:
   version "2.1.0"
