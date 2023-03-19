@@ -1,3 +1,5 @@
+import 'reflect-metadata';
+
 import CacheManager from './CacheManager';
 export * from './decorators';
 export * from './interfaces';

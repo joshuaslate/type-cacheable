@@ -1,5 +1,5 @@
 import { CacheClearOptions } from '../interfaces';
-import { getFinalKey, determineOp, getCacheClearStrategy, extractKey } from '../util';
+import { getFinalKey, determineOp, getCacheClearStrategy, extractKey, setMetadata } from '../util';
 import cacheManager from '../index';
 import { DefaultClearStrategy } from '../strategies/DefaultClearStrategy';
 
@@ -13,7 +13,7 @@ export function CacheClear(options?: CacheClearOptions) {
     const originalMethod = descriptor?.value;
     const defaultStrategy = new DefaultClearStrategy();
 
-    return {
+    const newDescriptor: PropertyDescriptor = {
       ...descriptor,
       value: async function (...args: any[]): Promise<any> {
         // Allow a client to be passed in directly for granularity, else use the connected
@@ -86,5 +86,8 @@ export function CacheClear(options?: CacheClearOptions) {
         return result;
       },
     };
+
+    setMetadata(newDescriptor, originalMethod);
+    return newDescriptor;
   };
 }
