@@ -1,5 +1,5 @@
 import { CacheOptions } from '../interfaces';
-import { determineOp, getFinalKey, getTTL, getCacheStrategy } from '../util';
+import { determineOp, getCacheStrategy, getFinalKey, getTTL, setMetadata } from '../util';
 import cacheManager from '../index';
 import { DefaultStrategy } from '../strategies';
 
@@ -15,7 +15,7 @@ export function Cacheable(options?: CacheOptions) {
     const originalMethod = descriptor?.value;
     const defaultStrategy = new DefaultStrategy();
 
-    return {
+    const newDescriptor: PropertyDescriptor = {
       ...descriptor,
       value: async function (...args: any[]): Promise<any> {
         // Allow a client to be passed in directly for granularity, else use the connected
@@ -77,5 +77,8 @@ export function Cacheable(options?: CacheOptions) {
         });
       },
     };
+
+    setMetadata(newDescriptor, originalMethod);
+    return newDescriptor;
   };
 }

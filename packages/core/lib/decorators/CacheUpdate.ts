@@ -4,7 +4,7 @@ import {
   getFinalKey,
   getTTL,
   getCacheClearStrategy,
-  getCacheUpdateStrategy,
+  getCacheUpdateStrategy, setMetadata,
 } from '../util';
 import cacheManager from '../index';
 import { DefaultClearStrategy } from '../strategies/DefaultClearStrategy';
@@ -21,7 +21,7 @@ export function CacheUpdate(options?: CacheUpdateOptions) {
     const defaultUpdateStrategy = new DefaultUpdateStrategy();
     const defaultClearStrategy = new DefaultClearStrategy();
 
-    return {
+    const newDescriptor: PropertyDescriptor = {
       ...descriptor,
       value: async function (...args: any[]): Promise<any> {
         // Allow a client to be passed in directly for granularity, else use the connected
@@ -134,5 +134,8 @@ export function CacheUpdate(options?: CacheUpdateOptions) {
         return strategyResult;
       },
     };
+
+    setMetadata(newDescriptor, originalMethod);
+    return newDescriptor;
   };
 }
