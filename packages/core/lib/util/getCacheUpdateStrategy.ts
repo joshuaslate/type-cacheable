@@ -1,4 +1,4 @@
-import { CacheStrategy, CacheUpdateStrategy, CacheUpdateStrategyBuilder } from '../interfaces';
+import { CacheUpdateStrategy, CacheUpdateStrategyBuilder } from '../interfaces';
 
 /**
  * getCacheUpdateStrategy - This is the strategy to use for updating cached data, or a function to extract it
@@ -15,7 +15,7 @@ export const getCacheUpdateStrategy = (
   args: any[],
   context?: any,
   returnValue?: any,
-): CacheStrategy =>
+): CacheUpdateStrategy =>
   passedInCacheStrategy instanceof Function
     ? passedInCacheStrategy(args, context, returnValue)
     : passedInCacheStrategy;

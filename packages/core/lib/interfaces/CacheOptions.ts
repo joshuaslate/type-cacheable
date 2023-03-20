@@ -1,4 +1,4 @@
-import { CacheKeyBuilder, CacheClient, NoOpDeterminer, TTLBuilder, CacheStrategy } from './';
+import { CacheKeyBuilder, CacheClient, NoOpDeterminer, TTLBuilder, CacheStrategy, IsCacheableBuilder } from './';
 import { CacheStrategyBuilder } from './CacheStrategyBuilder';
 
 export interface CacheOptions {
@@ -9,4 +9,5 @@ export interface CacheOptions {
   noop?: boolean | NoOpDeterminer;
   ttlSeconds?: number | TTLBuilder;
   strategy?: CacheStrategy | CacheStrategyBuilder;
+  isCacheable?: IsCacheableBuilder;
 }

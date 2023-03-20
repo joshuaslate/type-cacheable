@@ -58,6 +58,11 @@ export function Cacheable(options?: CacheOptions) {
             ? getTTL(options.ttlSeconds, args, contextToUse)
             : cacheManager.options.ttlSeconds || undefined;
 
+        const isCacheable = (value: any) =>
+          options && options.isCacheable
+            ? options.isCacheable(value, args, contextToUse)
+            : true;
+
         const strategy = getCacheStrategy(
           options?.strategy || cacheManager.options.strategy || defaultStrategy,
           args,
@@ -74,6 +79,7 @@ export function Cacheable(options?: CacheOptions) {
           fallbackClient,
           key: finalKey as string,
           ttl,
+          isCacheable,
         });
       },
     };
