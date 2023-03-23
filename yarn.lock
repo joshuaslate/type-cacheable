@@ -1529,10 +1529,10 @@
   dependencies:
     "@types/istanbul-lib-report" "*"
 
-"@types/jest@^29.2.2":
-  version "29.4.0"
-  resolved "https://registry.yarnpkg.com/@types/jest/-/jest-29.4.0.tgz#a8444ad1704493e84dbf07bb05990b275b3b9206"
-  integrity sha512-VaywcGQ9tPorCX/Jkkni7RWGFfI11whqzs8dvxF41P17Z+z872thvEvlIbznjPJ02kl1HMX3LmLOonsj2n7HeQ==
+"@types/jest@^29.5.0":
+  version "29.5.0"
+  resolved "https://registry.yarnpkg.com/@types/jest/-/jest-29.5.0.tgz#337b90bbcfe42158f39c2fb5619ad044bbb518ac"
+  integrity sha512-3Emr5VOl/aoBwnWcH/EFQvlSAmjV+XtV9GGu5mwdYew5vhQh0IUZx/60x0TzHDu09Bi7HMx10t/namdJw5QIcg==
   dependencies:
     expect "^29.0.0"
     pretty-format "^29.0.0"
@@ -1554,10 +1554,15 @@
   resolved "https://registry.yarnpkg.com/@types/minimist/-/minimist-1.2.0.tgz#69a23a3ad29caf0097f06eda59b361ee2f0639f6"
   integrity sha1-aaI6OtKcrwCX8G7aWbNh7i8GOfY=
 
-"@types/node@*", "@types/node@^18.0.0":
+"@types/node@*":
   version "18.15.5"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-18.15.5.tgz#3af577099a99c61479149b716183e70b5239324a"
   integrity sha512-Ark2WDjjZO7GmvsyFFf81MXuGTA/d6oP38anyxWOL6EREyBKAxKoFHwBhaZxCfLRLpO8JgVXwqOwSwa7jRcjew==
+
+"@types/node@^18.15.6":
+  version "18.15.6"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.15.6.tgz#af98ef4a36e7ac5f2d03040f3109fcce972bf6cb"
+  integrity sha512-YErOafCZpK4g+Rp3Q/PBgZNAsWKGunQTm9FA3/Pbcm0VCriTEzcrutQ/SxSc0rytAp0NoFWue669jmKhEtd0sA==
 
 "@types/normalize-package-data@^2.4.0":
   version "2.4.0"
@@ -3344,10 +3349,25 @@ inquirer@8.2.4, inquirer@^8.2.4:
     through "^2.3.6"
     wrap-ansi "^7.0.0"
 
-ioredis@*, ioredis@^5.0.6:
+ioredis@*:
   version "5.3.0"
   resolved "https://registry.yarnpkg.com/ioredis/-/ioredis-5.3.0.tgz#b5469f0fd374648ef074840c00c1d8eed42fca3f"
   integrity sha512-Id9jKHhsILuIZpHc61QkagfVdUj2Rag5GzG1TGEvRNeM7dtTOjICgjC+tvqYxi//PuX2wjQ+Xjva2ONBuf92Pw==
+  dependencies:
+    "@ioredis/commands" "^1.1.1"
+    cluster-key-slot "^1.1.0"
+    debug "^4.3.4"
+    denque "^2.1.0"
+    lodash.defaults "^4.2.0"
+    lodash.isarguments "^3.1.0"
+    redis-errors "^1.2.0"
+    redis-parser "^3.0.0"
+    standard-as-callback "^2.1.0"
+
+ioredis@^5.3.1:
+  version "5.3.1"
+  resolved "https://registry.yarnpkg.com/ioredis/-/ioredis-5.3.1.tgz#55d394a51258cee3af9e96c21c863b1a97bf951f"
+  integrity sha512-C+IBcMysM6v52pTLItYMeV4Hz7uriGtoJdz7SSBDX6u+zwSYGirLdQh3L7t/OItWITcw3gTFMjJReYUwS4zihg==
   dependencies:
     "@ioredis/commands" "^1.1.1"
     cluster-key-slot "^1.1.0"

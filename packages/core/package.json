@@ -35,7 +35,7 @@
   },
   "homepage": "https://github.com/joshuaslate/type-cacheable#readme",
   "devDependencies": {
-    "@types/node": "^18.0.0",
+    "@types/node": "^18.15.6",
     "@types/serialize-javascript": "^5.0.1",
     "typescript": "^5.0.2"
   },
