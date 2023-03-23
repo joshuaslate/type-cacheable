@@ -62,13 +62,20 @@ export class DefaultStrategy implements CacheStrategy {
     } else {
       const methodPromise = new Promise(async (resolve, reject) => {
         let returnValue;
+        let isCacheable = false;
         try {
           returnValue = await context.originalMethod!.apply(
             context.originalMethodScope,
             context.originalMethodArgs,
           );
+          isCacheable = context.isCacheable(returnValue);
         } catch (err) {
           reject(err);
+        }
+
+        if (!isCacheable) {
+          resolve(returnValue);
+          return;
         }
 
         try {

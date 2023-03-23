@@ -1,4 +1,4 @@
-import { CacheClient } from '.';
+import { CacheClient, IsCacheable } from '.';
 
 export interface CacheStrategyContext {
   debug: boolean | undefined;
@@ -10,4 +10,5 @@ export interface CacheStrategyContext {
   fallbackClient: CacheClient | null;
   key: string;
   ttl: number | undefined;
+  isCacheable: IsCacheable;
 }

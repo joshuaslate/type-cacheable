@@ -148,6 +148,7 @@ interface CacheOptions {
   noop?: boolean; // Allows for consuming libraries to conditionally disable caching. Set this to true to disable caching for some reason.
   ttlSeconds?: number | TTLBuilder; // Number of seconds the cached key should live for
   strategy?: CacheStrategy | CacheStrategyBuilder; // Strategy by which cached values and computed values are handled
+  isCacheable?: IsCacheableBuilder; // Allows for conditional caching based on the arguments passed into the decorated method
 }
 ```
 

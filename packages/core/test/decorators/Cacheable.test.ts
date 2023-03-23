@@ -94,6 +94,26 @@ describe('Cacheable Decorator Tests', () => {
     expect(result).toEqual('hello world');
   });
 
+  it('should use the provided isCacheable function', async () => {
+    const client = new MockAdapter();
+    const isCacheable = jest.fn().mockImplementation((value) => value.status === 200);
+    jest.spyOn(client, 'set');
+
+    class TestClass {
+      @Cacheable({ client, isCacheable })
+      public async hello(): Promise<any> {
+        return { status: 400, message: 'bad request' };
+      }
+    }
+
+    const testInstance = new TestClass();
+    const result = await testInstance.hello();
+
+    expect(result).toEqual({ status: 400, message: 'bad request' });
+    expect(isCacheable).toHaveBeenCalledWith({ status: 400, message: 'bad request' }, [], undefined);
+    expect(client.set).not.toHaveBeenCalled();
+  });
+
   it('should use the fallback cache if provided', async () => {
     const inMemMockSet = jest.fn();
     const inMemMockGet = jest.fn();

@@ -11,6 +11,8 @@ export { CacheStrategy } from './CacheStrategy';
 export { CacheClearStrategyContext } from './CacheClearStrategyContext';
 export { CacheStrategyContext } from './CacheStrategyContext';
 export { CacheUpdateStrategyContext } from './CacheUpdateStrategyContext';
+export { IsCacheable } from './IsCacheable';
+export { IsCacheableBuilder } from './IsCacheableBuilder';
 export { NoOpDeterminer } from './NoOpDeterminer';
 export { CacheClearStrategyBuilder } from './CacheClearStrategyBuilder';
 export { CacheStrategyBuilder as StrategyBuilder } from './CacheStrategyBuilder';
