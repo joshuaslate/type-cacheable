@@ -37,12 +37,12 @@
   "devDependencies": {
     "@type-cacheable/core": "^11.1.1",
     "@types/lru-cache": "^7.4.0",
-    "lru-cache": "^7.3.0",
+    "lru-cache": "^8.0.4",
     "typescript": "^5.0.2"
   },
   "peerDependencies": {
     "@type-cacheable/core": "^11.0.0",
-    "lru-cache": "^7.3.0"
+    "lru-cache": "^8.0.4"
   },
   "gitHead": "ba374530da264bef419e893c8fa44ee2479c7782"
 }
