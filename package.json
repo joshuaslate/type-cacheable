@@ -1,7 +1,10 @@
 {
   "name": "type-cacheable",
   "private": true,
-  "author": "Joshua Slate",
+  "author": {
+    "name": "Joshua Slate",
+    "url": "https://joshuaslate.com"
+  },
   "license": "MIT",
   "workspaces": {
     "packages": [

@@ -1,7 +1,7 @@
-import * as LRUCache from 'lru-cache';
+import LRUCache from 'lru-cache';
 import cacheManager, { CacheClient } from '@type-cacheable/core';
 
-export class LRUCacheAdapter<T> implements CacheClient {
+export class LRUCacheAdapter<T extends {}> implements CacheClient {
   constructor(lruClient: LRUCache<string, T>) {
     this.lruClient = lruClient;
 
@@ -76,7 +76,7 @@ export class LRUCacheAdapter<T> implements CacheClient {
   }
 }
 
-export const useAdapter = <T>(
+export const useAdapter = <T extends {} = {}>(
   client: LRUCache<string, T>,
   asFallback?: boolean
 ): LRUCacheAdapter<T> => {

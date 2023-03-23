@@ -28,7 +28,10 @@
     "cache",
     "typescript"
   ],
-  "author": "Joshua Slate",
+  "author": {
+    "name": "Joshua Slate",
+    "url": "https://joshuaslate.com"
+  },
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/joshuaslate/type-cacheable/issues"
