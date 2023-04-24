@@ -71,6 +71,7 @@ export class DefaultStrategy implements CacheStrategy {
           isCacheable = context.isCacheable(returnValue);
         } catch (err) {
           reject(err);
+          return;
         }
 
         if (!isCacheable) {
