@@ -1,6 +1,6 @@
 {
   "name": "@type-cacheable/lru-cache-adapter",
-  "version": "14.0.0",
+  "version": "14.0.1",
   "description": "Adapter for using lru-cache with type-cacheable",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -38,7 +38,7 @@
   },
   "homepage": "https://github.com/joshuaslate/type-cacheable#readme",
   "devDependencies": {
-    "@type-cacheable/core": "^12.0.0",
+    "@type-cacheable/core": "^12.0.1",
     "@types/lru-cache": "^7.4.0",
     "lru-cache": "^8.0.4",
     "typescript": "^5.0.2"
