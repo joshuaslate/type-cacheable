@@ -43,7 +43,7 @@
     "typescript": "^5.0.2"
   },
   "peerDependencies": {
-    "@type-cacheable/core": "^11.0.0",
+    "@type-cacheable/core": "^12.0.0",
     "node-cache": "^5.0.0"
   },
   "gitHead": "ba374530da264bef419e893c8fa44ee2479c7782"
