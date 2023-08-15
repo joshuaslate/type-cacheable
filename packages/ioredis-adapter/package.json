@@ -1,6 +1,6 @@
 {
   "name": "@type-cacheable/ioredis-adapter",
-  "version": "13.0.1",
+  "version": "13.0.2",
   "description": "Adapter for using ioredis with type-cacheable",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
