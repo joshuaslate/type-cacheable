@@ -23,7 +23,7 @@ yarn add @type-cacheable/core @type-cacheable/lru-cache-adapter
 ### Using adapter
 
 ```ts
-import * as LRUCache from 'lru-cache';
+import { LRUCache } from 'lru-cache';
 import { useAdapter } from '@type-cacheable/lru-cache-adapter';
 
 const client = new LRUCache();

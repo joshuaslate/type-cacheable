@@ -1,4 +1,4 @@
-import LRUCache from 'lru-cache';
+import { LRUCache } from 'lru-cache';
 import { Cacheable } from '@type-cacheable/core';
 import { LRUCacheAdapter, useAdapter } from '../lib';
 
