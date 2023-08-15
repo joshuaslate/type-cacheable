@@ -1,4 +1,4 @@
-import LRUCache from 'lru-cache';
+import { LRUCache }  from 'lru-cache';
 import cacheManager, { CacheClient } from '@type-cacheable/core';
 
 export class LRUCacheAdapter<T extends {}> implements CacheClient {
