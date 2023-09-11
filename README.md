@@ -247,6 +247,9 @@ class UserService {
 }
 ```
 
+### Disabling Caching
+If you want to disable cache operations globally, you can use `cacheManager.disable()`. If you want to re-enable caching operations, you may use `cacheManager.enable()`.
+
 ### TypeScript Configuration
 
 ```ts

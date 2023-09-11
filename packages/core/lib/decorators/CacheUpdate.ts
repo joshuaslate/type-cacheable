@@ -30,7 +30,7 @@ export function CacheUpdate(options?: CacheUpdateOptions) {
         const fallbackClient =
           options && options.fallbackClient ? options.fallbackClient : cacheManager.fallbackClient;
 
-        if (options && options.noop && determineOp(options.noop, args, this)) {
+        if (cacheManager.options?.disabled || (options && options.noop && determineOp(options.noop, args, this))) {
           return originalMethod?.apply(this, args);
         }
 
