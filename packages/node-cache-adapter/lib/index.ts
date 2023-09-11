@@ -1,4 +1,4 @@
-import * as NodeCache from 'node-cache';
+import NodeCache from 'node-cache';
 import cacheManager, { CacheClient, CacheManagerOptions } from '@type-cacheable/core';
 
 export class NodeCacheAdapter implements CacheClient {

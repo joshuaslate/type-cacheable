@@ -23,7 +23,7 @@ yarn add @type-cacheable/core @type-cacheable/node-cache-adapter
 ### Using adapter
 
 ```ts
-import * as NodeCache from 'node-cache';
+import NodeCache from 'node-cache';
 import { useAdapter } from '@type-cacheable/node-cache-adapter';
 
 const client = new NodeCache();
