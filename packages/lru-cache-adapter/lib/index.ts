@@ -1,5 +1,5 @@
 import { LRUCache }  from 'lru-cache';
-import cacheManager, { CacheClient } from '@type-cacheable/core';
+import cacheManager, { CacheClient, CacheManagerOptions } from '@type-cacheable/core';
 
 export class LRUCacheAdapter<T extends {}> implements CacheClient {
   constructor(lruClient: LRUCache<string, T>) {
@@ -78,7 +78,8 @@ export class LRUCacheAdapter<T extends {}> implements CacheClient {
 
 export const useAdapter = <T extends {} = {}>(
   client: LRUCache<string, T>,
-  asFallback?: boolean
+  asFallback?: boolean,
+  options?: CacheManagerOptions,
 ): LRUCacheAdapter<T> => {
   const lruCacheAdapter = new LRUCacheAdapter(client);
 
@@ -87,5 +88,10 @@ export const useAdapter = <T extends {} = {}>(
   } else {
     cacheManager.setClient(lruCacheAdapter);
   }
+
+  if (options) {
+    cacheManager.setOptions(options);
+  }
+
   return lruCacheAdapter;
 };

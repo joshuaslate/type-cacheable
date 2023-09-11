@@ -128,6 +128,7 @@ describe('LRUCacheAdapter Tests', () => {
             client: lruCacheAdapter,
             hashKey: 'user',
             cacheKey: (x) => x[0],
+            ttlSeconds: 30,
           })
           async getId(id: string): Promise<string> {
             mockGetIdImplementation();

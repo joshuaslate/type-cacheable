@@ -1,6 +1,6 @@
 import { RedisClientType } from '@redis/client/dist/lib/client';
 import { compareVersions } from 'compare-versions';
-import cacheManager, { CacheClient, parseIfRequired } from '@type-cacheable/core';
+import cacheManager, { CacheClient, CacheManagerOptions, parseIfRequired } from '@type-cacheable/core';
 
 // In order to support scalars in hsets (likely not the intended use, but support has been requested),
 // we need at least one key.
@@ -239,13 +239,17 @@ export class RedisAdapter implements CacheClient {
   }
 }
 
-export const useAdapter = (client: RedisClientType, asFallback?: boolean): RedisAdapter => {
+export const useAdapter = (client: RedisClientType, asFallback?: boolean, options?: CacheManagerOptions): RedisAdapter => {
   const redisAdapter = new RedisAdapter(client);
 
   if (asFallback) {
     cacheManager.setFallbackClient(redisAdapter);
   } else {
     cacheManager.setClient(redisAdapter);
+  }
+
+  if (options) {
+    cacheManager.setOptions(options);
   }
 
   return redisAdapter;

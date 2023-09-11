@@ -1,6 +1,6 @@
 import { Cluster, Redis } from 'ioredis';
 import { compareVersions } from 'compare-versions';
-import cacheManager, { CacheClient, parseIfRequired } from '@type-cacheable/core';
+import cacheManager, { CacheClient, CacheManagerOptions, parseIfRequired } from '@type-cacheable/core';
 
 const REDIS_VERSION_UNLINK_INTRODUCED = '4.0.0';
 const REDIS_VERSION_FRAGMENT_IDENTIFIER = 'redis_version:';
@@ -110,13 +110,17 @@ export class IoRedisAdapter implements CacheClient {
   }
 }
 
-export const useAdapter = (client: Redis, asFallback?: boolean): IoRedisAdapter => {
+export const useAdapter = (client: Redis, asFallback?: boolean, options?: CacheManagerOptions): IoRedisAdapter => {
   const ioRedisAdapter = new IoRedisAdapter(client);
 
   if (asFallback) {
     cacheManager.setFallbackClient(ioRedisAdapter);
   } else {
     cacheManager.setClient(ioRedisAdapter);
+  }
+
+  if (options) {
+    cacheManager.setOptions(options);
   }
 
   return ioRedisAdapter;
