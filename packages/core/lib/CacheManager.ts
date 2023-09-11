@@ -7,6 +7,7 @@ export default class CacheManager {
   public client: CacheClient | null = null;
   public fallbackClient: CacheClient | null = null;
   public options: CacheManagerOptions = {
+    disabled: false,
     excludeContext: true,
     ttlSeconds: 0,
     debug: false,
@@ -29,5 +30,13 @@ export default class CacheManager {
 
   public setOptions(options: CacheManagerOptions): void {
     this.options = options;
+  }
+
+  public disable() {
+    this.options.disabled = true;
+  }
+
+  public enable() {
+    this.options.disabled = false;
   }
 }
