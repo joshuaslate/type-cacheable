@@ -1,10 +1,11 @@
 import {
-  CacheClearStrategy, CacheClearStrategyContext,
+  CacheClearStrategy,
+  CacheClearStrategyContext,
   CacheStrategy,
   CacheStrategyContext,
   CacheUpdateStrategy,
   CacheUpdateStrategyContext,
-} from '@type-cacheable/core';
+} from '../interfaces';
 
 export class NoOpStrategy implements CacheStrategy {
   async handle(context: CacheStrategyContext): Promise<any> {
