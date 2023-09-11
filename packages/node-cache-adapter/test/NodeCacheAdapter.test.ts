@@ -1,4 +1,4 @@
-import * as NodeCache from 'node-cache';
+import NodeCache from 'node-cache';
 import { Cacheable, CacheClear } from '@type-cacheable/core';
 import { NodeCacheAdapter, useAdapter } from '../lib';
 

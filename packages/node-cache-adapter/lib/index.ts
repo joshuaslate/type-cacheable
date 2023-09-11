@@ -1,5 +1,5 @@
-import * as NodeCache from 'node-cache';
-import cacheManager, { CacheClient } from '@type-cacheable/core';
+import NodeCache from 'node-cache';
+import cacheManager, { CacheClient, CacheManagerOptions } from '@type-cacheable/core';
 
 export class NodeCacheAdapter implements CacheClient {
   // The node-cache client
@@ -69,13 +69,17 @@ export class NodeCacheAdapter implements CacheClient {
   }
 }
 
-export const useAdapter = (client: NodeCache, asFallback?: boolean): NodeCacheAdapter => {
+export const useAdapter = (client: NodeCache, asFallback?: boolean, options?: CacheManagerOptions): NodeCacheAdapter => {
   const nodeCacheAdapter = new NodeCacheAdapter(client);
 
   if (asFallback) {
     cacheManager.setFallbackClient(nodeCacheAdapter);
   } else {
     cacheManager.setClient(nodeCacheAdapter);
+  }
+
+  if (options) {
+    cacheManager.setOptions(options);
   }
 
   return nodeCacheAdapter;

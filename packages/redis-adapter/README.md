@@ -25,7 +25,7 @@ yarn add @type-cacheable/core @type-cacheable/redis-adapter
 ### Using adapter
 
 ```ts
-import * as Redis from 'redis';
+import Redis from 'redis';
 import { useAdapter } from '@type-cacheable/redis-adapter';
 
 const client = Redis.createClient();

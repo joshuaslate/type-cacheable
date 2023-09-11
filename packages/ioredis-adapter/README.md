@@ -23,7 +23,7 @@ yarn add @type-cacheable/core @type-cacheable/ioredis-adapter
 ### Using adapter
 
 ```ts
-import * as IoRedis from 'ioredis';
+import IoRedis from 'ioredis';
 import { useAdapter } from '@type-cacheable/ioredis-adapter';
 
 const client = new IoRedis();

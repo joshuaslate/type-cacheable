@@ -1,7 +1,6 @@
-import { createHash } from 'crypto';
-import * as serialize from 'serialize-javascript';
-import { CacheKeyBuilder, CacheKeyDeleteBuilder } from '../interfaces';
-import { PostRunKeyBuilder } from '../interfaces/PostRunKeyBuilder';
+import md5 from 'blueimp-md5';
+import serialize from 'serialize-javascript';
+import { CacheKeyBuilder, CacheKeyDeleteBuilder, PostRunKeyBuilder } from '../interfaces';
 
 export type CacheClearKey = string | string[] | CacheKeyDeleteBuilder;
 export type CacheableKey = string | CacheKeyBuilder;
@@ -17,7 +16,7 @@ export type CacheUpdateKey = string | CacheKeyBuilder | PostRunKeyBuilder;
  * @returns {String}
  */
 export const extractKey = (
-  passedInKey: string | string[] | CacheKeyBuilder | CacheKeyDeleteBuilder | PostRunKeyBuilder = '',
+  passedInKey: string | string[] | CacheKeyBuilder | CacheUpdateKey | CacheKeyDeleteBuilder | PostRunKeyBuilder = '',
   args: any[],
   context?: any,
   returnValue?: any,
@@ -40,7 +39,7 @@ export const extractKey = (
  * @returns {String}
  */
 export const getCacheKey = (
-  passedInKey: string | string[] | CacheKeyBuilder | CacheKeyDeleteBuilder | PostRunKeyBuilder = '',
+  passedInKey: string | string[] | CacheKeyBuilder | CacheKeyDeleteBuilder | CacheUpdateKey | PostRunKeyBuilder = '',
   methodName: string,
   args: any[],
   context?: any,
@@ -61,11 +60,11 @@ export const getCacheKey = (
   };
 
   const serializedKey = serialize(callMap);
-  return createHash('md5').update(serializedKey).digest('hex');
+  return md5(serializedKey);
 };
 
 export const getFinalKey = (
-  passedCacheKey: CacheableKey | CacheClearKey | PostRunKeyBuilder = '',
+  passedCacheKey: CacheableKey | CacheClearKey | CacheUpdateKey | PostRunKeyBuilder = '',
   passedHashKey: string | CacheKeyBuilder | PostRunKeyBuilder = '',
   methodName: string,
   args: any[],

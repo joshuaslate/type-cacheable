@@ -51,7 +51,7 @@ cacheManager.setOptions(<CacheManagerOptions>{
 Currently, there are three decorators available in this library: `@Cacheable`, `@CacheClear`, and `@CacheUpdate`. Here is a sample of how they can be used:
 
 ```ts
-import * as Redis from 'redis';
+import Redis from 'redis';
 import { Cacheable, CacheClear } from '@type-cacheable/core';
 
 const userClient = Redis.createClient();
