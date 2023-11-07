@@ -1395,9 +1395,9 @@
     "@babel/types" "^7.3.0"
 
 "@types/blueimp-md5@^2.18.0":
-  version "2.18.1"
-  resolved "https://registry.yarnpkg.com/@types/blueimp-md5/-/blueimp-md5-2.18.1.tgz#664c80ee756a82384a640ee45f2f97e7efbb4e55"
-  integrity sha512-0Ud2ef0DMurdLPj63BmiB01E98F1UNrwdBEflTpZtE3Z4jhhCclCiS88XDWXagiOaG+RjfliyvOBTAMUMw7jnw==
+  version "2.18.2"
+  resolved "https://registry.yarnpkg.com/@types/blueimp-md5/-/blueimp-md5-2.18.2.tgz#4fd6fb720990b22229c30b3e06f61e6ec2ef92b8"
+  integrity sha512-dJ9yRry9Olt5GAWlgCtE5dK9d/Dfhn/V7hna86eEO2Pn76+E8Y0S0n61iEUEGhWXXgtKtHxtZLVNwL8X+vLHzg==
 
 "@types/color-name@^1.1.1":
   version "1.1.1"
