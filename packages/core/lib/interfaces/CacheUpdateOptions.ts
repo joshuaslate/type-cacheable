@@ -8,13 +8,14 @@ import { CacheClearStrategyBuilder } from './CacheClearStrategyBuilder';
 import { PostRunKeyBuilder } from './PostRunKeyBuilder';
 import { CacheUpdateStrategy } from './CacheUpdateStrategy';
 import { CacheUpdateStrategyBuilder } from './CacheUpdateStrategyBuilder';
+import { CacheClientBuilder } from './CacheClientBuilder';
 
 export interface CacheUpdateOptions {
   cacheKey?: string | CacheKeyBuilder | PostRunKeyBuilder;
   cacheKeysToClear?: string | string[] | CacheKeyDeleteBuilder | null;
   hashKey?: string | CacheKeyBuilder | PostRunKeyBuilder;
-  client?: CacheClient;
-  fallbackClient?: CacheClient;
+  client?: CacheClient | CacheClientBuilder;
+  fallbackClient?: CacheClient | CacheClientBuilder;
   noop?: boolean | NoOpDeterminer;
   ttlSeconds?: number | TTLBuilder;
   strategy?: CacheUpdateStrategy | CacheUpdateStrategyBuilder;
