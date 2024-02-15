@@ -2,6 +2,7 @@ import { CacheClearOptions } from '../interfaces';
 import { getFinalKey, determineOp, getCacheClearStrategy, extractKey, setMetadata } from '../util';
 import cacheManager from '../index';
 import { DefaultClearStrategy } from '../strategies/DefaultClearStrategy';
+import { getCacheClient } from '../util/getCacheClient';
 
 /**
  * CacheClear - This decorator allows you to clear a key in
@@ -18,8 +19,8 @@ export function CacheClear(options?: CacheClearOptions) {
       value: async function (...args: any[]): Promise<any> {
         // Allow a client to be passed in directly for granularity, else use the connected
         // client from the main CacheManager singleton.
-        const client = options && options.client ? options.client : cacheManager.client;
-        const fallbackClient =
+        const _client = options && options.client ? options.client : cacheManager.client;
+        const _fallbackClient =
           options && options.fallbackClient ? options.fallbackClient : cacheManager.fallbackClient;
 
         if (cacheManager.options?.disabled || (options && options.noop && determineOp(options.noop, args, this))) {
@@ -28,7 +29,7 @@ export function CacheClear(options?: CacheClearOptions) {
 
         // If there is no client, no-op is enabled (else we would have thrown before),
         // just return the result of the decorated method (no caching)
-        if (!client) {
+        if (!_client) {
           // A caching client must exist if not set to noop, otherwise this library is doing nothing.
           if (cacheManager.options.debug) {
             console.warn(
@@ -44,6 +45,10 @@ export function CacheClear(options?: CacheClearOptions) {
 
         try {
           const contextToUse = !cacheManager.options.excludeContext ? this : undefined;
+          
+          const client = getCacheClient(_client, args, contextToUse);
+          const fallbackClient = _fallbackClient ? getCacheClient(_fallbackClient, args, contextToUse) : null;
+
           const finalKey = getFinalKey(
             options && options.cacheKey,
             options && options.hashKey,
