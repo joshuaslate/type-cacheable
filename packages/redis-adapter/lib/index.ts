@@ -10,14 +10,6 @@ const REDIS_VERSION_UNLINK_INTRODUCED = '4.0.0';
 const REDIS_VERSION_FRAGMENT_IDENTIFIER = 'redis_version:';
 const REDIS_SCAN_PAGE_LIMIT = 1000;
 
-const dateFormat = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{1,3}Z$/
-const fixDates = (key: string, value: any) => {
-  if (typeof value === 'string' && dateFormat.test(value)) {
-    return new Date(value)
-  }
-  return value
-}
-
 export class RedisAdapter implements CacheClient {
   static buildSetArgumentsFromObject = (objectValue: any): string[] =>
     Object.keys(objectValue).reduce((accum: any, objectKey: any) => {
@@ -30,14 +22,14 @@ export class RedisAdapter implements CacheClient {
     if (response && typeof response === 'object') {
       return Object.entries(response).reduce((accum: any, curr: any[]) => {
         const [key, value] = curr;
-        accum[key] = JSON.parse(value, fixDates);
+        accum[key] = JSON.parse(value);
 
         return accum;
       }, {});
     }
 
     try {
-      return JSON.parse(response, fixDates);
+      return JSON.parse(response);
     } catch {
       return response;
     }
