@@ -22,14 +22,14 @@ export class RedisAdapter implements CacheClient {
     if (response && typeof response === 'object') {
       return Object.entries(response).reduce((accum: any, curr: any[]) => {
         const [key, value] = curr;
-        accum[key] = JSON.parse(value);
+        accum[key] = parseIfRequired(value)
 
         return accum;
       }, {});
     }
 
     try {
-      return JSON.parse(response);
+      return parseIfRequired(response);
     } catch {
       return response;
     }
