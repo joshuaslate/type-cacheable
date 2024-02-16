@@ -252,7 +252,7 @@ describe('IoRedisAdapter Tests', () => {
           async getObjectValue(value: string): Promise<any> {
             mockGetObjectValueImplementation();
 
-            return { hello: 'world', 1: 2, '2': 1, true: false, false: 'true' };
+            return { hello: 'world', 1: 2, '2': 1, true: false, false: 'true', date: new Date('2024-01-02') };
           }
         }
 
@@ -326,6 +326,7 @@ describe('IoRedisAdapter Tests', () => {
           '2': 1,
           true: false,
           false: 'true',
+          date: new Date('2024-01-02'),
         });
         mockGetObjectValueImplementation.mockClear();
 
