@@ -44,7 +44,7 @@
     "typescript": "^5.0.2"
   },
   "peerDependencies": {
-    "@type-cacheable/core": "^13.0.0",
+    "@type-cacheable/core": "^14.0.0",
     "ioredis": "^5"
   },
   "dependencies": {

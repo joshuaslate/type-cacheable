@@ -45,7 +45,7 @@
   },
   "peerDependencies": {
     "@redis/client": "^1.1.0",
-    "@type-cacheable/core": "^13.0.0"
+    "@type-cacheable/core": "^14.0.0"
   },
   "dependencies": {
     "compare-versions": "^6.0.0"
