@@ -4,7 +4,8 @@ services:
     build: .
     container_name: 'type_cacheable_test'
     depends_on:
-      - redis
+      redis:
+        condition: 'service_healthy'
     links:
       - redis
     environment:
