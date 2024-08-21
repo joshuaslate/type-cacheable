@@ -2,7 +2,7 @@ import { CacheOptions } from '../interfaces';
 import { determineOp, getCacheStrategy, getFinalKey, getTTL, setMetadata } from '../util';
 import cacheManager from '../index';
 import { DefaultStrategy } from '../strategies';
-import { getCacheClient } from '../util/getCacheClient';
+import { getCacheClient } from '../util/get-cache-client';
 
 /**
  * Cacheable - This decorator allows you to first check if cached results for the

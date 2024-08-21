@@ -4,12 +4,13 @@ import {
   getFinalKey,
   getTTL,
   getCacheClearStrategy,
-  getCacheUpdateStrategy, setMetadata,
+  getCacheUpdateStrategy,
+  setMetadata,
 } from '../util';
 import cacheManager from '../index';
-import { DefaultClearStrategy } from '../strategies/DefaultClearStrategy';
-import { DefaultUpdateStrategy } from '../strategies/DefaultUpdateStrategy';
-import { getCacheClient } from '../util/getCacheClient';
+import { DefaultClearStrategy } from '../strategies/default-clear-strategy';
+import { DefaultUpdateStrategy } from '../strategies/default-update-strategy';
+import { getCacheClient } from '../util/get-cache-client';
 
 /**
  * CacheUpdate - This decorator allows you to update a cached value

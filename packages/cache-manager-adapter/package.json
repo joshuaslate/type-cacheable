@@ -1,7 +1,7 @@
 {
-  "name": "@type-cacheable/lru-cache-adapter",
-  "version": "17.0.1",
-  "description": "Adapter for using lru-cache with type-cacheable",
+  "name": "@type-cacheable/cache-manager-adapter",
+  "version": "17.0.0",
+  "description": "Adapter for using cache-manager with type-cacheable",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -26,7 +26,7 @@
   "keywords": [
     "cache",
     "typescript",
-    "lru-cache"
+    "cache-manager"
   ],
   "author": {
     "name": "Joshua Slate",
@@ -39,12 +39,13 @@
   "homepage": "https://github.com/joshuaslate/type-cacheable#readme",
   "devDependencies": {
     "@type-cacheable/core": "^14.0.1",
-    "lru-cache": "^10.0.0",
+    "cache-manager": "^5.7.6",
     "typescript": "^5.0.2"
   },
   "peerDependencies": {
-    "@type-cacheable/core": ">=14.0.0 < 15.0.0",
-    "lru-cache": ">=10.0.0 < 11.0.0"
+    "@type-cacheable/core": ">=^14.0.0 < 15.0.0",
+    "cache-manager": ">=^5.7.0 < 6.0.0"
   },
+  "dependencies": {},
   "gitHead": "ba374530da264bef419e893c8fa44ee2479c7782"
 }

@@ -23,7 +23,7 @@ export const extractKey = (
 ): string | string[] => {
   // If the user passed in a cacheKey, use that. If it's a string, use it directly.
   // In the case of a function, we'll use the result of the called function.
-  return passedInKey instanceof Function ? passedInKey(args, context, returnValue) : passedInKey;
+  return  typeof passedInKey === 'function' ? passedInKey(args, context, returnValue) : passedInKey;
 };
 
 /**

@@ -1,4 +1,4 @@
-import { RedisClientType } from '@redis/client/dist/lib/client';
+import { RedisClientType } from 'redis';
 import { compareVersions } from 'compare-versions';
 import cacheManager, { CacheClient, CacheManagerOptions, parseIfRequired } from '@type-cacheable/core';
 
@@ -49,7 +49,7 @@ export class RedisAdapter implements CacheClient {
   };
 
   // The node_redis client
-  private redisClient: RedisClientType;
+  private redisClient: RedisClientType<any>;
   private connectPromise: Promise<any> | null = null;
   private hasConnected: boolean = false;
   private redisVersion: string | undefined;
@@ -87,7 +87,7 @@ export class RedisAdapter implements CacheClient {
     }
   }
 
-  constructor(redisClient: RedisClientType) {
+  constructor(redisClient: RedisClientType<any>) {
     this.redisClient = redisClient;
 
     this.get = this.get.bind(this);
@@ -231,7 +231,7 @@ export class RedisAdapter implements CacheClient {
   }
 }
 
-export const useAdapter = (client: RedisClientType, asFallback?: boolean, options?: CacheManagerOptions): RedisAdapter => {
+export const useAdapter = (client: RedisClientType<any>, asFallback?: boolean, options?: CacheManagerOptions): RedisAdapter => {
   const redisAdapter = new RedisAdapter(client);
 
   if (asFallback) {
