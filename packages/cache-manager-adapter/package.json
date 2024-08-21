@@ -38,7 +38,7 @@
   },
   "homepage": "https://github.com/joshuaslate/type-cacheable#readme",
   "devDependencies": {
-    "@type-cacheable/core": "^14.0.1",
+    "@type-cacheable/core": "^14.1.0",
     "cache-manager": "^5.7.6",
     "typescript": "^5.5.4"
   },
@@ -46,6 +46,5 @@
     "@type-cacheable/core": ">=^14.0.0 < 15.0.0",
     "cache-manager": ">=^5.7.0 < 6.0.0"
   },
-  "dependencies": {},
   "gitHead": "ba374530da264bef419e893c8fa44ee2479c7782"
 }

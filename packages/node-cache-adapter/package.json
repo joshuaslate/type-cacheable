@@ -1,6 +1,6 @@
 {
   "name": "@type-cacheable/node-cache-adapter",
-  "version": "14.0.1",
+  "version": "14.1.0",
   "description": "Adapter for using node-cache with type-cacheable",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -38,7 +38,7 @@
   },
   "homepage": "https://github.com/joshuaslate/type-cacheable#readme",
   "devDependencies": {
-    "@type-cacheable/core": "^14.0.1",
+    "@type-cacheable/core": "^14.1.0",
     "node-cache": "^5.1.2",
     "typescript": "^5.5.4"
   },
