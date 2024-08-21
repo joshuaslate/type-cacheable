@@ -21,12 +21,12 @@
     "unlink": "lerna exec -- yarn unlink"
   },
   "devDependencies": {
-    "@types/jest": "^29.5.0",
-    "lerna": "^8.0.0",
-    "typescript": "^5.0.2"
+    "@types/jest": "^29.5.12",
+    "lerna": "^8.1.8",
+    "typescript": "^5.5.4"
   },
   "dependencies": {
-    "jest": "^29.0.1",
-    "ts-jest": "^29.0.1"
+    "jest": "^29.7.0",
+    "ts-jest": "^29.2.4"
   }
 }

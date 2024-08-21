@@ -40,15 +40,15 @@
   "devDependencies": {
     "@type-cacheable/core": "^14.0.1",
     "@types/redis": "^4.0.11",
-    "redis": "^4.5.0",
-    "typescript": "^5.0.2"
+    "redis": "^4.7.0",
+    "typescript": "^5.5.4"
   },
   "peerDependencies": {
     "redis": ">=4.5.0 < 5.0.0",
     "@type-cacheable/core": ">=14.0.0 < 15.0.0"
   },
   "dependencies": {
-    "compare-versions": "^6.0.0"
+    "compare-versions": "^6.1.1"
   },
   "gitHead": "ba374530da264bef419e893c8fa44ee2479c7782"
 }
