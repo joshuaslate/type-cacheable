@@ -1,6 +1,6 @@
 import { CacheKeyBuilder, CacheClient, NoOpDeterminer, TTLBuilder, CacheStrategy, IsCacheableBuilder } from './';
-import { CacheClientBuilder } from './CacheClientBuilder';
-import { CacheStrategyBuilder } from './CacheStrategyBuilder';
+import { CacheClientBuilder } from './cache-client-builder';
+import { CacheStrategyBuilder } from './cache-strategy-builder';
 
 export interface CacheOptions {
   cacheKey?: string | CacheKeyBuilder;

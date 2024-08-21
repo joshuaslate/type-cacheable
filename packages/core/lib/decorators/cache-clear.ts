@@ -1,8 +1,8 @@
 import { CacheClearOptions } from '../interfaces';
 import { getFinalKey, determineOp, getCacheClearStrategy, extractKey, setMetadata } from '../util';
 import cacheManager from '../index';
-import { DefaultClearStrategy } from '../strategies/DefaultClearStrategy';
-import { getCacheClient } from '../util/getCacheClient';
+import { DefaultClearStrategy } from '../strategies/default-clear-strategy';
+import { getCacheClient } from '../util/get-cache-client';
 
 /**
  * CacheClear - This decorator allows you to clear a key in
@@ -45,7 +45,7 @@ export function CacheClear(options?: CacheClearOptions) {
 
         try {
           const contextToUse = !cacheManager.options.excludeContext ? this : undefined;
-          
+
           const client = getCacheClient(_client, args, contextToUse);
           const fallbackClient = _fallbackClient ? getCacheClient(_fallbackClient, args, contextToUse) : null;
 

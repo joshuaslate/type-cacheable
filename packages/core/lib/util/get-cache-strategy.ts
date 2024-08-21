@@ -1,4 +1,4 @@
-import { CacheStrategyBuilder } from '../interfaces/CacheStrategyBuilder';
+import { CacheStrategyBuilder } from '../interfaces/cache-strategy-builder';
 import { CacheStrategy } from '../interfaces';
 
 /**

@@ -1,4 +1,4 @@
-import { CacheStrategyContext } from './CacheStrategyContext';
+import { CacheStrategyContext } from './cache-strategy-context';
 
 export interface CacheStrategy {
   handle(context: CacheStrategyContext): Promise<any>;

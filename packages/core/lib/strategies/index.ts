@@ -1,4 +1,4 @@
-export { DefaultClearStrategy } from './DefaultClearStrategy';
-export { DefaultUpdateStrategy } from './DefaultUpdateStrategy';
-export { DefaultStrategy } from './DefaultStrategy';
-export { NoOpClearStrategy, NoOpUpdateStrategy, NoOpStrategy } from './NoOpStrategy';
+export { DefaultClearStrategy } from './default-clear-strategy';
+export { DefaultUpdateStrategy } from './default-update-strategy';
+export { DefaultStrategy } from './default-strategy';
+export { NoOpClearStrategy, NoOpUpdateStrategy, NoOpStrategy } from './no-op-strategy';

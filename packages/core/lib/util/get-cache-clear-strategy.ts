@@ -1,4 +1,4 @@
-import { CacheClearStrategyBuilder } from '../interfaces/CacheClearStrategyBuilder';
+import { CacheClearStrategyBuilder } from '../interfaces/cache-clear-strategy-builder';
 import { CacheClearStrategy } from '../interfaces';
 
 /**

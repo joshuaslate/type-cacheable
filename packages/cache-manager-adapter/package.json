@@ -1,7 +1,7 @@
 {
-  "name": "@type-cacheable/sqlite-adapter",
-  "version": "17.0.1",
-  "description": "Adapter for using sqlite with type-cacheable",
+  "name": "@type-cacheable/cache-manager-adapter",
+  "version": "17.0.0",
+  "description": "Adapter for using cache-manager with type-cacheable",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -26,7 +26,7 @@
   "keywords": [
     "cache",
     "typescript",
-    "sqlite"
+    "cache-manager"
   ],
   "author": {
     "name": "Joshua Slate",
@@ -38,18 +38,14 @@
   },
   "homepage": "https://github.com/joshuaslate/type-cacheable#readme",
   "devDependencies": {
-    "@resolid/cache-manager-sqlite": "^5.1.6",
     "@type-cacheable/core": "^14.0.1",
-    "@types/better-sqlite3": "^7.6.11",
-    "better-sqlite3": "^11.1.2",
     "cache-manager": "^5.7.6",
     "typescript": "^5.0.2"
   },
   "peerDependencies": {
-    "@type-cacheable/core": "^14.0.0"
+    "@type-cacheable/core": ">=^14.0.0 < 15.0.0",
+    "cache-manager": ">=^5.7.0 < 6.0.0"
   },
-  "dependencies": {
-    "compare-versions": "^6.0.0"
-  },
+  "dependencies": {},
   "gitHead": "ba374530da264bef419e893c8fa44ee2479c7782"
 }

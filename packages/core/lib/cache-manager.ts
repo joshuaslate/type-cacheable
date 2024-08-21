@@ -1,7 +1,5 @@
 import { CacheClient, CacheManagerOptions } from './interfaces';
-import { DefaultStrategy } from './strategies';
-import { DefaultClearStrategy } from './strategies/DefaultClearStrategy';
-import { DefaultUpdateStrategy } from './strategies/DefaultUpdateStrategy';
+import { DefaultStrategy, DefaultClearStrategy, DefaultUpdateStrategy } from './strategies';
 
 export default class CacheManager {
   public client: CacheClient | null = null;
