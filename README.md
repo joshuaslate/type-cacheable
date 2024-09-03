@@ -35,6 +35,10 @@ Node-Cache:
 
 - `node-cache` - `@type-cacheable/node-cache-adapter` https://github.com/joshuaslate/type-cacheable/tree/main/packages/node-cache-adapter
 
+Cache-Manager:
+
+- `cache-manager` - `@type-cacheable/cache-manager-adapter` - https://github.com/joshuaslate/type-cacheable/tree/main/packages/cache-manager-adapter
+
 ### Change Global Options
 
 Some options can be configured globally for all decorated methods. Here is an example of how you can change these options:
