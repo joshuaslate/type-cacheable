@@ -4,6 +4,8 @@
     "baseUrl": ".",
     "paths": { "@type-cacheable/*": ["./packages/*"] },
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
-  }
+    "emitDecoratorMetadata": true,
+    "skipLibCheck": true
+  },
+  "exclude": ["node_modules"]
 }
