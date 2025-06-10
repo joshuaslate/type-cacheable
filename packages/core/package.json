@@ -39,7 +39,7 @@
   "homepage": "https://github.com/joshuaslate/type-cacheable#readme",
   "devDependencies": {
     "@types/blueimp-md5": "^2.18.0",
-    "@types/node": "^22.5.0",
+    "@types/node": "^24.0.0",
     "@types/serialize-javascript": "^5.0.4",
     "typescript": "^5.5.4"
   },
