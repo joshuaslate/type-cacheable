@@ -4,9 +4,7 @@
   "description": "Adapter for using ioredis with type-cacheable",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "files": [
-    "dist/**/*"
-  ],
+  "files": ["dist/**/*"],
   "publishConfig": {
     "access": "public"
   },
@@ -23,11 +21,7 @@
     "type": "git",
     "url": "git+https://github.com/joshuaslate/type-cacheable.git"
   },
-  "keywords": [
-    "cache",
-    "typescript",
-    "ioredis"
-  ],
+  "keywords": ["cache", "typescript", "ioredis"],
   "author": {
     "name": "Joshua Slate",
     "url": "https://joshuaslate.com"
@@ -47,8 +41,6 @@
     "@type-cacheable/core": ">=14.0.0 < 15.0.0",
     "ioredis": ">=5.0.0 < 6.0.0"
   },
-  "dependencies": {
-    "compare-versions": "^6.1.1"
-  },
+  "dependencies": {},
   "gitHead": "ba374530da264bef419e893c8fa44ee2479c7782"
 }
