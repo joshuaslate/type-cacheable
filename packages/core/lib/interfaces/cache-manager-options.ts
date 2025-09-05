@@ -1,8 +1,8 @@
-import { CacheStrategy } from './cache-strategy';
-import { CacheStrategyBuilder } from './cache-strategy-builder';
-import { CacheClearStrategy } from './cache-clear-strategy';
-import { CacheClearStrategyBuilder } from './cache-clear-strategy-builder';
-import { CacheUpdateStrategy } from './cache-update-strategy';
+import type { CacheClearStrategy } from './cache-clear-strategy';
+import type { CacheClearStrategyBuilder } from './cache-clear-strategy-builder';
+import type { CacheStrategy } from './cache-strategy';
+import type { CacheStrategyBuilder } from './cache-strategy-builder';
+import type { CacheUpdateStrategy } from './cache-update-strategy';
 
 export interface CacheManagerOptions {
   disabled?: boolean;
