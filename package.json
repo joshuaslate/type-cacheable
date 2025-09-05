@@ -21,9 +21,12 @@
     "unlink": "lerna exec -- yarn unlink"
   },
   "devDependencies": {
+    "@biomejs/biome": "2.2.3",
     "@types/jest": "^30.0.0",
+    "add": "2.0.6",
     "lerna": "^8.1.8",
-    "typescript": "^5.5.4"
+    "typescript": "^5.5.4",
+    "yarn": "1.22.22"
   },
   "dependencies": {
     "jest": "^30.0.0",

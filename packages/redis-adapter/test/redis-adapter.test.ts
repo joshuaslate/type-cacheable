@@ -1,5 +1,5 @@
-import { createClient, RedisClientType } from 'redis';
 import { Cacheable, CacheClear } from '@type-cacheable/core';
+import { createClient, type RedisClientType } from 'redis';
 import { RedisAdapter, useAdapter } from '../lib';
 
 const keyName = 'aSimpleKeyForRedis';
@@ -17,10 +17,13 @@ describe('RedisAdapter Tests', () => {
 
   beforeAll(async () => {
     client = createClient(
-    process.env.REDIS_HOST && process.env.REDIS_PORT ?
-        { url: `redis://${process.env.REDIS_HOST}:${process.env.REDIS_PORT}` }
+      process.env.REDIS_HOST && process.env.REDIS_PORT
+        ? { url: `redis://${process.env.REDIS_HOST}:${process.env.REDIS_PORT}` }
         : undefined,
     );
+
+    await client.connect();
+
     redisAdapter = useAdapter(client);
   });
 
@@ -59,11 +62,11 @@ describe('RedisAdapter Tests', () => {
       const result = await client.hGetAll(compoundKey);
 
       expect(result).toEqual(
-          Object.keys(objectValue).reduce((accum, curr) => {
-            accum[curr] = JSON.stringify((objectValue as any)[curr]);
+        Object.keys(objectValue).reduce((accum, curr) => {
+          accum[curr] = JSON.stringify((objectValue as any)[curr]);
 
-            return accum;
-          }, {} as any),
+          return accum;
+        }, {} as any),
       );
     });
 
@@ -75,7 +78,6 @@ describe('RedisAdapter Tests', () => {
     });
 
     it('should set an expiresAt value on a compound (x:y) key when TTL is passed in', async () => {
-      // @ts-ignore
       jest.spyOn(client, 'expire');
       await redisAdapter.set(compoundKey, objectValue, 50000);
 
@@ -85,7 +87,7 @@ describe('RedisAdapter Tests', () => {
 
   describe('Getter tests', () => {
     it('should get a string set on a simple key', async () => {
-      await client.set(keyName, simpleValue)
+      await client.set(keyName, simpleValue);
       const result = await redisAdapter.get(keyName);
 
       expect(result).toBe(simpleValue);
@@ -142,8 +144,8 @@ describe('RedisAdapter Tests', () => {
 
     it('should return multiple pages worth of keys when more than the max page size exist', async () => {
       const values = new Array(5000)
-          .fill(undefined)
-          .reduce((accum, _, i) => ({...accum, [`key-${i}`]: `val-${i}`}), {});
+        .fill(undefined)
+        .reduce((accum, _, i) => ({ ...accum, [`key-${i}`]: `val-${i}` }), {});
 
       await client.mSet(values);
       const result = await redisAdapter.keys('*key-*');
@@ -242,7 +244,14 @@ describe('RedisAdapter Tests', () => {
           async getObjectValue(value: string): Promise<any> {
             mockGetObjectValueImplementation();
 
-            return { hello: 'world', 1: 2, '2': 1, true: false, false: 'true', date: new Date('2022-01-02') };
+            return {
+              hello: 'world',
+              1: 2,
+              '2': 1,
+              true: false,
+              false: 'true',
+              date: new Date('2022-01-02'),
+            };
           }
         }
 
@@ -283,7 +292,8 @@ describe('RedisAdapter Tests', () => {
       });
 
       it('should properly set, and get, cached boolean values', async () => {
-        const { testClass, mockGetBooleanValueImplementation } = getTestInstance();
+        const { testClass, mockGetBooleanValueImplementation } =
+          getTestInstance();
         const getBooleanValueResult1 = await testClass.getBoolValue(true);
         expect(getBooleanValueResult1).toBe(true);
         expect(mockGetBooleanValueImplementation).toHaveBeenCalled();
@@ -295,10 +305,18 @@ describe('RedisAdapter Tests', () => {
       });
 
       it('should properly set, and get, cached array values', async () => {
-        const { testClass, mockGetArrayValueImplementation } = getTestInstance();
+        const { testClass, mockGetArrayValueImplementation } =
+          getTestInstance();
         const getArrayValueResult1 = await testClass.getArrayValue('test');
         expect(mockGetArrayValueImplementation).toHaveBeenCalled();
-        expect(getArrayValueResult1).toEqual(['true', true, 'false', false, 1, '1']);
+        expect(getArrayValueResult1).toEqual([
+          'true',
+          true,
+          'false',
+          false,
+          1,
+          '1',
+        ]);
         mockGetArrayValueImplementation.mockClear();
 
         const getArrayValueResult2 = await testClass.getArrayValue('test');
@@ -307,7 +325,8 @@ describe('RedisAdapter Tests', () => {
       });
 
       it('should properly set, and get, cached object values', async () => {
-        const { testClass, mockGetObjectValueImplementation } = getTestInstance();
+        const { testClass, mockGetObjectValueImplementation } =
+          getTestInstance();
         const getObjectValueResult1 = await testClass.getObjectValue('test');
         expect(mockGetObjectValueImplementation).toHaveBeenCalled();
         expect(getObjectValueResult1).toEqual({
@@ -316,7 +335,7 @@ describe('RedisAdapter Tests', () => {
           '2': 1,
           true: false,
           false: 'true',
-          date: new Date('2022-01-02')
+          date: new Date('2022-01-02'),
         });
         mockGetObjectValueImplementation.mockClear();
 
@@ -389,6 +408,6 @@ describe('RedisAdapter Tests', () => {
   });
 
   afterAll(async () => {
-    await client.disconnect()
+    await client.disconnect();
   });
 });

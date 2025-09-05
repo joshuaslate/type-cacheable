@@ -1,13 +1,14 @@
-import { RedisClientType } from 'redis';
-import { compareVersions } from 'compare-versions';
-import cacheManager, { CacheClient, CacheManagerOptions, parseIfRequired } from '@type-cacheable/core';
+import cacheManager, {
+  type CacheClient,
+  type CacheManagerOptions,
+  parseIfRequired,
+} from '@type-cacheable/core';
+import type { RedisClientType, RedisClusterType } from 'redis';
 
 // In order to support scalars in hsets (likely not the intended use, but support has been requested),
 // we need at least one key.
 const SCALAR_KEY = '@TYPE-CACHEABLE-REDIS';
 
-const REDIS_VERSION_UNLINK_INTRODUCED = '4.0.0';
-const REDIS_VERSION_FRAGMENT_IDENTIFIER = 'redis_version:';
 const REDIS_SCAN_PAGE_LIMIT = 1000;
 
 export class RedisAdapter implements CacheClient {
@@ -22,7 +23,7 @@ export class RedisAdapter implements CacheClient {
     if (response && typeof response === 'object') {
       return Object.entries(response).reduce((accum: any, curr: any[]) => {
         const [key, value] = curr;
-        accum[key] = parseIfRequired(value)
+        accum[key] = parseIfRequired(value);
 
         return accum;
       }, {});
@@ -37,10 +38,10 @@ export class RedisAdapter implements CacheClient {
 
   static processResponse = (response: any) => {
     if (
-        response &&
-        typeof response === 'object' &&
-        Object.keys(response).length === 1 &&
-        response[SCALAR_KEY]
+      response &&
+      typeof response === 'object' &&
+      Object.keys(response).length === 1 &&
+      response[SCALAR_KEY]
     ) {
       return RedisAdapter.transformRedisResponse(response)[SCALAR_KEY];
     }
@@ -48,46 +49,66 @@ export class RedisAdapter implements CacheClient {
     return RedisAdapter.transformRedisResponse(response);
   };
 
-  // The node_redis client
-  private redisClient: RedisClientType<any>;
+  private redisClient: RedisClientType<any> | RedisClusterType<any>;
   private connectPromise: Promise<any> | null = null;
   private hasConnected: boolean = false;
-  private redisVersion: string | undefined;
+  private supportsUnlink: boolean = true;
 
   private async ensureConnection() {
     if (this.hasConnected) {
       return;
     }
 
-    try {
-      const ping = await this.redisClient.ping();
-
-      if (ping.toLowerCase() !== 'pong') {
-        throw new Error('Ping failure');
-      }
-    } catch {
-      if (this.connectPromise) {
-        return this.connectPromise;
+    if ('isReady' in this.redisClient) {
+      if (this.redisClient.isReady) {
+        this.hasConnected = true;
+        return;
       }
 
-      this.connectPromise = new Promise(async (resolve, reject) => {
-        try {
-          const result = await this.redisClient.connect();
+      return;
+    }
+
+    if ('masters' in this.redisClient) {
+      const masters = this.redisClient.masters;
+
+      for (const node of masters) {
+        const client = await node.client;
+        if (client && 'isReady' in client && client.isReady) {
           this.hasConnected = true;
-          resolve(result);
-        } catch (err) {
-          this.hasConnected = false;
-          reject(err);
-        } finally {
-          this.connectPromise = null;
+          return;
         }
-      })
+      }
+    }
 
+    if (this.connectPromise) {
       return this.connectPromise;
     }
+
+    this.connectPromise = new Promise((resolve, reject) => {
+      this.redisClient
+        .connect()
+        .then((result) => {
+          if (result) {
+            this.hasConnected = true;
+            resolve(result);
+          } else {
+            this.hasConnected = false;
+            reject('Redis connection could not be established');
+          }
+        })
+        .catch((e) => {
+          this.hasConnected = false;
+          reject(e);
+        })
+        .finally(() => {
+          this.connectPromise = null;
+        });
+    });
+
+    return this.connectPromise;
   }
 
-  constructor(redisClient: RedisClientType<any>) {
+  constructor(redisClient: RedisClientType<any> | RedisClusterType<any>) {
     this.redisClient = redisClient;
 
     this.get = this.get.bind(this);
@@ -97,15 +118,51 @@ export class RedisAdapter implements CacheClient {
     this.keys = this.keys.bind(this);
     this.set = this.set.bind(this);
     this.ensureConnection = this.ensureConnection.bind(this);
+    this.updateUnlinkSupport = this.updateUnlinkSupport.bind(this);
 
-    this.ensureConnection().then(async () => {
-      const infoString = await this.redisClient.info().catch();
-      const versionFragment = infoString
-          .split('\n')
-          .find((info) => info.includes(REDIS_VERSION_FRAGMENT_IDENTIFIER));
-      this.redisVersion =
-          versionFragment?.replace('\r', '').split(REDIS_VERSION_FRAGMENT_IDENTIFIER)[1] || '0';
-    }).catch();
+    this.ensureConnection()
+      .then(() => this.updateUnlinkSupport())
+      .catch();
+  }
+
+  private async updateUnlinkSupport() {
+    try {
+      if ('masters' in this.redisClient) {
+        const masters = this.redisClient.masters;
+
+        const results = await Promise.all(
+          masters.map(async (node) => {
+            try {
+              const client = await node.client;
+              if (client) {
+                const res = await client.sendCommand([
+                  'COMMAND',
+                  'INFO',
+                  'UNLINK',
+                ]);
+                return Boolean(res);
+              }
+            } catch {
+              return false;
+            }
+          }),
+        );
+
+        this.supportsUnlink = results.every(Boolean);
+      } else {
+        const res = await this.redisClient.sendCommand([
+          'COMMAND',
+          'INFO',
+          'UNLINK',
+        ]);
+        this.supportsUnlink = Boolean(res);
+      }
+    } catch (e) {
+      console.warn(
+        '[type-cacheable]: error encountered while testing unlink support:',
+        e,
+      );
+    }
   }
 
   // Redis doesn't have a standard TTL, it's at a per-key basis
@@ -129,9 +186,9 @@ export class RedisAdapter implements CacheClient {
 
     const usableResult = parseIfRequired(RedisAdapter.processResponse(result));
     if (
-        usableResult &&
-        typeof usableResult === 'object' &&
-        Object.keys(usableResult).every((key) => Number.isInteger(Number(key)))
+      usableResult &&
+      typeof usableResult === 'object' &&
+      Object.keys(usableResult).every((key) => Number.isInteger(Number(key)))
     ) {
       return Object.values(usableResult);
     }
@@ -162,7 +219,9 @@ export class RedisAdapter implements CacheClient {
 
         return RedisAdapter.processResponse(result);
       } else {
-        const args = RedisAdapter.buildSetArgumentsFromObject({ [SCALAR_KEY]: JSON.stringify(value) });
+        const args = RedisAdapter.buildSetArgumentsFromObject({
+          [SCALAR_KEY]: JSON.stringify(value),
+        });
         const result = await this.redisClient.hSet(cacheKey, args);
 
         if (ttl) {
@@ -188,13 +247,7 @@ export class RedisAdapter implements CacheClient {
   public async del(keyOrKeys: string | string[]): Promise<any> {
     await this.ensureConnection();
 
-    if (
-        this.redisVersion &&
-        compareVersions(
-            this.redisVersion,
-            REDIS_VERSION_UNLINK_INTRODUCED,
-        ) >= 0
-    ) {
+    if (this.supportsUnlink) {
       const result = await this.redisClient.unlink(keyOrKeys);
       return RedisAdapter.processResponse(result);
     } else {
@@ -203,35 +256,81 @@ export class RedisAdapter implements CacheClient {
     }
   }
 
-  public async keys(pattern: string): Promise<string[]> {
-    await this.ensureConnection();
-
-    const keys: string[] = [];
+  private async scan(
+    client: RedisClientType<any>,
+    pattern: string,
+  ): Promise<string[]> {
+    const keys: Set<string> = new Set();
     let cursor: number | null = 0;
 
     while (cursor !== null) {
-      const { cursor: responseCursor, keys: responseKeys = [] }: { cursor: number, keys: string[] } = await this.redisClient.scan(cursor, {
-        MATCH: pattern,
-        COUNT: REDIS_SCAN_PAGE_LIMIT,
-      });
+      const response: { cursor: number; keys: string[] } = await client.scan(
+        cursor,
+        {
+          MATCH: pattern,
+          COUNT: REDIS_SCAN_PAGE_LIMIT,
+        },
+      );
 
-      cursor = responseCursor || null;
-      keys.push(...responseKeys);
+      cursor = response.cursor || null;
+
+      for (const k of response.keys || []) {
+        keys.add(k);
+      }
     }
 
-    return keys;
+    return Array.from(keys);
+  }
+
+  public async keys(pattern: string): Promise<string[]> {
+    await this.ensureConnection();
+
+    const scanPromises: Promise<string[]>[] = [];
+
+    if ('scan' in this.redisClient) {
+      scanPromises.push(this.scan(this.redisClient, pattern));
+    } else if ('masters' in this.redisClient) {
+      const masters = this.redisClient.masters;
+
+      for (const node of masters) {
+        const nodeClient = await this.redisClient.nodeClient(node);
+        if (nodeClient) {
+          scanPromises.push(this.scan(nodeClient, pattern));
+        }
+      }
+    }
+
+    const keys = new Set<string>();
+
+    const scanResults = await Promise.all(scanPromises);
+
+    for (const scanResult of scanResults) {
+      for (const resultKeys of scanResult) {
+        keys.add(resultKeys);
+      }
+    }
+
+    return Array.from(keys);
   }
 
   public async delHash(hashKeyOrKeys: string | string[]): Promise<any> {
-    const finalDeleteKeys = Array.isArray(hashKeyOrKeys) ? hashKeyOrKeys : [hashKeyOrKeys];
+    const finalDeleteKeys = Array.isArray(hashKeyOrKeys)
+      ? hashKeyOrKeys
+      : [hashKeyOrKeys];
     await this.ensureConnection();
 
-    const deletePromises = finalDeleteKeys.map((key) => this.keys(`*${key}*`).then(this.del));
+    const deletePromises = finalDeleteKeys.map((key) =>
+      this.keys(`*${key}*`).then(this.del),
+    );
     await Promise.all(deletePromises);
   }
 }
 
-export const useAdapter = (client: RedisClientType<any>, asFallback?: boolean, options?: CacheManagerOptions): RedisAdapter => {
+export const useAdapter = (
+  client: RedisClientType<any> | RedisClusterType<any>,
+  asFallback?: boolean,
+  options?: CacheManagerOptions,
+): RedisAdapter => {
   const redisAdapter = new RedisAdapter(client);
 
   if (asFallback) {
