@@ -1,10 +1,12 @@
 {
   "name": "@type-cacheable/redis-adapter",
-  "version": "17.2.0",
+  "version": "17.3.0",
   "description": "Adapter for using redis with type-cacheable",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "files": ["dist/**/*"],
+  "files": [
+    "dist/**/*"
+  ],
   "publishConfig": {
     "access": "public"
   },
@@ -21,7 +23,11 @@
     "type": "git",
     "url": "git+https://github.com/joshuaslate/type-cacheable.git"
   },
-  "keywords": ["cache", "typescript", "redis"],
+  "keywords": [
+    "cache",
+    "typescript",
+    "redis"
+  ],
   "author": {
     "name": "Joshua Slate",
     "url": "https://joshuaslate.com"
@@ -32,7 +38,7 @@
   },
   "homepage": "https://github.com/joshuaslate/type-cacheable#readme",
   "devDependencies": {
-    "@type-cacheable/core": "^14.1.0",
+    "@type-cacheable/core": "^14.2.0",
     "redis": "^4.7.0",
     "typescript": "^5.5.4"
   },
@@ -40,6 +46,5 @@
     "@type-cacheable/core": ">=14.0.0 < 15.0.0",
     "redis": ">=4.5.0 < 5.0.0"
   },
-  "dependencies": {},
   "gitHead": "ba374530da264bef419e893c8fa44ee2479c7782"
 }
