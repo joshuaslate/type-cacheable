@@ -1,10 +1,10 @@
-import { getCacheStrategy } from '../../lib/util';
 import { DefaultStrategy } from '../../lib/strategies';
+import { getCacheStrategy } from '../../lib/util';
 
 const mockArgs: any[] = [
   1,
   'two',
-  function () {
+  () => {
     console.log('this is a test');
   },
 ];
@@ -20,7 +20,7 @@ describe('getCacheStrategy Tests', () => {
     expect(
       getCacheStrategy((args) => {
         return strategy;
-      }, mockArgs)
+      }, mockArgs),
     ).toBe(strategy);
   });
 });

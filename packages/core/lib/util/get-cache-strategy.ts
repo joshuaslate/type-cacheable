@@ -1,5 +1,5 @@
-import { CacheStrategyBuilder } from '../interfaces/cache-strategy-builder';
-import { CacheStrategy } from '../interfaces';
+import type { CacheStrategy } from '../interfaces';
+import type { CacheStrategyBuilder } from '../interfaces/cache-strategy-builder';
 
 /**
  * getCacheStrategy - This is the strategy to use for caching data, or a function to extract it
@@ -13,7 +13,7 @@ import { CacheStrategy } from '../interfaces';
 export const getCacheStrategy = (
   passedInCacheStrategy: CacheStrategy | CacheStrategyBuilder,
   args: any[],
-  context?: any
+  context?: any,
 ): CacheStrategy => {
   // If the user passed in a cacheKey, use that. If it's a string/number, use it directly.
   // In the case of a function

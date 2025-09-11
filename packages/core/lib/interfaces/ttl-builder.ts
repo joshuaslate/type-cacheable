@@ -1,3 +1,1 @@
-export interface TTLBuilder {
-  (args: any[], context?: any): number;
-}
+export type TTLBuilder = (args: any[], context?: any) => number;

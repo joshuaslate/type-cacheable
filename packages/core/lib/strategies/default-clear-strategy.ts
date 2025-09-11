@@ -1,7 +1,14 @@
-import { CacheClearStrategy, CacheClearStrategyContext, CacheClient } from '../interfaces';
+import type {
+  CacheClearStrategy,
+  CacheClearStrategyContext,
+  CacheClient,
+} from '../interfaces';
 
 export class DefaultClearStrategy implements CacheClearStrategy {
-  private handleDelete = async (client: CacheClient, context: CacheClearStrategyContext) => {
+  private handleDelete = async (
+    client: CacheClient,
+    context: CacheClearStrategyContext,
+  ) => {
     // If hashesToClear is truthy, there is no individual cache keys to clear, so clear the provided hashes
     if (context.hashesToClear) {
       await client.delHash(context.hashesToClear);

@@ -1,10 +1,10 @@
-import { CacheKeyBuilder } from './cache-key-builder';
-import { CacheClient } from './cache-client';
-import { NoOpDeterminer } from './no-op-determiner';
-import { CacheKeyDeleteBuilder } from './cache-key-delete-builder';
-import { CacheClearStrategyBuilder } from './cache-clear-strategy-builder';
-import { CacheClearStrategy } from './cache-clear-strategy';
-import { CacheClientBuilder } from './cache-client-builder';
+import type { CacheClearStrategy } from './cache-clear-strategy';
+import type { CacheClearStrategyBuilder } from './cache-clear-strategy-builder';
+import type { CacheClient } from './cache-client';
+import type { CacheClientBuilder } from './cache-client-builder';
+import type { CacheKeyBuilder } from './cache-key-builder';
+import type { CacheKeyDeleteBuilder } from './cache-key-delete-builder';
+import type { NoOpDeterminer } from './no-op-determiner';
 
 export interface CacheClearOptions {
   cacheKey?: string | string[] | CacheKeyDeleteBuilder;

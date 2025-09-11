@@ -1,4 +1,7 @@
-import { CacheUpdateStrategy, CacheUpdateStrategyContext } from '../interfaces';
+import type {
+  CacheUpdateStrategy,
+  CacheUpdateStrategyContext,
+} from '../interfaces';
 
 export class DefaultUpdateStrategy implements CacheUpdateStrategy {
   async handle(context: CacheUpdateStrategyContext): Promise<any> {
@@ -7,7 +10,11 @@ export class DefaultUpdateStrategy implements CacheUpdateStrategy {
     } catch (err) {
       if (context.fallbackClient) {
         try {
-          await context.fallbackClient.set(context.key, context.result, context.ttl);
+          await context.fallbackClient.set(
+            context.key,
+            context.result,
+            context.ttl,
+          );
         } catch (err) {}
       }
 

@@ -1,5 +1,9 @@
+import type {
+  CacheClient,
+  CacheStrategy,
+  CacheStrategyContext,
+} from '../../lib';
 import { Cacheable } from '../../lib/decorators';
-import { CacheStrategy, CacheStrategyContext, CacheClient } from '../../lib';
 import { MockAdapter } from '../test-utils';
 
 describe('Cacheable Decorator Tests', () => {
@@ -24,8 +28,8 @@ describe('Cacheable Decorator Tests', () => {
     };
 
     const testInstance = new TestClass();
-    let result;
-    let err;
+    let result: any;
+    let err: any;
     try {
       result = await testInstance.hello();
     } catch (error) {
@@ -96,7 +100,9 @@ describe('Cacheable Decorator Tests', () => {
 
   it('should use the provided isCacheable function', async () => {
     const client = new MockAdapter();
-    const isCacheable = jest.fn().mockImplementation((value) => value.status === 200);
+    const isCacheable = jest
+      .fn()
+      .mockImplementation((value) => value.status === 200);
     jest.spyOn(client, 'set');
 
     class TestClass {
@@ -110,7 +116,11 @@ describe('Cacheable Decorator Tests', () => {
     const result = await testInstance.hello();
 
     expect(result).toEqual({ status: 400, message: 'bad request' });
-    expect(isCacheable).toHaveBeenCalledWith({ status: 400, message: 'bad request' }, [], undefined);
+    expect(isCacheable).toHaveBeenCalledWith(
+      { status: 400, message: 'bad request' },
+      [],
+      undefined,
+    );
     expect(client.set).not.toHaveBeenCalled();
   });
 

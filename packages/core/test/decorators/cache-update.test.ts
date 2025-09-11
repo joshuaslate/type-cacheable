@@ -1,10 +1,10 @@
-import { CacheUpdate, Cacheable } from '../../lib/decorators';
-import {
+import { MockAdapter } from '@type-cacheable/core/test/test-utils';
+import type {
   CacheClient,
   CacheUpdateStrategy,
   CacheUpdateStrategyContext,
 } from '../../lib';
-import { MockAdapter } from '@type-cacheable/core/test/test-utils';
+import { Cacheable, CacheUpdate } from '../../lib/decorators';
 
 describe('CacheUpdate Decorator Tests', () => {
   it('should not throw an error if the client fails', async () => {
@@ -26,7 +26,7 @@ describe('CacheUpdate Decorator Tests', () => {
     };
 
     const testInstance = new TestClass();
-    let err;
+    let err: any;
     try {
       await testInstance.hello();
     } catch (error) {
@@ -134,7 +134,10 @@ describe('CacheUpdate Decorator Tests', () => {
     }
 
     const testInstance = new TestClass();
-    const createdUser = await testInstance.createUser({ name: 'Joe', email: 'fake@fakeemail.com' });
+    const createdUser = await testInstance.createUser({
+      name: 'Joe',
+      email: 'fake@fakeemail.com',
+    });
     const fetchedUser = await testInstance.getUser(createdUser.id);
 
     expect(fetchedUser).toEqual(createdUser);
@@ -221,7 +224,10 @@ describe('CacheUpdate Decorator Tests', () => {
     }
 
     class TestClass {
-      @CacheUpdate({ client: new FailingPrimaryClient(), fallbackClient: new InMemClient() })
+      @CacheUpdate({
+        client: new FailingPrimaryClient(),
+        fallbackClient: new InMemClient(),
+      })
       public async hello(): Promise<any> {
         return 'world';
       }

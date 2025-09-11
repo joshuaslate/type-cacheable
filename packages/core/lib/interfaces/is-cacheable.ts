@@ -1,3 +1,1 @@
-export interface IsCacheable<T = any> {
-    (value: T): boolean;
-  }
+export type IsCacheable<T = any> = (value: T) => boolean;

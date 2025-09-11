@@ -1,4 +1,8 @@
-import { CacheClient, CacheStrategy, CacheStrategyContext } from '../interfaces';
+import type {
+  CacheClient,
+  CacheStrategy,
+  CacheStrategyContext,
+} from '../interfaces';
 
 export class DefaultStrategy implements CacheStrategy {
   private pendingCacheRequestMap = new Map<string, Promise<any>>();
@@ -26,7 +30,10 @@ export class DefaultStrategy implements CacheStrategy {
 
   async handle(context: CacheStrategyContext): Promise<any> {
     try {
-      const cachedValue = await this.findCachedValue(context.client, context.key);
+      const cachedValue = await this.findCachedValue(
+        context.client,
+        context.key,
+      );
 
       // If a value for the cacheKey was found in cache, simply return that.
       if (cachedValue !== undefined && cachedValue !== null) {
@@ -35,7 +42,10 @@ export class DefaultStrategy implements CacheStrategy {
     } catch (err) {
       if (context.fallbackClient) {
         try {
-          const cachedValue = await this.findCachedValue(context.fallbackClient, context.key);
+          const cachedValue = await this.findCachedValue(
+            context.fallbackClient,
+            context.key,
+          );
 
           // If a value for the cacheKey was found in cache, simply return that.
           if (cachedValue !== undefined && cachedValue !== null) {
@@ -84,7 +94,11 @@ export class DefaultStrategy implements CacheStrategy {
         } catch (err) {
           if (context.fallbackClient) {
             try {
-              await context.fallbackClient.set(context.key, returnValue, context.ttl);
+              await context.fallbackClient.set(
+                context.key,
+                returnValue,
+                context.ttl,
+              );
             } catch (err) {}
           }
 

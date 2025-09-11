@@ -1,4 +1,7 @@
-import { CacheUpdateStrategy, CacheUpdateStrategyBuilder } from '../interfaces';
+import type {
+  CacheUpdateStrategy,
+  CacheUpdateStrategyBuilder,
+} from '../interfaces';
 
 /**
  * getCacheUpdateStrategy - This is the strategy to use for updating cached data, or a function to extract it

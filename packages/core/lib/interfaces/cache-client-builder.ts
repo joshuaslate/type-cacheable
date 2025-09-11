@@ -1,5 +1,6 @@
-import { CacheClient } from "./cache-client";
+import type { CacheClient } from './cache-client';
 
-export interface CacheClientBuilder<T = any[], U = any> {
-  (args: T, context?: U): CacheClient;
-}
+export type CacheClientBuilder<T = any[], U = any> = (
+  args: T,
+  context?: U,
+) => CacheClient;
