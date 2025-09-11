@@ -1,4 +1,4 @@
-import { CacheClient } from '../lib';
+import type { CacheClient } from '../lib';
 
 export class MockAdapter implements CacheClient {
   constructor() {
@@ -35,7 +35,9 @@ export class MockAdapter implements CacheClient {
   }
 
   keys(pattern: string): Promise<string[]> {
-    return Promise.resolve(Object.keys(this.cache).filter((key) => key.includes(pattern)));
+    return Promise.resolve(
+      Object.keys(this.cache).filter((key) => key.includes(pattern)),
+    );
   }
 
   getClientTTL(): number {
@@ -43,8 +45,12 @@ export class MockAdapter implements CacheClient {
   }
 
   async delHash(hashKeyOrKeys: string | string[]): Promise<any> {
-    const finalDeleteKeys = Array.isArray(hashKeyOrKeys) ? hashKeyOrKeys : [hashKeyOrKeys];
-    const deletePromises = finalDeleteKeys.map((key) => this.keys(key).then(this.del));
+    const finalDeleteKeys = Array.isArray(hashKeyOrKeys)
+      ? hashKeyOrKeys
+      : [hashKeyOrKeys];
+    const deletePromises = finalDeleteKeys.map((key) =>
+      this.keys(key).then(this.del),
+    );
     await Promise.all(deletePromises);
     return;
   }

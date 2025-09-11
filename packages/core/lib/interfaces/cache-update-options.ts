@@ -1,14 +1,14 @@
-import { CacheKeyBuilder } from './cache-key-builder';
-import { CacheClient } from './cache-client';
-import { NoOpDeterminer } from './no-op-determiner';
-import { TTLBuilder } from './ttl-builder';
-import { CacheKeyDeleteBuilder } from './cache-key-delete-builder';
-import { CacheClearStrategy } from './cache-clear-strategy';
-import { CacheClearStrategyBuilder } from './cache-clear-strategy-builder';
-import { PostRunKeyBuilder } from './post-run-key-builder';
-import { CacheUpdateStrategy } from './cache-update-strategy';
-import { CacheUpdateStrategyBuilder } from './cache-update-strategy-builder';
-import { CacheClientBuilder } from './cache-client-builder';
+import type { CacheClearStrategy } from './cache-clear-strategy';
+import type { CacheClearStrategyBuilder } from './cache-clear-strategy-builder';
+import type { CacheClient } from './cache-client';
+import type { CacheClientBuilder } from './cache-client-builder';
+import type { CacheKeyBuilder } from './cache-key-builder';
+import type { CacheKeyDeleteBuilder } from './cache-key-delete-builder';
+import type { CacheUpdateStrategy } from './cache-update-strategy';
+import type { CacheUpdateStrategyBuilder } from './cache-update-strategy-builder';
+import type { NoOpDeterminer } from './no-op-determiner';
+import type { PostRunKeyBuilder } from './post-run-key-builder';
+import type { TTLBuilder } from './ttl-builder';
 
 export interface CacheUpdateOptions {
   cacheKey?: string | CacheKeyBuilder | PostRunKeyBuilder;

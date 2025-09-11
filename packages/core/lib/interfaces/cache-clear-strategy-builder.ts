@@ -1,5 +1,6 @@
-import { CacheClearStrategy } from './cache-clear-strategy';
+import type { CacheClearStrategy } from './cache-clear-strategy';
 
-export interface CacheClearStrategyBuilder {
-  (args: any[], context?: any): CacheClearStrategy;
-}
+export type CacheClearStrategyBuilder = (
+  args: any[],
+  context?: any,
+) => CacheClearStrategy;

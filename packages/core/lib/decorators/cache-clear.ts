@@ -1,7 +1,13 @@
-import { CacheClearOptions } from '../interfaces';
-import { getFinalKey, determineOp, getCacheClearStrategy, extractKey, setMetadata } from '../util';
 import cacheManager from '../index';
+import type { CacheClearOptions } from '../interfaces';
 import { DefaultClearStrategy } from '../strategies/default-clear-strategy';
+import {
+  determineOp,
+  extractKey,
+  getCacheClearStrategy,
+  getFinalKey,
+  setMetadata,
+} from '../util';
 import { getCacheClient } from '../util/get-cache-client';
 
 /**
@@ -10,7 +16,11 @@ import { getCacheClient } from '../util/get-cache-client';
  * @param options {CacheOptions}
  */
 export function CacheClear(options?: CacheClearOptions) {
-  return (target: Object, propertyKey: string, descriptor?: PropertyDescriptor) => {
+  return (
+    target: Object,
+    propertyKey: string,
+    descriptor?: PropertyDescriptor,
+  ) => {
     const originalMethod = descriptor?.value;
     const defaultStrategy = new DefaultClearStrategy();
 
@@ -19,11 +29,17 @@ export function CacheClear(options?: CacheClearOptions) {
       value: async function (...args: any[]): Promise<any> {
         // Allow a client to be passed in directly for granularity, else use the connected
         // client from the main CacheManager singleton.
-        const _client = options && options.client ? options.client : cacheManager.client;
+        const _client =
+          options && options.client ? options.client : cacheManager.client;
         const _fallbackClient =
-          options && options.fallbackClient ? options.fallbackClient : cacheManager.fallbackClient;
+          options && options.fallbackClient
+            ? options.fallbackClient
+            : cacheManager.fallbackClient;
 
-        if (cacheManager.options?.disabled || (options && options.noop && determineOp(options.noop, args, this))) {
+        if (
+          cacheManager.options?.disabled ||
+          (options && options.noop && determineOp(options.noop, args, this))
+        ) {
           return originalMethod?.apply(this, args);
         }
 
@@ -44,10 +60,14 @@ export function CacheClear(options?: CacheClearOptions) {
         const result = await originalMethod?.apply(this, args);
 
         try {
-          const contextToUse = !cacheManager.options.excludeContext ? this : undefined;
+          const contextToUse = !cacheManager.options.excludeContext
+            ? this
+            : undefined;
 
           const client = getCacheClient(_client, args, contextToUse);
-          const fallbackClient = _fallbackClient ? getCacheClient(_fallbackClient, args, contextToUse) : null;
+          const fallbackClient = _fallbackClient
+            ? getCacheClient(_fallbackClient, args, contextToUse)
+            : null;
 
           const finalKey = getFinalKey(
             options && options.cacheKey,
@@ -59,7 +79,9 @@ export function CacheClear(options?: CacheClearOptions) {
           const clearHash = options?.hashKey && !options?.cacheKey;
 
           const strategy = getCacheClearStrategy(
-            options?.strategy || cacheManager.options.clearStrategy || defaultStrategy,
+            options?.strategy ||
+              cacheManager.options.clearStrategy ||
+              defaultStrategy,
             args,
             contextToUse,
           );

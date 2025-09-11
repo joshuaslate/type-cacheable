@@ -1,5 +1,7 @@
-import { CacheUpdateStrategy } from './cache-update-strategy';
+import type { CacheUpdateStrategy } from './cache-update-strategy';
 
-export interface CacheUpdateStrategyBuilder {
-  (args: any[], context?: any, returnValue?: any): CacheUpdateStrategy;
-}
+export type CacheUpdateStrategyBuilder = (
+  args: any[],
+  context?: any,
+  returnValue?: any,
+) => CacheUpdateStrategy;

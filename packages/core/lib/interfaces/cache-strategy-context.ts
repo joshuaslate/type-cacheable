@@ -1,4 +1,4 @@
-import { CacheClient, IsCacheable } from '.';
+import type { CacheClient, IsCacheable } from '.';
 
 export interface CacheStrategyContext {
   debug: boolean | undefined;

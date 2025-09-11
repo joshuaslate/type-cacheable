@@ -34,7 +34,7 @@ describe('CacheClear Decorator Tests', () => {
     };
 
     const testInstance = new TestClass();
-    let err;
+    let err: any;
     try {
       await testInstance.getProp('1');
       await testInstance.setProp('1', 'anotherValue!');
@@ -98,7 +98,9 @@ describe('CacheClear Decorator Tests', () => {
     const testInstance = new TestClass();
 
     await testInstance.getProp('1');
-    await expect(testInstance.setProp('1', 'anotherValue!')).rejects.toEqual(new Error);
+    await expect(testInstance.setProp('1', 'anotherValue!')).rejects.toEqual(
+      new Error(),
+    );
     await testInstance.getProp('1');
 
     expect(delSpy).toHaveBeenCalledTimes(0);

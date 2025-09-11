@@ -1,4 +1,4 @@
-import { CacheClient, CacheClientBuilder } from '../interfaces';
+import type { CacheClient, CacheClientBuilder } from '../interfaces';
 
 /**
  * getCacheClient - Will refine a CacheClient or CacheClientBuilder to a CacheClient
@@ -9,7 +9,11 @@ import { CacheClient, CacheClientBuilder } from '../interfaces';
  *
  * @returns {CacheClient}
  */
-export const getCacheClient = (passedInCacheClient: CacheClient | CacheClientBuilder, args: any[], context?: any): CacheClient => {
+export const getCacheClient = (
+  passedInCacheClient: CacheClient | CacheClientBuilder,
+  args: any[],
+  context?: any,
+): CacheClient => {
   // If the user passed in a cache client, use that. If it's a function to build a cache client, call it with args and context.
   return passedInCacheClient instanceof Function
     ? passedInCacheClient(args, context)

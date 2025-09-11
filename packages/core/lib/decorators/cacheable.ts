@@ -1,7 +1,13 @@
-import { CacheOptions } from '../interfaces';
-import { determineOp, getCacheStrategy, getFinalKey, getTTL, setMetadata } from '../util';
 import cacheManager from '../index';
+import type { CacheOptions } from '../interfaces';
 import { DefaultStrategy } from '../strategies';
+import {
+  determineOp,
+  getCacheStrategy,
+  getFinalKey,
+  getTTL,
+  setMetadata,
+} from '../util';
 import { getCacheClient } from '../util/get-cache-client';
 
 /**
@@ -12,7 +18,11 @@ import { getCacheClient } from '../util/get-cache-client';
  * @param options {CacheOptions}
  */
 export function Cacheable(options?: CacheOptions) {
-  return (target: Object, propertyKey: string, descriptor?: PropertyDescriptor) => {
+  return (
+    target: Object,
+    propertyKey: string,
+    descriptor?: PropertyDescriptor,
+  ) => {
     const originalMethod = descriptor?.value;
     const defaultStrategy = new DefaultStrategy();
 
@@ -21,11 +31,17 @@ export function Cacheable(options?: CacheOptions) {
       value: async function (...args: any[]): Promise<any> {
         // Allow a client to be passed in directly for granularity, else use the connected
         // client from the main CacheManager singleton.
-        const _client = options && options.client ? options.client : cacheManager.client;
+        const _client =
+          options && options.client ? options.client : cacheManager.client;
         const _fallbackClient =
-          options && options.fallbackClient ? options.fallbackClient : cacheManager.fallbackClient;
+          options && options.fallbackClient
+            ? options.fallbackClient
+            : cacheManager.fallbackClient;
 
-        if (cacheManager.options?.disabled || (options && options.noop && determineOp(options.noop, args, this))) {
+        if (
+          cacheManager.options?.disabled ||
+          (options && options.noop && determineOp(options.noop, args, this))
+        ) {
           return originalMethod?.apply(this, args);
         }
 
@@ -42,10 +58,14 @@ export function Cacheable(options?: CacheOptions) {
           return originalMethod?.apply(this, args);
         }
 
-        const contextToUse = !cacheManager.options.excludeContext ? this : undefined;
+        const contextToUse = !cacheManager.options.excludeContext
+          ? this
+          : undefined;
 
         const client = getCacheClient(_client, args, contextToUse);
-        const fallbackClient = _fallbackClient ? getCacheClient(_fallbackClient, args, contextToUse) : null;
+        const fallbackClient = _fallbackClient
+          ? getCacheClient(_fallbackClient, args, contextToUse)
+          : null;
 
         const finalKey = getFinalKey(
           options && options.cacheKey,

@@ -1,5 +1,5 @@
-import { CacheClearStrategyBuilder } from '../interfaces/cache-clear-strategy-builder';
-import { CacheClearStrategy } from '../interfaces';
+import type { CacheClearStrategy } from '../interfaces';
+import type { CacheClearStrategyBuilder } from '../interfaces/cache-clear-strategy-builder';
 
 /**
  * getCacheClearStrategy - This is the strategy to use for clearing cached data, or a function to extract it

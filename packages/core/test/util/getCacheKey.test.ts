@@ -3,7 +3,7 @@ import { getCacheKey } from '../../lib/util';
 const mockArgs: any[] = [
   1,
   'two',
-  function () {
+  () => {
     console.log('this is a test');
   },
 ];
@@ -26,6 +26,8 @@ describe('getCacheKey Tests', () => {
   });
 
   it('should return the md5 hash of serialized arguments when a cacheKey is not given', () => {
-    expect(getCacheKey(undefined, 'myMethod', mockArgs)).toMatch(/[a-fA-F0-9]{32}/);
+    expect(getCacheKey(undefined, 'myMethod', mockArgs)).toMatch(
+      /[a-fA-F0-9]{32}/,
+    );
   });
 });
