@@ -24,7 +24,7 @@
     "@biomejs/biome": "2.2.4",
     "@types/jest": "^30.0.0",
     "add": "2.0.6",
-    "lerna": "^8.1.8",
+    "lerna": "^9.0.0",
     "typescript": "^5.5.4",
     "yarn": "1.22.22"
   },
