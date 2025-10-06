@@ -46,7 +46,7 @@
   "dependencies": {
     "blueimp-md5": "^2.19.0",
     "reflect-metadata": "^0.2.0",
-    "serialize-javascript": "^6.0.0"
+    "serialize-javascript": "^7.0.0"
   },
   "gitHead": "1689e788bf82138115d88617d0c394947d9b96bc"
 }
