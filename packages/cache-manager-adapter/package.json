@@ -39,7 +39,7 @@
   "homepage": "https://github.com/joshuaslate/type-cacheable#readme",
   "devDependencies": {
     "@type-cacheable/core": "^14.2.1",
-    "cache-manager": "^5.7.6",
+    "cache-manager": "^7.2.4",
     "typescript": "^5.5.4"
   },
   "peerDependencies": {
