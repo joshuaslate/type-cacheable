@@ -6008,9 +6008,9 @@ semver@^7.1.1, semver@^7.3.2, semver@^7.3.4, semver@^7.3.5, semver@^7.3.7, semve
   integrity sha512-SdsKMrI9TdgjdweUSR9MweHA4EJ8YxHn8DFaDisvhVlUOe4BF1tLD7GAj0lIqWVl+dPb/rExr0Btby5loQm20Q==
 
 serialize-javascript@^7.0.0:
-  version "7.0.0"
-  resolved "https://registry.yarnpkg.com/serialize-javascript/-/serialize-javascript-7.0.0.tgz#ba912a5a5e3b2031548d2b190191f2ac3472a8c4"
-  integrity sha512-pgLqXJrPEahCSuSLFvmBbIi6C769CQkpG509G8lwnaltznys3QxinnJE71cr78TOr6OPi+boskt4NvRbhfgFrA==
+  version "7.0.1"
+  resolved "https://registry.yarnpkg.com/serialize-javascript/-/serialize-javascript-7.0.1.tgz#deb54bc9e2a9441aebe557c3998d81c831b26816"
+  integrity sha512-ZLk39cj/i4KVhAPoLcAbqq38U6GaJchno7g+GPTn6F4HYdCT4u4p41l+DvKQHOR+TkanbSOCkrHJW1Zp60LYkw==
 
 set-blocking@^2.0.0:
   version "2.0.0"
