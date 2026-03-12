@@ -1,5 +1,8 @@
-import NodeCache from 'node-cache';
-import cacheManager, { CacheClient, CacheManagerOptions } from '@type-cacheable/core';
+import cacheManager, {
+  type CacheClient,
+  type CacheManagerOptions,
+} from '@type-cacheable/core';
+import type NodeCache from 'node-cache';
 
 export class NodeCacheAdapter implements CacheClient {
   // The node-cache client
@@ -61,15 +64,23 @@ export class NodeCacheAdapter implements CacheClient {
   }
 
   public async delHash(hashKeyOrKeys: string | string[]): Promise<any> {
-    const finalDeleteKeys = Array.isArray(hashKeyOrKeys) ? hashKeyOrKeys : [hashKeyOrKeys];
-    const deletePromises = finalDeleteKeys.map((key) => this.keys(key).then(this.del));
+    const finalDeleteKeys = Array.isArray(hashKeyOrKeys)
+      ? hashKeyOrKeys
+      : [hashKeyOrKeys];
+    const deletePromises = finalDeleteKeys.map((key) =>
+      this.keys(key).then(this.del),
+    );
 
     await Promise.all(deletePromises);
     return;
   }
 }
 
-export const useAdapter = (client: NodeCache, asFallback?: boolean, options?: CacheManagerOptions): NodeCacheAdapter => {
+export const useAdapter = (
+  client: NodeCache,
+  asFallback?: boolean,
+  options?: CacheManagerOptions,
+): NodeCacheAdapter => {
   const nodeCacheAdapter = new NodeCacheAdapter(client);
 
   if (asFallback) {

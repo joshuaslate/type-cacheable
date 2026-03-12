@@ -38,9 +38,9 @@
   },
   "homepage": "https://github.com/joshuaslate/type-cacheable#readme",
   "devDependencies": {
-    "@type-cacheable/core": "^14.2.1",
-    "lru-cache": "^11.0.0",
-    "typescript": "^5.5.4"
+    "@type-cacheable/core": "workspace:*",
+    "lru-cache": "^11.2.6",
+    "typescript": "^5.9.3"
   },
   "peerDependencies": {
     "@type-cacheable/core": ">=14.0.0 < 15.0.0",

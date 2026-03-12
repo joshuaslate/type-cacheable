@@ -1,13 +1,17 @@
-import * as cacheManager from 'cache-manager';
 import { Cacheable, CacheClear } from '@type-cacheable/core';
-import { CacheManagerAdapter, useAdapter } from '../lib';
+import * as cacheManager from 'cache-manager';
+import { type CacheManagerAdapter, useAdapter } from '../lib';
 
 const keyName = 'aSimpleCacheManagerKey';
 const keyName_2 = 'aSimpleCacheManagerKey2';
 const compoundKey = 'aCompoundCacheManager:key';
 const simpleValue = 'aSimpleCacheManagerValue';
 const objectValue = { myKeyOneCacheManager: 'myValOneCacheManager' };
-const arrayValue = ['element1CacheManager', 2, { complex: 'elementCacheManager' }];
+const arrayValue = [
+  'element1CacheManager',
+  2,
+  { complex: 'elementCacheManager' },
+];
 
 describe('CacheManagerAdapter Tests', () => {
   let client: cacheManager.Cache;
@@ -128,10 +132,10 @@ describe('CacheManagerAdapter Tests', () => {
     });
 
     it('should not throw error on an empty array of keys', async () => {
-      let foundErr;
+      let foundErr: unknown;
 
       try {
-        await cacheManagerAdapter.del([])
+        await cacheManagerAdapter.del([]);
       } catch (err) {
         foundErr = err;
       }
@@ -235,7 +239,14 @@ describe('CacheManagerAdapter Tests', () => {
           async getObjectValue(value: string): Promise<any> {
             mockGetObjectValueImplementation();
 
-            return { hello: 'world', 1: 2, '2': 1, true: false, false: 'true', date: new Date('2024-01-02') };
+            return {
+              hello: 'world',
+              1: 2,
+              '2': 1,
+              true: false,
+              false: 'true',
+              date: new Date('2024-01-02'),
+            };
           }
         }
 
@@ -276,7 +287,8 @@ describe('CacheManagerAdapter Tests', () => {
       });
 
       it('should properly set, and get, cached boolean values', async () => {
-        const { testClass, mockGetBooleanValueImplementation } = getTestInstance();
+        const { testClass, mockGetBooleanValueImplementation } =
+          getTestInstance();
         const getBooleanValueResult1 = await testClass.getBoolValue(true);
         expect(getBooleanValueResult1).toBe(true);
         expect(mockGetBooleanValueImplementation).toHaveBeenCalled();
@@ -288,10 +300,18 @@ describe('CacheManagerAdapter Tests', () => {
       });
 
       it('should properly set, and get, cached array values', async () => {
-        const { testClass, mockGetArrayValueImplementation } = getTestInstance();
+        const { testClass, mockGetArrayValueImplementation } =
+          getTestInstance();
         const getArrayValueResult1 = await testClass.getArrayValue('test');
         expect(mockGetArrayValueImplementation).toHaveBeenCalled();
-        expect(getArrayValueResult1).toEqual(['true', true, 'false', false, 1, '1']);
+        expect(getArrayValueResult1).toEqual([
+          'true',
+          true,
+          'false',
+          false,
+          1,
+          '1',
+        ]);
         mockGetArrayValueImplementation.mockClear();
 
         const getArrayValueResult2 = await testClass.getArrayValue('test');
@@ -300,7 +320,8 @@ describe('CacheManagerAdapter Tests', () => {
       });
 
       it('should properly set, and get, cached object values', async () => {
-        const { testClass, mockGetObjectValueImplementation } = getTestInstance();
+        const { testClass, mockGetObjectValueImplementation } =
+          getTestInstance();
         const getObjectValueResult1 = await testClass.getObjectValue('test');
         expect(mockGetObjectValueImplementation).toHaveBeenCalled();
         expect(getObjectValueResult1).toEqual({

@@ -38,15 +38,15 @@
   },
   "homepage": "https://github.com/joshuaslate/type-cacheable#readme",
   "devDependencies": {
-    "@types/blueimp-md5": "^2.18.0",
-    "@types/node": "^25.0.0",
+    "@types/blueimp-md5": "^2.18.2",
+    "@types/node": "^25.5.0",
     "@types/serialize-javascript": "^5.0.4",
-    "typescript": "^5.5.4"
+    "typescript": "^5.9.3"
   },
   "dependencies": {
     "blueimp-md5": "^2.19.0",
-    "reflect-metadata": "^0.2.0",
-    "serialize-javascript": "^7.0.0"
+    "reflect-metadata": "^0.2.2",
+    "serialize-javascript": "^7.0.4"
   },
   "gitHead": "1689e788bf82138115d88617d0c394947d9b96bc"
 }

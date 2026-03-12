@@ -5,7 +5,8 @@
     "paths": { "@type-cacheable/*": ["./packages/*"] },
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "esModuleInterop": true,
   },
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules"],
 }
