@@ -1,5 +1,5 @@
 import { Cacheable, CacheClear } from '@type-cacheable/core';
-import * as NodeCache from 'node-cache';
+import NodeCache from 'node-cache';
 import { type NodeCacheAdapter, useAdapter } from '../lib';
 
 let client: NodeCache;
