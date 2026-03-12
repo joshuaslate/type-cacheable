@@ -40,7 +40,7 @@
   "devDependencies": {
     "@type-cacheable/core": "^14.2.1",
     "node-cache": "^5.1.2",
-    "typescript": "^5.5.4"
+    "typescript": "^5.9.3"
   },
   "peerDependencies": {
     "@type-cacheable/core": ">=14.0.0 < 15.0.0",

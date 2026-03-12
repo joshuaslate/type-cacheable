@@ -1,5 +1,8 @@
-import cacheableManager, { CacheClient, CacheManagerOptions } from '@type-cacheable/core';
-import * as cacheManager from 'cache-manager';
+import cacheableManager, {
+  type CacheClient,
+  type CacheManagerOptions,
+} from '@type-cacheable/core';
+import type * as cacheManager from 'cache-manager';
 
 export class CacheManagerAdapter implements CacheClient {
   private client: cacheManager.Cache;
@@ -58,13 +61,19 @@ export class CacheManagerAdapter implements CacheClient {
 
       return matchedKeys;
     } catch {
-      console.warn(`[@type-cacheable/cache-manager-adapter]: failed to filter keys by pattern ${pattern}, returning all keys.`);
+      console.warn(
+        `[@type-cacheable/cache-manager-adapter]: failed to filter keys by pattern ${pattern}, returning all keys.`,
+      );
     }
 
     return keys;
   }
 
-  public async set<T>(cacheKey: string, value: T, ttl?: cacheManager.Milliseconds): Promise<T> {
+  public async set<T>(
+    cacheKey: string,
+    value: T,
+    ttl?: cacheManager.Milliseconds,
+  ): Promise<T> {
     await this.client.set(cacheKey, value, ttl ?? undefined);
     return value;
   }
@@ -88,4 +97,4 @@ export const useAdapter = (
   }
 
   return adapter;
-}
+};

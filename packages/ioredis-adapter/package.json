@@ -40,8 +40,8 @@
   "devDependencies": {
     "@type-cacheable/core": "^14.2.1",
     "@types/ioredis": "^5.0.0",
-    "ioredis": "^5.4.1",
-    "typescript": "^5.5.4"
+    "ioredis": "^5.10.0",
+    "typescript": "^5.9.3"
   },
   "peerDependencies": {
     "@type-cacheable/core": ">=14.0.0 < 15.0.0",

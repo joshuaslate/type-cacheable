@@ -1,6 +1,6 @@
-import NodeCache from 'node-cache';
 import { Cacheable, CacheClear } from '@type-cacheable/core';
-import { NodeCacheAdapter, useAdapter } from '../lib';
+import * as NodeCache from 'node-cache';
+import { type NodeCacheAdapter, useAdapter } from '../lib';
 
 let client: NodeCache;
 let nodeCacheAdapter: NodeCacheAdapter;
@@ -219,7 +219,8 @@ describe('NodeCacheAdapter Tests', () => {
       });
 
       it('should properly set, and get, cached boolean values', async () => {
-        const { testClass, mockGetBooleanValueImplementation } = getTestInstance();
+        const { testClass, mockGetBooleanValueImplementation } =
+          getTestInstance();
         const getBooleanValueResult1 = await testClass.getBoolValue(true);
         expect(getBooleanValueResult1).toBe(true);
         expect(mockGetBooleanValueImplementation).toHaveBeenCalled();
@@ -231,10 +232,18 @@ describe('NodeCacheAdapter Tests', () => {
       });
 
       it('should properly set, and get, cached array values', async () => {
-        const { testClass, mockGetArrayValueImplementation } = getTestInstance();
+        const { testClass, mockGetArrayValueImplementation } =
+          getTestInstance();
         const getArrayValueResult1 = await testClass.getArrayValue('test');
         expect(mockGetArrayValueImplementation).toHaveBeenCalled();
-        expect(getArrayValueResult1).toEqual(['true', true, 'false', false, 1, '1']);
+        expect(getArrayValueResult1).toEqual([
+          'true',
+          true,
+          'false',
+          false,
+          1,
+          '1',
+        ]);
         mockGetArrayValueImplementation.mockClear();
 
         const getArrayValueResult2 = await testClass.getArrayValue('test');
@@ -243,7 +252,8 @@ describe('NodeCacheAdapter Tests', () => {
       });
 
       it('should properly set, and get, cached object values', async () => {
-        const { testClass, mockGetObjectValueImplementation } = getTestInstance();
+        const { testClass, mockGetObjectValueImplementation } =
+          getTestInstance();
         const getObjectValueResult1 = await testClass.getObjectValue('test');
         expect(mockGetObjectValueImplementation).toHaveBeenCalled();
         expect(getObjectValueResult1).toEqual({
