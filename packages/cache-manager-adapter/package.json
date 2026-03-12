@@ -1,6 +1,6 @@
 {
   "name": "@type-cacheable/cache-manager-adapter",
-  "version": "17.0.2",
+  "version": "17.0.3",
   "description": "Adapter for using cache-manager with type-cacheable",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
