@@ -23,10 +23,8 @@
   "devDependencies": {
     "@biomejs/biome": "2.4.6",
     "@types/jest": "^30.0.0",
-    "add": "2.0.6",
     "lerna": "^9.0.6",
-    "typescript": "^5.9.3",
-    "yarn": "1.22.22"
+    "typescript": "^5.9.3"
   },
   "dependencies": {
     "jest": "^30.3.0",
