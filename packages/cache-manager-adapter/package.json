@@ -4,9 +4,7 @@
   "description": "Adapter for using cache-manager with type-cacheable",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "files": [
-    "dist/**/*"
-  ],
+  "files": ["dist/**/*"],
   "publishConfig": {
     "access": "public"
   },
@@ -23,11 +21,7 @@
     "type": "git",
     "url": "git+https://github.com/joshuaslate/type-cacheable.git"
   },
-  "keywords": [
-    "cache",
-    "typescript",
-    "cache-manager"
-  ],
+  "keywords": ["cache", "typescript", "cache-manager"],
   "author": {
     "name": "Joshua Slate",
     "url": "https://joshuaslate.com"
@@ -43,8 +37,8 @@
     "typescript": "^5.9.3"
   },
   "peerDependencies": {
-    "@type-cacheable/core": "*",
-    "cache-manager": "*"
+    "@type-cacheable/core": ">=14.0.0 < 15.0.0",
+    "cache-manager": ">=5.0.0 < 6.0.0"
   },
   "gitHead": "1689e788bf82138115d88617d0c394947d9b96bc"
 }
