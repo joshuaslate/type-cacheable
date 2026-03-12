@@ -2,10 +2,13 @@ FROM node:lts
 
 ENV YARN_VERSION=4
 
-RUN corepack enable && corepack prepare yarn@${YARN_VERSION}
-
 WORKDIR /app
 COPY . /app
-RUN yarn
+
+RUN corepack enable && corepack prepare yarn@${YARN_VERSION}
+
+RUN yarn set version berry
+
+RUN yarn install --immutable
 
 CMD ["yarn", "test"]
