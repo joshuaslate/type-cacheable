@@ -41,7 +41,7 @@
     "@type-cacheable/core": "workspace:*",
     "@types/ioredis": "^5.0.0",
     "ioredis": "^5.10.0",
-    "typescript": "^5.9.3"
+    "typescript": "^6.0.3"
   },
   "peerDependencies": {
     "@type-cacheable/core": ">=14.0.0 < 15.0.0",
