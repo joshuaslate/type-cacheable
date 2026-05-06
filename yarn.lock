@@ -2409,7 +2409,7 @@ __metadata:
   dependencies:
     "@type-cacheable/core": "workspace:*"
     cache-manager: ^5.7.6
-    typescript: ^5.9.3
+    typescript: ^6.0.3
   peerDependencies:
     "@type-cacheable/core": ">=14.0.0 < 15.0.0"
     cache-manager: ">=5.0.0 < 6.0.0"
@@ -2426,7 +2426,7 @@ __metadata:
     blueimp-md5: ^2.19.0
     reflect-metadata: ^0.2.2
     serialize-javascript: ^7.0.4
-    typescript: ^5.9.3
+    typescript: ^6.0.3
   languageName: unknown
   linkType: soft
 
@@ -2437,7 +2437,7 @@ __metadata:
     "@type-cacheable/core": "workspace:*"
     "@types/ioredis": ^5.0.0
     ioredis: ^5.10.0
-    typescript: ^5.9.3
+    typescript: ^6.0.3
   peerDependencies:
     "@type-cacheable/core": ">=14.0.0 < 15.0.0"
     ioredis: ">=5.0.0 < 6.0.0"
@@ -2450,7 +2450,7 @@ __metadata:
   dependencies:
     "@type-cacheable/core": "workspace:*"
     lru-cache: ^11.2.6
-    typescript: ^5.9.3
+    typescript: ^6.0.3
   peerDependencies:
     "@type-cacheable/core": ">=14.0.0 < 15.0.0"
     lru-cache: ">=11.0.0 < 12.0.0"
@@ -2463,7 +2463,7 @@ __metadata:
   dependencies:
     "@type-cacheable/core": "workspace:*"
     node-cache: ^5.1.2
-    typescript: ^5.9.3
+    typescript: ^6.0.3
   peerDependencies:
     "@type-cacheable/core": ">=14.0.0 < 15.0.0"
     node-cache: ">=5.0.0 < 6.0.0"
@@ -2476,7 +2476,7 @@ __metadata:
   dependencies:
     "@type-cacheable/core": "workspace:*"
     redis: ^4.7.1
-    typescript: ^5.9.3
+    typescript: ^6.0.3
   peerDependencies:
     "@type-cacheable/core": ">=14.0.0 < 15.0.0"
     redis: ">=4.5.0 < 5.0.0"
@@ -8441,7 +8441,7 @@ __metadata:
     jest: ^30.3.0
     lerna: ^9.0.6
     ts-jest: ^29.4.6
-    typescript: ^5.9.3
+    typescript: ^6.0.3
   languageName: unknown
   linkType: soft
 
@@ -8501,7 +8501,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:>=3 < 6, typescript@npm:^5.9.3":
+"typescript@npm:>=3 < 6":
   version: 5.9.3
   resolution: "typescript@npm:5.9.3"
   bin:
@@ -8511,7 +8511,27 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@^5.9.3#~builtin<compat/typescript>, typescript@patch:typescript@npm%3A>=3 < 6#~builtin<compat/typescript>":
+"typescript@npm:^6.0.3":
+  version: 6.0.3
+  resolution: "typescript@npm:6.0.3"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: c1182dfadf8a8cb22a4e32442715afef1af1b950ae635b1c52c27e0d7fb7a5e2607ed7c7c4079bba4163579250e02445fd8d46b09cbceda71ff72a5b7d69db61
+  languageName: node
+  linkType: hard
+
+"typescript@patch:typescript@^6.0.3#~builtin<compat/typescript>":
+  version: 6.0.3
+  resolution: "typescript@patch:typescript@npm%3A6.0.3#~builtin<compat/typescript>::version=6.0.3&hash=5786d5"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: 238430fdcadd2ca8ec7179bc644b324dbe4d13d647efae95351f216c7d9645092c0d848a45bd5a27a3d9058e2466eb8d67f9d944e2a78fa32171eee2e2f8d11e
+  languageName: node
+  linkType: hard
+
+"typescript@patch:typescript@npm%3A>=3 < 6#~builtin<compat/typescript>":
   version: 5.9.3
   resolution: "typescript@patch:typescript@npm%3A5.9.3#~builtin<compat/typescript>::version=5.9.3&hash=5786d5"
   bin:

@@ -40,7 +40,7 @@
   "devDependencies": {
     "@type-cacheable/core": "workspace:*",
     "redis": "^4.7.1",
-    "typescript": "^5.9.3"
+    "typescript": "^6.0.3"
   },
   "peerDependencies": {
     "@type-cacheable/core": ">=14.0.0 < 15.0.0",
