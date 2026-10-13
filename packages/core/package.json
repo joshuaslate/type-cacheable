@@ -41,7 +41,7 @@
     "@types/blueimp-md5": "^2.18.2",
     "@types/node": "^25.5.0",
     "@types/serialize-javascript": "^5.0.4",
-    "typescript": "^5.9.3"
+    "typescript": "^7.0.2"
   },
   "dependencies": {
     "blueimp-md5": "^2.19.0",
