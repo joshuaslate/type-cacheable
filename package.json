@@ -24,7 +24,7 @@
     "@biomejs/biome": "2.4.14",
     "@types/jest": "^30.0.0",
     "lerna": "^10.0.1",
-    "typescript": "^5.9.3"
+    "typescript": "^7.0.2"
   },
   "dependencies": {
     "jest": "^30.3.0",
